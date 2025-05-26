@@ -7,6 +7,9 @@ model:
   arch: blip2
   model_type: coco
   use_grad_checkpoint: False
+  load_finetuned: True
+  vit_model: clip_L
+  finetuned: "/home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/output/BLIP2/Retrieval_coco_vitL_ft/20250422020/checkpoint_4.pth"
 
 datasets:
   coco_retrieval: # name of the dataset builder
@@ -49,8 +52,6 @@ run:
 
   # misc
   seed: 42
-  output_dir: "output/BLIP2/Retrieval_COCO"
+  output_dir: "output/BLIP2/Retrieval_COCO_vitL_ft"
 
   evaluate: True
-
-  wo_rerank: True

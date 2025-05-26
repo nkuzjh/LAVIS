@@ -1,0 +1,140 @@
+| distributed init (rank 0, world 1): env://
+2025-04-18 18:13:00,080 [INFO] 
+=====  Running Parameters    =====
+2025-04-18 18:13:00,080 [INFO] {
+    "accum_grad_iters": 1,
+    "amp": true,
+    "batch_size_eval": 16,
+    "batch_size_train": 14,
+    "device": "cuda",
+    "dist_backend": "nccl",
+    "dist_url": "env://",
+    "distributed": true,
+    "evaluate": false,
+    "gpu": 0,
+    "init_lr": 1e-05,
+    "k_test": 128,
+    "lr_layer_decay": 0.95,
+    "lr_sched": "linear_warmup_cosine_lr",
+    "max_epoch": 5,
+    "min_lr": 0,
+    "num_workers": 4,
+    "output_dir": "output/BLIP2/Retrieval_coco_vitL_ft",
+    "rank": 0,
+    "resume_ckpt_path": null,
+    "seed": 42,
+    "task": "retrieval",
+    "train_splits": [
+        "train"
+    ],
+    "use_dist_eval_sampler": false,
+    "valid_splits": [
+        "test"
+    ],
+    "warmup_lr": 1e-08,
+    "warmup_steps": 1000,
+    "weight_decay": 0.05,
+    "world_size": 1
+}
+2025-04-18 18:13:00,080 [INFO] 
+======  Dataset Attributes  ======
+2025-04-18 18:13:00,081 [INFO] 
+======== coco_retrieval =======
+2025-04-18 18:13:00,081 [INFO] {
+    "build_info": {
+        "annotations": {
+            "test": {
+                "md5": "3ff34b0ef2db02d01c37399f6a2a6cd1",
+                "storage": "coco/annotations/coco_karpathy_test.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_test.json"
+            },
+            "train": {
+                "md5": "aa31ac474cf6250ebb81d18348a07ed8",
+                "storage": "coco/annotations/coco_karpathy_train.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_train.json"
+            },
+            "val": {
+                "md5": "b273847456ef5580e33713b1f7de52a0",
+                "storage": "coco/annotations/coco_karpathy_val.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_val.json"
+            }
+        },
+        "images": {
+            "storage": "/home/zhh/ssd/excute/deeplearning/projects/datasets/coco/images/"
+        }
+    },
+    "data_type": "images",
+    "text_processor": {
+        "eval": {
+            "name": "blip_caption"
+        },
+        "train": {
+            "name": "blip_caption"
+        }
+    },
+    "vis_processor": {
+        "eval": {
+            "image_size": 364,
+            "name": "blip_image_eval"
+        },
+        "train": {
+            "image_size": 364,
+            "name": "blip2_image_train"
+        }
+    }
+}
+2025-04-18 18:13:00,081 [INFO] 
+======  Model Attributes  ======
+2025-04-18 18:13:00,081 [INFO] {
+    "arch": "blip2",
+    "drop_path_rate": 0,
+    "finetuned": "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth",
+    "freeze_vit": false,
+    "image_size": 364,
+    "load_finetuned": false,
+    "load_pretrained": true,
+    "model_type": "coco",
+    "num_query_token": 32,
+    "pretrained": "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_vitL.pth",
+    "use_grad_checkpoint": false,
+    "vit_model": "clip_L",
+    "vit_precision": "fp32"
+}
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_train.json
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_val.json
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_test.json
+2025-04-18 18:13:00,082 [INFO] Building datasets...
+2025-04-18 18:13:00,664 [WARNING] /home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/huggingface_hub/file_download.py:1142: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+
+W0418 18:13:27.641000 139710737879424 torch/distributed/elastic/agent/server/api.py:688] Received 1 death signal, shutting down workers
+W0418 18:13:27.642000 139710737879424 torch/distributed/elastic/multiprocessing/api.py:858] Sending process 24007 closing signal SIGHUP
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/torch/distributed/run.py", line 905, in <module>
+    main()
+  File "/home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 348, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 133, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 255, in launch_agent
+    result = agent.run()
+             ^^^^^^^^^^^
+  File "/home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/torch/distributed/elastic/metrics/api.py", line 124, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 680, in run
+    result = self._invoke_run(role)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 835, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 79, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 23985 got signal: 1

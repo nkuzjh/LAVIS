@@ -7,6 +7,7 @@
 
 import argparse
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 import random
 
 import numpy as np
@@ -35,6 +36,7 @@ from lavis.tasks import *
 def parse_args():
     parser = argparse.ArgumentParser(description="Training")
 
+    parser.add_argument("--is_tta", default=False, help="whether or not to use TTA")
     parser.add_argument("--cfg-path", required=True, help="path to configuration file.")
     parser.add_argument(
         "--options",
@@ -89,15 +91,19 @@ def main():
 
     cfg.pretty_print()
 
-    task = tasks.setup_task(cfg)
-    datasets = task.build_datasets(cfg)
-    model = task.build_model(cfg)
+    task = tasks.setup_task(cfg) # lavis.tasks.retrieval.RetrievalTask()
+    datasets = task.build_datasets(cfg) # 'train': <lavis.datasets.datasets.retrieval_datasets.RetrievalDataset object at 0x7f70f23a4190>, 'val': <lavis.datasets.datasets.retrieval_datasets.RetrievalEvalDataset object at 0x7f70846e3e10>, 'test': <lavis.datasets.datasets.retrieval_datasets.RetrievalEvalDataset object at 0x7f7158f8a710>
+    model = task.build_model(cfg) #  # <class 'lavis.models.blip2_models.blip2_qformer.Blip2Qformer'>
 
     runner = get_runner_class(cfg)(
         cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets
-    )
+    ) # RunnerBase
     runner.train()
 
 
 if __name__ == "__main__":
     main()
+
+# debug args: --cfg-path lavis/projects/blip2/train/retrieval_coco_ft_vitL.yaml
+
+# CUDA_VISIBLE_DEVICES=1 python -m torch.distributed.run --nproc_per_node=1 ../train.py --cfg-path ../lavis/projects/blip2/train/retrieval_coco_ft_vitL.yaml

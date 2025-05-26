@@ -33,6 +33,7 @@ from lavis.tasks import *
 def parse_args():
     parser = argparse.ArgumentParser(description="Training")
 
+    parser.add_argument("--is_tta", default=False, help="whether or not to use TTA")
     parser.add_argument("--cfg-path", required=True, help="path to configuration file.")
     parser.add_argument(
         "--options",
@@ -85,8 +86,14 @@ def main():
     runner = RunnerBase(
         cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets
     )
-    runner.evaluate(skip_reload=True)
+    runner.evaluate(skip_reload=True, wo_rerank=cfg.config.run.wo_rerank)
 
 
 if __name__ == "__main__":
     main()
+
+
+# !python ../evaluate.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_vitL_ft.yaml
+
+# !python ../evaluate.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval.yaml
+

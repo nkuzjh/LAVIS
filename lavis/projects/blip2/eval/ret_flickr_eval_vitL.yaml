@@ -7,24 +7,20 @@ model:
   arch: blip2
   model_type: coco
   use_grad_checkpoint: False
+  load_finetuned: True
+  vit_model: clip_L
+  finetuned: "/home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/output/BLIP2/Retrieval_coco_vitL_ft/20250422020/checkpoint_4.pth"
 
 datasets:
-  coco_retrieval: # name of the dataset builder
+  flickr30k: # name of the dataset builder
     vis_processor:
-        train:
-          name: "blip_image_train"
-          image_size: 364
         eval:
           name: "blip_image_eval"
           image_size: 364
     text_processor:
-        train:
-          name: "blip_caption"
         eval:
           name: "blip_caption"
-#     build_info:
-#         images:
-#             storage: '/export/share/datasets/vision/coco/images/'
+
 run:
   task: retrieval
 
@@ -33,8 +29,6 @@ run:
   batch_size_train: 16
   batch_size_eval: 32
 
-  train_splits: ["train"]
-  valid_splits: ["val"]
   test_splits: ["test"]
 
   # distribution
@@ -49,8 +43,6 @@ run:
 
   # misc
   seed: 42
-  output_dir: "output/BLIP2/Retrieval_COCO"
+  output_dir: "output/BLIP2/Retrieval_Flickr30k_vitL"
 
   evaluate: True
-
-  wo_rerank: True

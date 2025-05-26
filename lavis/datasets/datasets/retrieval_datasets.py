@@ -39,18 +39,18 @@ class RetrievalDataset(BaseDataset, __DisplMixin):
         for ann in self.annotation:
             img_id = ann["image_id"]
             if img_id not in self.img_ids.keys():
-                self.img_ids[img_id] = n
+                self.img_ids[img_id] = n # 把coco原生的image_id转换成递增的整数id
                 n += 1
 
     def __getitem__(self, index):
 
-        ann = self.annotation[index]
+        ann = self.annotation[index] #datasets["train"].annotation[0] = {'caption': 'A woman wearing a net on her head cutting a cake. ', 'image': 'val2014/COCO_val2014_000000522418.jpg', 'image_id': 'coco_522418', 'instance_id': '0'}
 
         image_path = os.path.join(self.vis_root, ann["image"])
         image = Image.open(image_path).convert("RGB")
 
-        image = self.vis_processor(image)
-        caption = self.text_processor(ann["caption"])
+        image = self.vis_processor(image) #lavis.processors.blip_processors.Blip2ImageTrainProcessor
+        caption = self.text_processor(ann["caption"]) #lavis.processors.blip_processors.BlipCaptionProcessor #每张图片对应多个(5个)caption，因此同一张图片会有多个训练样本，这些样本的image_id是一样的，但instance_id不同
 
         return {
             "image": image,

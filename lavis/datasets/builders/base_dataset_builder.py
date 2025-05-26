@@ -76,12 +76,12 @@ class BaseDatasetBuilder:
 
             self.text_processors["train"] = self._build_proc_from_cfg(txt_train_cfg)
             self.text_processors["eval"] = self._build_proc_from_cfg(txt_eval_cfg)
-        
+
         kw_proc_cfg = self.config.get("kw_processor")
         if kw_proc_cfg is not None:
             for name, cfg in kw_proc_cfg.items():
                 self.kw_processors[name] = self._build_proc_from_cfg(cfg)
-        
+
     @staticmethod
     def _build_proc_from_cfg(cfg):
         return (
@@ -115,8 +115,12 @@ class BaseDatasetBuilder:
 
         cache_root = registry.get_path("cache_root")
 
+        # print("cache_root",cache_root)
+
+
         for split in splits:
             info = anns[split]
+            # print("info",info)
 
             urls, storage_paths = info.get("url", None), info.storage
 
@@ -134,6 +138,7 @@ class BaseDatasetBuilder:
 
                 dirname = os.path.dirname(storage_path)
                 if not os.path.exists(dirname):
+                    # print("debug dirname: ",dirname)
                     os.makedirs(dirname)
 
                 if os.path.isfile(url_or_filename):
@@ -238,8 +243,8 @@ class BaseDatasetBuilder:
 class MultiModalDatasetBuilder(BaseDatasetBuilder):
     """
     MultiModalDatasetBuilder is a utility class designed to construct datasets
-    suitable for multi-modal tasks. This class simplifies the creation of 
-    datasets that incorporate data of multiple modalities, such as text, 
+    suitable for multi-modal tasks. This class simplifies the creation of
+    datasets that incorporate data of multiple modalities, such as text,
     images, video, or audio.
     """
     train_dataset_cls, eval_dataset_cls = None, None
@@ -252,15 +257,15 @@ class MultiModalDatasetBuilder(BaseDatasetBuilder):
     def _build_processor(self, cfg_name):
         cfg = self.config.get(cfg_name)
         return {
-            split: self._build_proc_from_cfg(cfg.get(split)) 
-            if cfg is not None 
+            split: self._build_proc_from_cfg(cfg.get(split))
+            if cfg is not None
             else None
             for split in ['train', 'eval']
         }
 
     def build_processors(self):
         self.text_processors = self._build_processor("text_processor")
-        
+
         self.processors = {
             split: {
                 modality: self._build_proc_from_cfg(
@@ -290,14 +295,14 @@ class MultiModalDatasetBuilder(BaseDatasetBuilder):
         self.build_processors()
         build_info = self.config.build_info
         datasets = {}
-        
+
         for split, info in build_info.annotations.items():
             if split not in ["train", "val", "test"]:
                 continue
 
             is_train = split == "train"
             dataset_args = self._get_dataset_args(info, is_train)
-            
+
             dataset_cls = self.train_dataset_cls if is_train else self.eval_dataset_cls
             datasets[split] = dataset_cls(**dataset_args)
 
@@ -305,21 +310,21 @@ class MultiModalDatasetBuilder(BaseDatasetBuilder):
 
     def _get_dataset_args(self, info, is_train):
         dataset_args = dict(self.config.build_info.get('kwargs', {}))
-        
+
         for modality in self.data_type:
             proc_name = f"{'vis' if 'image' in modality else modality}_processor"
             dataset_args[proc_name] = self.processors["train" if is_train else "eval"][modality]
             mm_path = self._get_absolute_path(self.config.build_info.get(modality).storage)
             dataset_args[f"{'vis' if 'image' in modality  else modality}_root"] = mm_path
-        
+
         dataset_args['text_processor'] = self.text_processors["train" if is_train else "eval"]
         dataset_args["ann_paths"] = [self._get_absolute_path(path) for path in info.storage]
         dataset_args['modalities'] = self.data_type
-        
+
         # Conform to base
         for key in ['vis_processor', 'vis_root', 'test_processor']:
             dataset_args.setdefault(key, None)
-        
+
         return dataset_args
 
 def load_dataset_config(cfg_path):

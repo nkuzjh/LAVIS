@@ -29,9 +29,27 @@ class RetrievalTask(BaseTask):
 
         return cls(cfg=run_cfg)
 
-    def evaluation(self, model, data_loader, **kwargs):
+    def evaluation(self, model, data_loader, wo_rerank, **kwargs):
         # score_i2t, score_t2i = model.compute_sim_matrix(model, data_loader)
-        score_i2t, score_t2i = model.compute_sim_matrix(data_loader, task_cfg=self.cfg)
+        score_i2t, score_t2i = model.compute_sim_matrix(data_loader, task_cfg=self.cfg, wo_rerank=wo_rerank)
+
+        if is_main_process():
+            eval_result = self._report_metrics(
+                score_i2t,
+                score_t2i,
+                data_loader.dataset.txt2img,
+                data_loader.dataset.img2txt,
+            )
+            logging.info(eval_result)
+        else:
+            eval_result = None
+
+        return eval_result
+
+    def evaluation_tta(self, model, data_loader, tta_cfg, **kwargs):
+        # score_i2t, score_t2i = model.compute_sim_matrix(model, data_loader)
+        # score_i2t, score_t2i = model.compute_sim_matrix(data_loader, task_cfg=self.cfg)
+        score_i2t, score_t2i = model(data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
 
         if is_main_process():
             eval_result = self._report_metrics(

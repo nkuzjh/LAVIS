@@ -17,7 +17,16 @@ from lavis.models.base_model import all_gather_with_grad, concat_all_gather
 from lavis.models.blip2_models.blip2 import (
     Blip2Base,
     compute_sim_matrix,
+    compute_sim_matrix_worerank,
     disabled_train,
+    compute_i2t_sim_matrix_adapt,
+    compute_t2i_sim_matrix_adapt,
+    compute_i2t_sim_matrix_adapt_worerank,
+    compute_t2i_sim_matrix_adapt_worerank,
+    compute_i2t_sim_matrix_adapt_zhh,
+    compute_t2i_sim_matrix_adapt_zhh,
+    compute_i2t_sim_matrix_adapt_zhh_topk,
+    compute_t2i_sim_matrix_adapt_zhh_topk,
 )
 from lavis.models.blip_models.blip_outputs import BlipOutput, BlipOutputFeatures
 
@@ -88,8 +97,8 @@ class Blip2Qformer(Blip2Base):
         self.max_txt_len = max_txt_len
 
     def forward(self, samples):
-        image = samples["image"]
-        text = samples["text_input"]
+        image = samples["image"] #14,3,364,364
+        text = samples["text_input"] #list.len=14
 
         image_embeds = self.ln_vision(self.visual_encoder(image))
         image_atts = torch.ones(image_embeds.size()[:-1], dtype=torch.long).to(
@@ -128,72 +137,75 @@ class Blip2Qformer(Blip2Base):
 
         ###============== Image-text Contrastive ===================###
         image_feats_all = concat_all_gather(
-            image_feats
-        )  # [batch_size*num_gpu, num_query_tokens, embed_dim]
-        text_feat_all = concat_all_gather(text_feat)  # [batch_size*num_gpu, embed_dim]
+            image_feats#14,32,256
+        )  # [batch_size*num_gpu, num_query_tokens, embed_dim] #14,32,256
+        text_feat_all = concat_all_gather(text_feat)  # [batch_size*num_gpu, embed_dim] #14，256
 
         sim_q2t = torch.matmul(
-            image_feats.unsqueeze(1), text_feat_all.unsqueeze(-1)
+            image_feats.unsqueeze(1), text_feat_all.unsqueeze(-1) #14,32,256 * 14,256 = 14, 14, 32
         ).squeeze()
         # [batch_size, batch_size*num_gpu, num_query_tokens]
 
         # image-text similarity: aggregate across all query tokens
-        sim_i2t, _ = sim_q2t.max(-1)
+        sim_i2t, _ = sim_q2t.max(-1) # 14,14
         sim_i2t = sim_i2t / self.temp
 
         # text-query similarity: [batch_size, batch_size*num_gpu, num_query_tokens]
         sim_t2q = torch.matmul(
-            text_feat.unsqueeze(1).unsqueeze(1), image_feats_all.permute(0, 2, 1)
+            text_feat.unsqueeze(1).unsqueeze(1), image_feats_all.permute(0, 2, 1) # 14,256 * 14,256,32 = 14, 14, 32
         ).squeeze()
 
         # text-image similarity: aggregate across all query tokens
-        sim_t2i, _ = sim_t2q.max(-1)
-        sim_t2i = sim_t2i / self.temp  # [batch_size, batch_size*num_gpu]
+        sim_t2i, _ = sim_t2q.max(-1) # 14, 14
+        sim_t2i = sim_t2i / self.temp  # [batch_size, batch_size*num_gpu]#均值5左右，最大值11左右
 
-        rank = dist.get_rank()
-        bs = image.size(0)
+        try:
+            rank = dist.get_rank() # 仅用于pretrain时的分布式训练时local_batch中retrieval similarity matrix的labels分配，见下述torch.linespace方法；单机单卡训练将rank置为0即可
+        except:
+            rank = 0
+        bs = image.size(0) #14
         targets = torch.linspace(rank * bs, rank * bs + bs - 1, bs, dtype=int).to(
             image.device
-        )
+        )# list of range(0,14,1)
 
         if "image_id" in samples.keys(): #coco retrieval finetuning
-            image_ids = samples["image_id"].view(-1,1)
-            image_ids_all = concat_all_gather(image_ids)
-            pos_idx = torch.eq(image_ids, image_ids_all.t()).float()       
-            sim_targets = pos_idx / pos_idx.sum(1,keepdim=True)   
-            sim_targets = 0.9 * sim_targets + 0.1 * torch.ones_like(sim_targets) / sim_targets.size(1)
+            image_ids = torch.as_tensor(samples["image_id"], dtype=torch.double).view(-1,1).to(sim_t2i.device) # 14,1
+            image_ids_all = concat_all_gather(image_ids) #14,1
+            pos_idx = torch.eq(image_ids, image_ids_all.t()).float() # 14,14 bs*bs的对角线为1的mask矩阵（单位矩阵I）
+            sim_targets = pos_idx / pos_idx.sum(1,keepdim=True) # 单卡训练同上，bs*bs的单位矩阵
+            sim_targets = 0.9 * sim_targets + 0.1 * torch.ones_like(sim_targets) / sim_targets.size(1)# 手动实现的label_smoothing,用于一个image_id可能对应多个text_id的情况，即多标签分类问题的cross_entropy
 
             loss_t2i = -torch.sum(F.log_softmax(sim_t2i, dim=1)*sim_targets,dim=1).mean()
-            loss_i2t = -torch.sum(F.log_softmax(sim_i2t, dim=1)*sim_targets,dim=1).mean()     
-            loss_itc = (loss_t2i+loss_i2t)/2  
-        else:                     
+            loss_i2t = -torch.sum(F.log_softmax(sim_i2t, dim=1)*sim_targets,dim=1).mean()
+            loss_itc = (loss_t2i+loss_i2t)/2
+        else:
             loss_itc = (
-                F.cross_entropy(sim_i2t, targets, label_smoothing=0.1)
+                F.cross_entropy(sim_i2t, targets, label_smoothing=0.1)# 多分类cross_entropy
                 + F.cross_entropy(sim_t2i, targets, label_smoothing=0.1)
             ) / 2
 
         ###============== Image-text Matching ===================###
-        text_input_ids_world = concat_all_gather(text_tokens.input_ids)
-        text_attention_mask_world = concat_all_gather(text_tokens.attention_mask)
-        image_embeds_world = all_gather_with_grad(image_embeds)
+        text_input_ids_world = concat_all_gather(text_tokens.input_ids) #14,32 #self.max_txt_len=32
+        text_attention_mask_world = concat_all_gather(text_tokens.attention_mask) #14,32 #self.max_txt_len=32
+        image_embeds_world = all_gather_with_grad(image_embeds)#14,677,1024
         with torch.no_grad():
             if "image_id" in samples.keys():
                 mask = torch.eq(image_ids, image_ids_all.t())
-                sim_t2i.masked_fill_(mask, -10000)
+                sim_t2i.masked_fill_(mask, -10000)# mask=1的位置替换为-10000，mask=0的位置数值不变
                 sim_i2t.masked_fill_(mask, -10000)
-            else:    
+            else:
                 sim_t2i[:, rank * bs : rank * bs + bs].fill_diagonal_(-10000)
-                sim_i2t[:, rank * bs : rank * bs + bs].fill_diagonal_(-10000)            
-                
-            weights_t2i = F.softmax(sim_t2i, dim=1)
-            weights_i2t = F.softmax(sim_i2t, dim=1)
+                sim_i2t[:, rank * bs : rank * bs + bs].fill_diagonal_(-10000)
+
+            weights_t2i = F.softmax(sim_t2i, dim=1)# 14，14 按照cos_similarity的概率 进行负样本抽样；除了单位矩阵对角线的image-text样本对，其他位置的cos_sim越大可以视为困难负样本
+            weights_i2t = F.softmax(sim_i2t, dim=1)# 14，14
 
         # select a negative image for each text
         image_embeds_neg = []
         for b in range(bs):
-            neg_idx = torch.multinomial(weights_t2i[b], 1).item()
+            neg_idx = torch.multinomial(weights_t2i[b], 1).item() # 多项式概率抽样，抽样次数为1,返回索引
             image_embeds_neg.append(image_embeds_world[neg_idx])
-        image_embeds_neg = torch.stack(image_embeds_neg, dim=0)
+        image_embeds_neg = torch.stack(image_embeds_neg, dim=0)#每个text样本抽样一个image负样本 14,677,1024
 
         # select a negative text for each image
         text_ids_neg = []
@@ -203,67 +215,75 @@ class Blip2Qformer(Blip2Base):
             text_ids_neg.append(text_input_ids_world[neg_idx])
             text_atts_neg.append(text_attention_mask_world[neg_idx])
 
-        text_ids_neg = torch.stack(text_ids_neg, dim=0)
-        text_atts_neg = torch.stack(text_atts_neg, dim=0)
+        text_ids_neg = torch.stack(text_ids_neg, dim=0) # 14,32 #self.max_txt_len=32
+        text_atts_neg = torch.stack(text_atts_neg, dim=0) # 14,32 #self.max_txt_len=32
 
         text_ids_all = torch.cat(
             [text_tokens.input_ids, text_tokens.input_ids, text_ids_neg], dim=0
-        )  # pos, pos, neg
+        )  # pos, pos, neg #42,32
         text_atts_all = torch.cat(
             [text_tokens.attention_mask, text_tokens.attention_mask, text_atts_neg],
             dim=0,
-        )
+        ) #42,32
 
-        query_tokens_itm = self.query_tokens.expand(text_ids_all.shape[0], -1, -1)
+        query_tokens_itm = self.query_tokens.expand(text_ids_all.shape[0], -1, -1) #self.query_tokens=1,32,768 -> query_tokens_itm.shape=42,32,768
         query_atts_itm = torch.ones(query_tokens_itm.size()[:-1], dtype=torch.long).to(
             image.device
-        )
-        attention_mask_all = torch.cat([query_atts_itm, text_atts_all], dim=1)
+        )# 42,32
+        attention_mask_all = torch.cat([query_atts_itm, text_atts_all], dim=1) #42,64
 
         image_embeds_all = torch.cat(
             [image_embeds, image_embeds_neg, image_embeds], dim=0
-        )  # pos, neg, pos
+        )  # pos, neg, pos #42.677.1024
         image_atts_all = torch.ones(image_embeds_all.size()[:-1], dtype=torch.long).to(
             image.device
-        )
+        )#42,677
 
         output_itm = self.Qformer.bert(
-            text_ids_all,
-            query_embeds=query_tokens_itm,
-            attention_mask=attention_mask_all,
-            encoder_hidden_states=image_embeds_all,
-            encoder_attention_mask=image_atts_all,
+            text_ids_all, #42,32#这里设计的42=14*3即bs*3分别代表了image_pos-text_pos，image_neg-text_pos， image_pos-text_neg三种样本对
+            query_embeds=query_tokens_itm,#42,32,768
+            attention_mask=attention_mask_all,#42,64 #64=32+32 #attention_mask_all=torch.cat([query_atts_itm, text_atts_all]) query_atts_itm为图片的query_tokens的mask，且全为1，text_atts_all为文本的attention_mask，根据文本长度进行mask；二者长度都为32，但一个指的是图片的query_tokens数量，一个指的是token的self.max_txt_len；Qformer的输入本身就是query和text concatenate后作为token sequence input，初始的hidden state则由image_embeds作为input；
+            encoder_hidden_states=image_embeds_all,#42,677,1024
+            encoder_attention_mask=image_atts_all,#42,677
             return_dict=True,
-        )
+        )#output_itm.last_hidden_state.shape=42,64,768
 
-        vl_embeddings = output_itm.last_hidden_state[:, : query_tokens_itm.size(1), :]
-        vl_output = self.itm_head(vl_embeddings)
-        logits = vl_output.mean(dim=1)
+        vl_embeddings = output_itm.last_hidden_state[:, : query_tokens_itm.size(1), :]#output_itm.last_hidden_state=42,64,768;query_tokens_itm.size(1)=32;vl_embeddings=42,32,768 #只要query_tokens_itm部分的 hidden state sequence token 输出
+        vl_output = self.itm_head(vl_embeddings) # vl_embeddings=42,32,768 -> vl_output=42,32,2 #单类别的分类任务改为多分类(2个类别)任务
+        logits = vl_output.mean(dim=1)#42,32,2 -> 42,2 #32个query_token的平均值作为ITM的预测结果 #与ITC使用max(query_token)作为预测结果不同
 
         itm_labels = torch.cat(
             [torch.ones(bs, dtype=torch.long), torch.zeros(2 * bs, dtype=torch.long)],
-            dim=0,
+            dim=0,#42 #对应了image_pos-text_pos，image_neg-text_pos， image_pos-text_neg三种样本对
         ).to(image.device)
-        loss_itm = F.cross_entropy(logits, itm_labels)
+        loss_itm = F.cross_entropy(logits, itm_labels)#
 
         ##================= Image Captioning ========================##
-        decoder_input_ids = text_tokens.input_ids.clone()
-        decoder_input_ids[:, 0] = self.tokenizer.bos_token_id
+        decoder_input_ids = text_tokens.input_ids.clone()#14,32
+        decoder_input_ids[:, 0] = self.tokenizer.bos_token_id#把input_ids的第一位从cls_token_id换成bos_token_id
         labels = decoder_input_ids.masked_fill(
             decoder_input_ids == self.tokenizer.pad_token_id, -100
-        )
+        )# pad_token_id换成-100
 
-        query_atts = torch.ones(query_tokens.size()[:-1], dtype=torch.long).to(
+        query_atts = torch.ones(query_tokens.size()[:-1], dtype=torch.long).to(#query_tokens=14,32,768
             image.device
-        )
-        attention_mask = torch.cat([query_atts, text_tokens.attention_mask], dim=1)
-        lm_output = self.Qformer(
-            decoder_input_ids,
-            attention_mask=attention_mask,
-            past_key_values=query_output.past_key_values,
+        )#14,32
+        attention_mask = torch.cat([query_atts, text_tokens.attention_mask], dim=1)#14,64 #64=query32+text_max_len32
+        lm_output = self.Qformer( #self.Qformer=lavis.models.blip2_models.Qformer.BertLMHeadModel #self.Qformer.bert=lavis.models.blip2_models.Qformer.BertModel
+            decoder_input_ids,#14,32
+            attention_mask=attention_mask,#14,64
+            past_key_values=query_output.past_key_values, #12*2的二维tuple * 14,12,32,64的tensor #Qformer.bert 输入query和image_embed 输出query_output 其中query_output.last_hidden_state=14,32,768经过vision_proj后成为image_feat 而query_output.past_key_values作为frozen LLM Decoder的初始hidden_state直接输入self.Qformer.forward
+            # past_key_values 缓存了模型在 先前时间步 计算过的键（Key）和值（Value）张量，使得在生成下一个 token 时：
+            # 避免重复计算：直接复用已缓存的键值，减少冗余计算。
+            # 实现高效的自回归生成：只需计算当前步的注意力，而不需要重新处理整个历史序列。
+            # past_key_values 是一个 嵌套的元组或列表，其结构如下：
+            # 每个元素对应模型的一个解码器层（Decoder Layer）。
+            # 每个层包含两个张量：(past_key, past_value)，形状通常为：
+            # (batch_size, num_heads, seq_len, head_dim)
+            # 其中 seq_len 是已生成序列的长度。
             return_dict=True,
-            labels=labels,
-        )
+            labels=labels,# 14,32
+        )#lm_output.keys()=['loss', 'logits'] #lm_output.logits.shape=14,32,30523 #self.tokenizer.vocab_size=30522
 
         loss_lm = lm_output.loss
 
@@ -361,26 +381,26 @@ class Blip2Qformer(Blip2Base):
         )
         return text_output.last_hidden_state[:, 0, :]
 
-    def compute_itm(self, image_inputs, text_ids, text_atts):
+    def compute_itm(self, image_inputs, text_ids, text_atts): # shape = #128,677,1408 #128,35 #128,35
         image_atts = torch.ones(image_inputs.size()[:-1], dtype=torch.long).to(
             image_inputs.device
-        )
-        query_tokens = self.query_tokens.expand(image_inputs.shape[0], -1, -1)
+        )#  image_inputs.shape=128,677,1408 -> image_atts.shape=128,677
+        query_tokens = self.query_tokens.expand(image_inputs.shape[0], -1, -1) #self.query_tokens.shape=1,32,768 -> query_tokens.shap=128,32,768
         query_atts = torch.ones(query_tokens.size()[:-1], dtype=torch.long).to(
             image_inputs.device
-        )
-        attention_mask = torch.cat([query_atts, text_atts], dim=1)
+        )# 128,32
+        attention_mask = torch.cat([query_atts, text_atts], dim=1) #128,67
         output_itm = self.Qformer.bert(
-            text_ids,
-            query_embeds=query_tokens,
-            attention_mask=attention_mask,
-            encoder_hidden_states=image_inputs,
-            encoder_attention_mask=image_atts,
+            text_ids, #128,35
+            query_embeds=query_tokens, #128,32,768
+            attention_mask=attention_mask, #128,67
+            encoder_hidden_states=image_inputs, #128,677,1408
+            encoder_attention_mask=image_atts, #128,677
             return_dict=True,
-        )
-        vl_embeddings = output_itm.last_hidden_state[:, : query_tokens.size(1), :]
-        itm_logit = self.itm_head(vl_embeddings)
-        itm_logit = itm_logit[:, :, 1].mean(dim=1)
+        )# output_itm.last_hidden_state=128,67,768
+        vl_embeddings = output_itm.last_hidden_state[:, : query_tokens.size(1), :]#128,32,768
+        itm_logit = self.itm_head(vl_embeddings)# 128,32,2
+        itm_logit = itm_logit[:, :, 1].mean(dim=1) #itm_logit[:, :, 1].shape=128,32 #itm_logit[:, :, 1].mean(dim=1).shape=128
         return itm_logit
 
     @torch.no_grad()
@@ -499,7 +519,7 @@ class Blip2Qformer(Blip2Base):
 
     @classmethod
     def from_config(cls, cfg):
-        vit_model = cfg.get("vit_model", "eva_clip_g")
+        vit_model = cfg.get("vit_model", "eva_clip_g") # 'clip_L'
         img_size = cfg.get("image_size")
         num_query_token = cfg.get("num_query_token")
         cross_attention_freq = cfg.get("cross_attention_freq", 2)
@@ -526,10 +546,78 @@ class Blip2Qformer(Blip2Base):
 
         return model
 
-    def compute_sim_matrix(self, data_loader, task_cfg):
+    def compute_sim_matrix(self, data_loader, task_cfg, wo_rerank):
         """
         Compute similarity i2t, t2i matrix for the given data loader.
         """
         k_test = task_cfg.k_test
 
-        return compute_sim_matrix(model=self, data_loader=data_loader, k_test=k_test)
+        # return compute_sim_matrix(model=self, data_loader=data_loader, k_test=k_test)
+        if wo_rerank:
+            return compute_sim_matrix_worerank(model=self, data_loader=data_loader, k_test=k_test)
+        else:
+            return compute_sim_matrix(model=self, data_loader=data_loader, k_test=k_test)
+
+    def compute_i2t_sim_matrix_adapt(self, data_loader, task_cfg, optimizer, wo_rerank):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        if wo_rerank:
+            return compute_i2t_sim_matrix_adapt_worerank(model=self, data_loader=data_loader, optimizer=optimizer,  k_test=k_test)
+        else:
+            return compute_i2t_sim_matrix_adapt(model=self, data_loader=data_loader, optimizer=optimizer,  k_test=k_test)
+
+    def compute_t2i_sim_matrix_adapt(self, data_loader, task_cfg, optimizer, wo_rerank):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        if wo_rerank:
+            return compute_t2i_sim_matrix_adapt_worerank(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+        else:
+            return compute_t2i_sim_matrix_adapt(model=self, data_loader=data_loader, optimizer=optimizer,  k_test=k_test)
+
+    def compute_i2t_sim_matrix_adapt_zhh(self, data_loader, task_cfg, optimizer, wo_rerank):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        return compute_i2t_sim_matrix_adapt_zhh(model=self, data_loader=data_loader, optimizer=optimizer,  k_test=k_test)
+        # if wo_rerank:
+        #     return compute_i2t_sim_matrix_adapt_zhh_worerank(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+        # else:
+        #     return compute_i2t_sim_matrix_adapt_zhh(model=self, data_loader=data_loader, optimizer=optimizer,  k_test=k_test)
+
+    def compute_t2i_sim_matrix_adapt_zhh(self, data_loader, task_cfg, optimizer, wo_rerank):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        return compute_t2i_sim_matrix_adapt_zhh(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+        # if wo_rerank:
+        #     return compute_t2i_sim_matrix_adapt_zhh_worerank(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+        # else:
+        #     return compute_t2i_sim_matrix_adapt_zhh(model=self, data_loader=data_loader, optimizer=optimizer,  k_test=k_test)
+
+    def compute_i2t_sim_matrix_adapt_zhh_topk(self, data_loader, task_cfg, optimizer, tta_cfg):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        score_i2t = compute_i2t_sim_matrix_adapt_zhh_topk(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+        return score_i2t
+
+    def compute_t2i_sim_matrix_adapt_zhh_topk(self, data_loader, task_cfg, optimizer, tta_cfg):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        score_t2i = compute_t2i_sim_matrix_adapt_zhh_topk(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+        return score_t2i

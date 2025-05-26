@@ -157,3 +157,17 @@ debug*/
 *.pdf
 
 cache/
+
+
+# diy gitignore file for BLIP2 project
+# checkpoint files
+*.pth
+
+# data files
+*.jpg
+*.png
+*.json
+
+# experiment files
+lavis/output/
+

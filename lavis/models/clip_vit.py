@@ -95,7 +95,7 @@ class AttentionPool2d(nn.Module):
         )
 
         return x[0]
-    
+
 
 class LayerNorm(nn.LayerNorm):
     """Subclass torch's LayerNorm to handle fp16."""
@@ -128,7 +128,7 @@ class ResidualAttentionBlock(nn.Module):
         if use_grad_checkpointing:
             self.attn = checkpoint_wrapper(self.attn)
             self.mlp = checkpoint_wrapper(self.mlp)
-            
+
     def attention(self, x: torch.Tensor):
         self.attn_mask = self.attn_mask.to(dtype=x.dtype, device=x.device) if self.attn_mask is not None else None
         return self.attn(x, x, x, need_weights=False, attn_mask=self.attn_mask)[0]
@@ -163,9 +163,9 @@ class VisionTransformer(nn.Module):
         self.class_embedding = nn.Parameter(scale * torch.randn(width))
         self.positional_embedding = nn.Parameter(scale * torch.randn(self.num_patches + 1, width))
         self.ln_pre = LayerNorm(width)
-        
+
         self.transformer = Transformer(width, layers, heads, use_grad_checkpointing=use_grad_checkpointing)
-           
+
 #         self.ln_final = LayerNorm(width)
 
     def forward(self, x: torch.Tensor):
@@ -180,10 +180,10 @@ class VisionTransformer(nn.Module):
         x = x.permute(1, 0, 2)  # NLD -> LND
         x = self.transformer(x)
         x = x.permute(1, 0, 2)  # LND -> NLD
-        
+
 #         x = self.ln_final(x)
         return x
-    
+
     def get_num_layer(self, var_name=""):
         if var_name in ("class_embedding", "positional_embedding", "conv1", "ln_pre"):
             return 0
@@ -191,9 +191,9 @@ class VisionTransformer(nn.Module):
             layer_id = int(var_name.split('.')[2])
             return layer_id + 1
         else:
-            return len(self.transformer.resblocks)    
-            
-            
+            return len(self.transformer.resblocks)
+
+
 # From PyTorch internals
 def _ntuple(n):
     def parse(x):
@@ -201,12 +201,12 @@ def _ntuple(n):
             return x
         return tuple(repeat(x, n))
     return parse
-to_2tuple = _ntuple(2)    
-    
+to_2tuple = _ntuple(2)
+
 def interpolate_pos_embed(model, state_dict, interpolation: str = 'bicubic', seq_dim=1):
     # Rescale the grid of position embeddings when loading from state_dict
     old_pos_embed = state_dict.get('positional_embedding', None)
-    
+
     grid_size = round((model.positional_embedding.shape[0] - 1) ** 0.5)
     if old_pos_embed is None:
         return
@@ -220,7 +220,7 @@ def interpolate_pos_embed(model, state_dict, interpolation: str = 'bicubic', seq
         pos_emb_tok, pos_emb_img = old_pos_embed[:extra_tokens], old_pos_embed[extra_tokens:]
     else:
         pos_emb_tok, pos_emb_img = None, old_pos_embed
-        
+
     old_grid_size = to_2tuple(int(math.sqrt(len(pos_emb_img))))
 
     print('Resizing position embedding grid-size from %s to %s', old_grid_size, grid_size)
@@ -237,8 +237,8 @@ def interpolate_pos_embed(model, state_dict, interpolation: str = 'bicubic', seq
     else:
         new_pos_embed = pos_emb_img
     state_dict['positional_embedding'] = new_pos_embed
-    
-    
+
+
 def create_clip_vit_L(img_size=224,use_checkpoint=False,precision="fp16"):
     model = VisionTransformer(
             input_resolution=img_size,
@@ -247,17 +247,18 @@ def create_clip_vit_L(img_size=224,use_checkpoint=False,precision="fp16"):
             layers=23,
             heads=16,
             use_grad_checkpointing=use_checkpoint,
-        )         
+        )
     url = "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/clip_vit_L.pth"
+    # url = "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_pretrained_vitL.pth"
     cached_file = download_cached_file(
         url, check_hash=False, progress=True
     )
-    state_dict = torch.load(cached_file, map_location="cpu")    
+    state_dict = torch.load(cached_file, map_location="cpu")
     interpolate_pos_embed(model,state_dict)
-    
+
     incompatible_keys = model.load_state_dict(state_dict, strict=False)
     # print(incompatible_keys)
-    
+
     if precision == "fp16":
         convert_weights_to_fp16(model)
     return model
