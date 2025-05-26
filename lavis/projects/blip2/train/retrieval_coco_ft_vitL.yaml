@@ -10,10 +10,11 @@ model:
   load_finetuned: False
   freeze_vit: False
 
-  # # finetune blip2 with clip-vit-large
-  # use_grad_checkpoint: False
-  # pretrained: "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_vitL.pth"
-  # vit_model: clip_L
+  # finetune blip2 with clip-vit-large
+  use_grad_checkpoint: False
+  pretrained: "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_vitL.pth"
+  # pretrained: "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_pretrained_vitL.pth"
+  vit_model: clip_L
 
 datasets:
   coco_retrieval: # name of the dataset builder
@@ -31,35 +32,41 @@ datasets:
           name: "blip_caption"
     build_info:
         images:
-            storage: '/export/share/datasets/vision/coco/images/'
+            storage: '/home/zhh/ssd/excute/deeplearning/projects/datasets/coco/images/'
 
 run:
   task: retrieval
   # optimizer
+  beta2: 0.98 # vit-L # 0.999 # vit-g
   lr_sched: "linear_warmup_cosine_lr"
-  init_lr: 1e-5
+  init_lr: 5e-6 # vit-L  # 1e-5 # vit-g
   min_lr: 0
   warmup_lr: 1e-8
   warmup_steps: 1000
-  weight_decay: 0.05
+  weight_decay: 0.0514
   max_epoch: 5
-  batch_size_train: 14
+  batch_size_train: 14 # 224 # batchsize for finetune retrieval vit-L/vit-g in paper
   batch_size_eval: 16
-  lr_layer_decay: 0.95 # layer-wise learning rate decay for the ViT
+  lr_layer_decay: 1 # vit-L # 0.95 # layer-wise learning rate decay for the ViT-g
   num_workers: 4
-  accum_grad_iters: 1
+  accum_grad_iters: 16 #224/14=16#1
 
   seed: 42
   output_dir: "output/BLIP2/Retrieval_coco_vitL_ft"
 
   amp: True
-  resume_ckpt_path: null
+  # resume_ckpt_path: null
+  resume_ckpt_path: "/home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/output/BLIP2/Retrieval_coco_vitL_ft/20250419144/checkpoint_0.pth"
+  # "/home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/output/BLIP2/Retrieval_coco_vitL_ft/20250419034/checkpoint_0.pth"
 
   evaluate: False
   train_splits: ["train"]
   valid_splits: ["test"]
   # test_splits: ["test"]
   k_test: 128
+  val_freq: 5
+  save_freq: 5
+  save_last: True
 
   device: "cuda"
   world_size: 1

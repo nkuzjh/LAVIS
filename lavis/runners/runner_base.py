@@ -33,6 +33,7 @@ from lavis.datasets.datasets.dataloader_utils import (
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader, DistributedSampler
 from torch.utils.data.dataset import ChainDataset
+from tent import tent, zhh
 
 
 @registry.register_runner("runner_base")
@@ -107,16 +108,16 @@ class RunnerBase:
             num_parameters = 0
             for p_group in optim_params:
                 for p in p_group["params"]:
-                    num_parameters += p.data.nelement()    
-            logging.info("number of trainable parameters: {}".format(num_parameters))      
-                  
+                    num_parameters += p.data.nelement()
+            logging.info("number of trainable parameters: {}".format(num_parameters))
+
             beta2 = self.config.run_cfg.get("beta2", 0.999)
 
             self._optimizer = torch.optim.AdamW(
                 optim_params,
                 lr=float(self.config.run_cfg.init_lr),
                 betas=(0.9, beta2),
-            )    
+            )
         return self._optimizer
 
     @property
@@ -272,7 +273,7 @@ class RunnerBase:
     def log_freq(self):
         log_freq = self.config.run_cfg.get("log_freq", 50)
         return int(log_freq)
-    
+
     @property
     def save_freq(self):
         save_freq = self.config.run_cfg.get("save_freq", 5)
@@ -282,7 +283,7 @@ class RunnerBase:
     def val_freq(self):
         val_freq = self.config.run_cfg.get("val_freq", 1)
         return int(val_freq)
-    
+
     @property
     def save_last(self):
         save_last = self.config.run_cfg.get("save_last", True)
@@ -388,7 +389,7 @@ class RunnerBase:
             if len(self.valid_splits) > 0 and (self.evaluate_only or cur_epoch%self.val_freq == 0):
                 for split_name in self.valid_splits:
                     logging.info("Evaluating on {}.".format(split_name))
-                    
+
                     val_log = self.eval_epoch(
                         split_name=split_name, cur_epoch=cur_epoch
                     )
@@ -419,7 +420,8 @@ class RunnerBase:
             if self.save_freq>0 and cur_epoch%self.save_freq == 0:
                 self._save_checkpoint(cur_epoch, is_best=False)
 
-            dist.barrier()
+            if dist.is_available() and dist.is_initialized():
+                dist.barrier()
 
         # save last checkpoint
         if self.save_last and not self.evaluate_only:
@@ -433,16 +435,82 @@ class RunnerBase:
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
         logging.info("Training time {}".format(total_time_str))
 
-    def evaluate(self, cur_epoch="best", skip_reload=False):
+    def evaluate(self, cur_epoch="best", skip_reload=False, wo_rerank=False):
         test_logs = dict()
 
         if len(self.test_splits) > 0:
             for split_name in self.test_splits:
                 test_logs[split_name] = self.eval_epoch(
-                    split_name=split_name, cur_epoch=cur_epoch, skip_reload=skip_reload
+                    split_name=split_name, cur_epoch=cur_epoch, skip_reload=skip_reload, wo_rerank=wo_rerank
                 )
 
             return test_logs
+
+
+    def evaluate_tta(self, cur_epoch="best", skip_reload=False, tta_cfg=None):
+        test_logs = dict()
+
+        if len(self.test_splits) > 0:
+            for split_name in self.test_splits:
+                test_logs[split_name] = self.eval_epoch_tta(
+                    split_name=split_name, cur_epoch=cur_epoch, skip_reload=skip_reload, tta_cfg=tta_cfg
+                )
+
+            return test_logs
+
+    # @torch.no_grad()
+    def eval_epoch_tta(self, split_name, cur_epoch, skip_reload=False, tta_cfg=None):
+        """
+        Evaluate the model on a given split.
+
+        Args:
+            split_name (str): name of the split to evaluate on.
+            cur_epoch (int): current epoch.
+            skip_reload_best (bool): whether to skip reloading the best checkpoint.
+                During training, we will reload the best checkpoint for validation.
+                During testing, we will use provided weights and skip reloading the best checkpoint .
+        """
+        data_loader = self.dataloaders.get(split_name, None)
+        assert data_loader, "data_loader for split {} is None.".format(split_name)
+
+        # TODO In validation, you need to compute loss as well as metrics
+        # TODO consider moving to model.before_evaluation()
+        model = self.unwrap_dist_model(self.model)
+        if not skip_reload and cur_epoch == "best":
+            model = self._reload_best_model(model)
+
+        # model.eval()
+        if tta_cfg.name == "tent":
+            model = tent.configure_model_blip2(model)
+            params, param_names = tent.collect_params_blip2(model)
+            # optimizer = TODO_optimizer(params, lr=1e-3)
+            optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
+            tta_model = tent.Tent_Blip2(model, optimizer)
+        elif tta_cfg.name == "zhh":
+            model = zhh.configure_model_blip2(model)
+            params, param_names = zhh.collect_params_blip2(model)
+            optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
+            tta_model = zhh.Zhh_Blip2(model, optimizer)
+        elif tta_cfg.name == "zhh_topk":
+            model = zhh.configure_model_blip2(model)
+            params, param_names = zhh.collect_params_blip2(model)
+            optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
+            tta_model = zhh.Zhh_Blip2(model, optimizer)
+
+        self.task.before_evaluation(
+            # model=model,
+            model=tta_model.model,
+            dataset=self.datasets[split_name],
+        )
+        # results = self.task.evaluation(model, data_loader)
+        results = self.task.evaluation_tta(tta_model, data_loader, tta_cfg)
+
+        if results is not None:
+            return self.task.after_evaluation(
+                val_result=results,
+                split_name=split_name,
+                epoch=cur_epoch,
+            )
 
     def train_epoch(self, epoch):
         # train
@@ -461,7 +529,7 @@ class RunnerBase:
         )
 
     @torch.no_grad()
-    def eval_epoch(self, split_name, cur_epoch, skip_reload=False):
+    def eval_epoch(self, split_name, cur_epoch, skip_reload=False, wo_rerank=False):
         """
         Evaluate the model on a given split.
 
@@ -486,7 +554,7 @@ class RunnerBase:
             model=model,
             dataset=self.datasets[split_name],
         )
-        results = self.task.evaluation(model, data_loader)
+        results = self.task.evaluation(model, data_loader, wo_rerank=wo_rerank)
 
         if results is not None:
             return self.task.after_evaluation(

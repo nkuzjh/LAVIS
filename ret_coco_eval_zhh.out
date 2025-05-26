@@ -1,0 +1,119 @@
+2025-05-26 21:29:12,684 [INFO] 
+=====  Running Parameters    =====
+2025-05-26 21:29:12,685 [INFO] {
+    "batch_size_eval": 16,
+    "batch_size_train": 16,
+    "device": "cuda",
+    "dist_url": "env://",
+    "distributed": false,
+    "evaluate": true,
+    "k_test": 128,
+    "num_workers": 4,
+    "output_dir": "output/BLIP2/Retrieval_COCO_zhh_lr1e-4_wd0_QfomerTentwoUnc_gradacc",
+    "seed": 42,
+    "task": "retrieval",
+    "test_splits": [
+        "test"
+    ],
+    "train_splits": [
+        "train"
+    ],
+    "use_dist_eval_sampler": false,
+    "valid_splits": [
+        "val"
+    ],
+    "world_size": 1
+}
+2025-05-26 21:29:12,685 [INFO] 
+======  Dataset Attributes  ======
+2025-05-26 21:29:12,685 [INFO] 
+======== coco_retrieval =======
+2025-05-26 21:29:12,685 [INFO] {
+    "build_info": {
+        "annotations": {
+            "test": {
+                "md5": "3ff34b0ef2db02d01c37399f6a2a6cd1",
+                "storage": "coco/annotations/coco_karpathy_test.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_test.json"
+            },
+            "train": {
+                "md5": "aa31ac474cf6250ebb81d18348a07ed8",
+                "storage": "coco/annotations/coco_karpathy_train.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_train.json"
+            },
+            "val": {
+                "md5": "b273847456ef5580e33713b1f7de52a0",
+                "storage": "coco/annotations/coco_karpathy_val.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_val.json"
+            }
+        },
+        "images": {
+            "storage": "coco/images/"
+        }
+    },
+    "data_type": "images",
+    "text_processor": {
+        "eval": {
+            "name": "blip_caption"
+        },
+        "train": {
+            "name": "blip_caption"
+        }
+    },
+    "vis_processor": {
+        "eval": {
+            "image_size": 364,
+            "name": "blip_image_eval"
+        },
+        "train": {
+            "image_size": 364,
+            "name": "blip_image_train"
+        }
+    }
+}
+2025-05-26 21:29:12,685 [INFO] 
+======  Model Attributes  ======
+2025-05-26 21:29:12,685 [INFO] {
+    "arch": "blip2",
+    "drop_path_rate": 0,
+    "finetuned": "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth",
+    "freeze_vit": false,
+    "image_size": 364,
+    "load_finetuned": true,
+    "model_type": "coco",
+    "num_query_token": 32,
+    "pretrained": "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_pretrained.pth",
+    "use_grad_checkpoint": false,
+    "vit_precision": "fp32"
+}
+2025-05-26 21:29:12,686 [INFO] Building datasets...
+2025-05-26 21:29:13,434 [WARNING] /home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/huggingface_hub/file_download.py:1142: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+
+2025-05-26 21:29:24,705 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/eva_vit.py:446: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  state_dict = torch.load(cached_file, map_location="cpu")
+
+2025-05-26 21:29:40,393 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/base_model.py:42: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(url_or_filename, map_location="cpu")
+
+2025-05-26 21:29:43,620 [INFO] Missing keys []
+2025-05-26 21:29:43,620 [INFO] load checkpoint from /home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth
+2025-05-26 21:29:43,770 [INFO] dataset_ratios not specified, datasets will be concatenated (map-style datasets) or chained (webdataset.DataPipeline).
+2025-05-26 21:29:43,770 [INFO] Loaded 566747 records for train split from the dataset.
+2025-05-26 21:29:43,771 [INFO] Loaded 5000 records for val split from the dataset.
+2025-05-26 21:29:43,771 [INFO] Loaded 5000 records for test split from the dataset.
+2025-05-26 21:29:45,348 [INFO] Computing features for evaluation...
+2025-05-26 21:29:45,351 [INFO]     text features...
+2025-05-26 21:29:55,237 [INFO]     image features...
+Not using distributed mode
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_train.json
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_val.json
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_test.json
+Position interpolate from 16x16 to 26x26
+ text_batch_i:  0 text_batch_i:  256 text_batch_i:  512 text_batch_i:  768 text_batch_i:  1024 text_batch_i:  1280 text_batch_i:  1536 text_batch_i:  1792 text_batch_i:  2048 text_batch_i:  2304 text_batch_i:  2560 text_batch_i:  2816 text_batch_i:  3072 text_batch_i:  3328 text_batch_i:  3584 text_batch_i:  3840 text_batch_i:  4096 text_batch_i:  4352 text_batch_i:  4608 text_batch_i:  4864 text_batch_i:  5120 text_batch_i:  5376 text_batch_i:  5632 text_batch_i:  5888 text_batch_i:  6144 text_batch_i:  6400 text_batch_i:  6656 text_batch_i:  6912 text_batch_i:  7168 text_batch_i:  7424 text_batch_i:  7680 text_batch_i:  7936 text_batch_i:  8192 text_batch_i:  8448 text_batch_i:  8704 text_batch_i:  8960 text_batch_i:  9216 text_batch_i:  9472 text_batch_i:  9728 text_batch_i:  9984 text_batch_i:  10240 text_batch_i:  10496 text_batch_i:  10752 text_batch_i:  11008 text_batch_i:  11264 text_batch_i:  11520 text_batch_i:  11776 text_batch_i:  12032 text_batch_i:  12288 text_batch_i:  12544 text_batch_i:  12800 text_batch_i:  13056 text_batch_i:  13312 text_batch_i:  13568 text_batch_i:  13824 text_batch_i:  14080 text_batch_i:  14336 text_batch_i:  14592 text_batch_i:  14848 text_batch_i:  15104 text_batch_i:  15360 text_batch_i:  15616 text_batch_i:  15872 text_batch_i:  16128 text_batch_i:  16384 text_batch_i:  16640 text_batch_i:  16896 text_batch_i:  17152 text_batch_i:  17408 text_batch_i:  17664 text_batch_i:  17920 text_batch_i:  18176 text_batch_i:  18432 text_batch_i:  18688 text_batch_i:  18944 text_batch_i:  19200 text_batch_i:  19456 text_batch_i:  19712 text_batch_i:  19968 text_batch_i:  20224 text_batch_i:  20480 text_batch_i:  20736 text_batch_i:  20992 text_batch_i:  21248 text_batch_i:  21504 text_batch_i:  21760 text_batch_i:  22016 text_batch_i:  22272 text_batch_i:  22528 text_batch_i:  22784 text_batch_i:  23040 text_batch_i:  23296 text_batch_i:  23552 text_batch_i:  23808 text_batch_i:  24064 text_batch_i:  24320 text_batch_i:  24576 text_batch_i:  248322025-05-26 21:37:15,497 [INFO]     similarity matrix...
+2025-05-26 21:37:17,009 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:995: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
+  loss_entropy_topk_gallery = -(F.softmax(score) * F.log_softmax(score))
+
+2025-05-26 21:37:17,010 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:995: UserWarning: Implicit dimension choice for log_softmax has been deprecated. Change the call to include dim=X as an argument.
+  loss_entropy_topk_gallery = -(F.softmax(score) * F.log_softmax(score))
+

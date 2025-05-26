@@ -30,7 +30,8 @@ class BaseTask:
         model_config = cfg.model_cfg
 
         model_cls = registry.get_model_class(model_config.arch)
-        return model_cls.from_config(model_config)
+        return model_cls.from_config(model_config) # <class 'lavis.models.blip2_models.blip2_qformer.Blip2Qformer'>
+        # 在model.from_config()中cls.__init__()和load_ckpt_from_config()各自加载了一遍pretrained weights，其中初始化加载了固定url，load_chpt_from_config加载了cfg中的pretrain路径
 
     def build_datasets(self, cfg):
         """
@@ -69,7 +70,7 @@ class BaseTask:
 
     def valid_step(self, model, samples):
         raise NotImplementedError
-    
+
     def before_training(self, model, dataset, **kwargs):
         model.before_training(dataset=dataset, task_type=type(self))
 
@@ -236,8 +237,8 @@ class BaseTask:
             if (i + 1) % accum_grad_iters == 0:
                 if use_amp:
                     scaler.step(optimizer)
-                    scaler.update()                     
-                else:    
+                    scaler.update()
+                else:
                     optimizer.step()
                 optimizer.zero_grad()
 

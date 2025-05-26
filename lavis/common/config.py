@@ -29,6 +29,8 @@ class Config:
         runner_config = self.build_runner_config(config)
         model_config = self.build_model_config(config, **user_config)
         dataset_config = self.build_dataset_config(config)
+        if args.is_tta:
+            tta_config = self.build_tta_config(config)
 
         # Validate the user-provided runner configuration
         # model and dataset configuration are supposed to be validated by the respective classes
@@ -36,9 +38,14 @@ class Config:
         # self._validate_runner_config(runner_config)
 
         # Override the default configuration with user options.
-        self.config = OmegaConf.merge(
-            runner_config, model_config, dataset_config, user_config
-        )
+        if args.is_tta:
+            self.config = OmegaConf.merge(
+                runner_config, model_config, dataset_config, user_config, tta_config
+            )
+        else:
+            self.config = OmegaConf.merge(
+                runner_config, model_config, dataset_config, user_config
+            )
 
     def _validate_runner_config(self, runner_config):
         """
@@ -110,6 +117,10 @@ class Config:
             )
 
         return dataset_config
+
+    @staticmethod
+    def build_tta_config(config):
+        return {"tta": config.tta}
 
     def _convert_to_dot_list(self, opts):
         if opts is None:
