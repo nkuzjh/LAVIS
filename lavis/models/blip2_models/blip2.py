@@ -26,7 +26,6 @@ from lavis.models.clip_vit import create_clip_vit_L
 from transformers import BertTokenizer
 from tent.tent import softmax_entropy
 
-
 class Blip2Base(BaseModel):
     @classmethod
     def init_tokenizer(cls, truncation_side="right"):

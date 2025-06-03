@@ -1,0 +1,133 @@
+2025-05-26 21:29:12,684 [INFO] 
+=====  Running Parameters    =====
+2025-05-26 21:29:12,685 [INFO] {
+    "batch_size_eval": 16,
+    "batch_size_train": 16,
+    "device": "cuda",
+    "dist_url": "env://",
+    "distributed": false,
+    "evaluate": true,
+    "k_test": 128,
+    "num_workers": 4,
+    "output_dir": "output/BLIP2/Retrieval_COCO_zhh_lr1e-4_wd0_QfomerTentwoUnc_gradacc",
+    "seed": 42,
+    "task": "retrieval",
+    "test_splits": [
+        "test"
+    ],
+    "train_splits": [
+        "train"
+    ],
+    "use_dist_eval_sampler": false,
+    "valid_splits": [
+        "val"
+    ],
+    "world_size": 1
+}
+2025-05-26 21:29:12,685 [INFO] 
+======  Dataset Attributes  ======
+2025-05-26 21:29:12,685 [INFO] 
+======== coco_retrieval =======
+2025-05-26 21:29:12,685 [INFO] {
+    "build_info": {
+        "annotations": {
+            "test": {
+                "md5": "3ff34b0ef2db02d01c37399f6a2a6cd1",
+                "storage": "coco/annotations/coco_karpathy_test.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_test.json"
+            },
+            "train": {
+                "md5": "aa31ac474cf6250ebb81d18348a07ed8",
+                "storage": "coco/annotations/coco_karpathy_train.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_train.json"
+            },
+            "val": {
+                "md5": "b273847456ef5580e33713b1f7de52a0",
+                "storage": "coco/annotations/coco_karpathy_val.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_val.json"
+            }
+        },
+        "images": {
+            "storage": "coco/images/"
+        }
+    },
+    "data_type": "images",
+    "text_processor": {
+        "eval": {
+            "name": "blip_caption"
+        },
+        "train": {
+            "name": "blip_caption"
+        }
+    },
+    "vis_processor": {
+        "eval": {
+            "image_size": 364,
+            "name": "blip_image_eval"
+        },
+        "train": {
+            "image_size": 364,
+            "name": "blip_image_train"
+        }
+    }
+}
+2025-05-26 21:29:12,685 [INFO] 
+======  Model Attributes  ======
+2025-05-26 21:29:12,685 [INFO] {
+    "arch": "blip2",
+    "drop_path_rate": 0,
+    "finetuned": "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth",
+    "freeze_vit": false,
+    "image_size": 364,
+    "load_finetuned": true,
+    "model_type": "coco",
+    "num_query_token": 32,
+    "pretrained": "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_pretrained.pth",
+    "use_grad_checkpoint": false,
+    "vit_precision": "fp32"
+}
+2025-05-26 21:29:12,686 [INFO] Building datasets...
+2025-05-26 21:29:13,434 [WARNING] /home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/huggingface_hub/file_download.py:1142: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+
+2025-05-26 21:29:24,705 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/eva_vit.py:446: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  state_dict = torch.load(cached_file, map_location="cpu")
+
+2025-05-26 21:29:40,393 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/base_model.py:42: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(url_or_filename, map_location="cpu")
+
+2025-05-26 21:29:43,620 [INFO] Missing keys []
+2025-05-26 21:29:43,620 [INFO] load checkpoint from /home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth
+2025-05-26 21:29:43,770 [INFO] dataset_ratios not specified, datasets will be concatenated (map-style datasets) or chained (webdataset.DataPipeline).
+2025-05-26 21:29:43,770 [INFO] Loaded 566747 records for train split from the dataset.
+2025-05-26 21:29:43,771 [INFO] Loaded 5000 records for val split from the dataset.
+2025-05-26 21:29:43,771 [INFO] Loaded 5000 records for test split from the dataset.
+2025-05-26 21:29:45,348 [INFO] Computing features for evaluation...
+2025-05-26 21:29:45,351 [INFO]     text features...
+2025-05-26 21:29:55,237 [INFO]     image features...
+Not using distributed mode
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_train.json
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_val.json
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_test.json
+Position interpolate from 16x16 to 26x26
+ text_batch_i:  0 text_batch_i:  256 text_batch_i:  512 text_batch_i:  768 text_batch_i:  1024 text_batch_i:  1280 text_batch_i:  1536 text_batch_i:  1792 text_batch_i:  2048 text_batch_i:  2304 text_batch_i:  2560 text_batch_i:  2816 text_batch_i:  3072 text_batch_i:  3328 text_batch_i:  3584 text_batch_i:  3840 text_batch_i:  4096 text_batch_i:  4352 text_batch_i:  4608 text_batch_i:  4864 text_batch_i:  5120 text_batch_i:  5376 text_batch_i:  5632 text_batch_i:  5888 text_batch_i:  6144 text_batch_i:  6400 text_batch_i:  6656 text_batch_i:  6912 text_batch_i:  7168 text_batch_i:  7424 text_batch_i:  7680 text_batch_i:  7936 text_batch_i:  8192 text_batch_i:  8448 text_batch_i:  8704 text_batch_i:  8960 text_batch_i:  9216 text_batch_i:  9472 text_batch_i:  9728 text_batch_i:  9984 text_batch_i:  10240 text_batch_i:  10496 text_batch_i:  10752 text_batch_i:  11008 text_batch_i:  11264 text_batch_i:  11520 text_batch_i:  11776 text_batch_i:  12032 text_batch_i:  12288 text_batch_i:  12544 text_batch_i:  12800 text_batch_i:  13056 text_batch_i:  13312 text_batch_i:  13568 text_batch_i:  13824 text_batch_i:  14080 text_batch_i:  14336 text_batch_i:  14592 text_batch_i:  14848 text_batch_i:  15104 text_batch_i:  15360 text_batch_i:  15616 text_batch_i:  15872 text_batch_i:  16128 text_batch_i:  16384 text_batch_i:  16640 text_batch_i:  16896 text_batch_i:  17152 text_batch_i:  17408 text_batch_i:  17664 text_batch_i:  17920 text_batch_i:  18176 text_batch_i:  18432 text_batch_i:  18688 text_batch_i:  18944 text_batch_i:  19200 text_batch_i:  19456 text_batch_i:  19712 text_batch_i:  19968 text_batch_i:  20224 text_batch_i:  20480 text_batch_i:  20736 text_batch_i:  20992 text_batch_i:  21248 text_batch_i:  21504 text_batch_i:  21760 text_batch_i:  22016 text_batch_i:  22272 text_batch_i:  22528 text_batch_i:  22784 text_batch_i:  23040 text_batch_i:  23296 text_batch_i:  23552 text_batch_i:  23808 text_batch_i:  24064 text_batch_i:  24320 text_batch_i:  24576 text_batch_i:  248322025-05-26 21:37:15,497 [INFO]     similarity matrix...
+2025-05-26 21:37:17,009 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:995: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
+  loss_entropy_topk_gallery = -(F.softmax(score) * F.log_softmax(score))
+
+2025-05-26 21:37:17,010 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:995: UserWarning: Implicit dimension choice for log_softmax has been deprecated. Change the call to include dim=X as an argument.
+  loss_entropy_topk_gallery = -(F.softmax(score) * F.log_softmax(score))
+
+ image_batch_i:  0 image_batch_i:  16 image_batch_i:  32 image_batch_i:  48 image_batch_i:  64 image_batch_i:  80 image_batch_i:  96 image_batch_i:  112 image_batch_i:  128 image_batch_i:  144 image_batch_i:  160 image_batch_i:  176 image_batch_i:  192 image_batch_i:  208 image_batch_i:  224 image_batch_i:  240 image_batch_i:  256 image_batch_i:  272 image_batch_i:  288 image_batch_i:  304 image_batch_i:  320 image_batch_i:  336 image_batch_i:  352 image_batch_i:  368 image_batch_i:  384 image_batch_i:  400 image_batch_i:  416 image_batch_i:  432 image_batch_i:  448 image_batch_i:  464 image_batch_i:  480 image_batch_i:  496 image_batch_i:  512 image_batch_i:  528 image_batch_i:  544 image_batch_i:  560 image_batch_i:  576 image_batch_i:  592 image_batch_i:  608 image_batch_i:  624 image_batch_i:  640 image_batch_i:  656 image_batch_i:  672 image_batch_i:  688 image_batch_i:  704 image_batch_i:  720 image_batch_i:  736 image_batch_i:  752 image_batch_i:  768 image_batch_i:  784 image_batch_i:  800 image_batch_i:  816 image_batch_i:  832 image_batch_i:  848 image_batch_i:  864 image_batch_i:  880 image_batch_i:  896 image_batch_i:  912 image_batch_i:  928 image_batch_i:  944 image_batch_i:  960 image_batch_i:  976 image_batch_i:  992 image_batch_i:  1008 image_batch_i:  1024 image_batch_i:  1040 image_batch_i:  1056 image_batch_i:  1072 image_batch_i:  1088 image_batch_i:  1104 image_batch_i:  1120 image_batch_i:  1136 image_batch_i:  1152 image_batch_i:  1168 image_batch_i:  1184 image_batch_i:  1200 image_batch_i:  1216 image_batch_i:  1232 image_batch_i:  1248 image_batch_i:  1264 image_batch_i:  1280 image_batch_i:  1296 image_batch_i:  1312 image_batch_i:  1328 image_batch_i:  1344 image_batch_i:  1360 image_batch_i:  1376 image_batch_i:  1392 image_batch_i:  1408 image_batch_i:  1424 image_batch_i:  1440 image_batch_i:  1456 image_batch_i:  1472 image_batch_i:  1488 image_batch_i:  1504 image_batch_i:  1520 image_batch_i:  1536 image_batch_i:  1552 image_batch_i:  1568 image_batch_i:  1584 image_batch_i:  1600 image_batch_i:  1616 image_batch_i:  1632 image_batch_i:  1648 image_batch_i:  1664 image_batch_i:  1680 image_batch_i:  1696 image_batch_i:  1712 image_batch_i:  1728 image_batch_i:  1744 image_batch_i:  1760 image_batch_i:  1776 image_batch_i:  1792 image_batch_i:  1808 image_batch_i:  1824 image_batch_i:  1840 image_batch_i:  1856 image_batch_i:  1872 image_batch_i:  1888 image_batch_i:  1904 image_batch_i:  1920 image_batch_i:  1936 image_batch_i:  1952 image_batch_i:  1968 image_batch_i:  1984 image_batch_i:  2000 image_batch_i:  2016 image_batch_i:  2032 image_batch_i:  2048 image_batch_i:  2064 image_batch_i:  2080 image_batch_i:  2096 image_batch_i:  2112 image_batch_i:  2128 image_batch_i:  2144 image_batch_i:  2160 image_batch_i:  2176 image_batch_i:  2192 image_batch_i:  2208 image_batch_i:  2224 image_batch_i:  2240 image_batch_i:  2256 image_batch_i:  2272 image_batch_i:  2288 image_batch_i:  2304 image_batch_i:  2320 image_batch_i:  2336 image_batch_i:  2352 image_batch_i:  2368 image_batch_i:  2384 image_batch_i:  2400 image_batch_i:  2416 image_batch_i:  2432 image_batch_i:  2448 image_batch_i:  2464 image_batch_i:  2480 image_batch_i:  2496 image_batch_i:  2512 image_batch_i:  2528 image_batch_i:  2544 image_batch_i:  2560 image_batch_i:  2576 image_batch_i:  2592 image_batch_i:  2608 image_batch_i:  2624 image_batch_i:  2640 image_batch_i:  2656 image_batch_i:  2672 image_batch_i:  2688 image_batch_i:  2704 image_batch_i:  2720 image_batch_i:  2736 image_batch_i:  2752 image_batch_i:  2768 image_batch_i:  2784 image_batch_i:  2800 image_batch_i:  2816 image_batch_i:  2832 image_batch_i:  2848 image_batch_i:  2864 image_batch_i:  2880 image_batch_i:  2896 image_batch_i:  2912 image_batch_i:  2928 image_batch_i:  2944 image_batch_i:  2960 image_batch_i:  2976 image_batch_i:  2992 image_batch_i:  3008 image_batch_i:  3024 image_batch_i:  3040 image_batch_i:  3056 image_batch_i:  3072 image_batch_i:  3088 image_batch_i:  3104 image_batch_i:  3120 image_batch_i:  3136 image_batch_i:  3152 image_batch_i:  3168 image_batch_i:  3184 image_batch_i:  3200 image_batch_i:  3216 image_batch_i:  3232 image_batch_i:  3248 image_batch_i:  3264 image_batch_i:  3280 image_batch_i:  3296 image_batch_i:  3312 image_batch_i:  3328 image_batch_i:  3344 image_batch_i:  3360 image_batch_i:  3376 image_batch_i:  3392 image_batch_i:  3408 image_batch_i:  3424 image_batch_i:  3440 image_batch_i:  3456 image_batch_i:  3472 image_batch_i:  3488 image_batch_i:  3504 image_batch_i:  3520 image_batch_i:  3536 image_batch_i:  3552 image_batch_i:  3568 image_batch_i:  3584 image_batch_i:  3600 image_batch_i:  3616 image_batch_i:  3632 image_batch_i:  3648 image_batch_i:  3664 image_batch_i:  3680 image_batch_i:  3696 image_batch_i:  3712 image_batch_i:  3728 image_batch_i:  3744 image_batch_i:  3760 image_batch_i:  3776 image_batch_i:  3792 image_batch_i:  3808 image_batch_i:  3824 image_batch_i:  3840 image_batch_i:  3856 image_batch_i:  3872 image_batch_i:  3888 image_batch_i:  3904 image_batch_i:  3920 image_batch_i:  3936 image_batch_i:  3952 image_batch_i:  3968 image_batch_i:  3984 image_batch_i:  4000 image_batch_i:  4016 image_batch_i:  4032 image_batch_i:  4048 image_batch_i:  4064 image_batch_i:  4080 image_batch_i:  4096 image_batch_i:  4112 image_batch_i:  4128 image_batch_i:  4144 image_batch_i:  4160 image_batch_i:  4176 image_batch_i:  4192 image_batch_i:  4208 image_batch_i:  4224 image_batch_i:  4240 image_batch_i:  4256 image_batch_i:  4272 image_batch_i:  4288 image_batch_i:  4304 image_batch_i:  4320 image_batch_i:  4336 image_batch_i:  4352 image_batch_i:  4368 image_batch_i:  4384 image_batch_i:  4400 image_batch_i:  4416 image_batch_i:  4432 image_batch_i:  4448 image_batch_i:  4464 image_batch_i:  4480 image_batch_i:  4496 image_batch_i:  4512 image_batch_i:  4528 image_batch_i:  4544 image_batch_i:  4560 image_batch_i:  4576 image_batch_i:  4592 image_batch_i:  4608 image_batch_i:  4624 image_batch_i:  4640 image_batch_i:  4656 image_batch_i:  4672 image_batch_i:  4688 image_batch_i:  4704 image_batch_i:  4720 image_batch_i:  4736 image_batch_i:  4752 image_batch_i:  4768 image_batch_i:  4784 image_batch_i:  4800 image_batch_i:  4816 image_batch_i:  4832 image_batch_i:  4848 image_batch_i:  4864 image_batch_i:  4880 image_batch_i:  4896 image_batch_i:  4912 image_batch_i:  4928 image_batch_i:  4944 image_batch_i:  4960 image_batch_i:  4976 image_batch_i:  2496Evaluation itm re-rank:  [   0/5000]  eta: 1:55:36    time: 1.3874  data: 0.0076  max mem: 19051
+Evaluation itm re-rank:  [ 100/5000]  eta: 0:48:17    time: 0.5846  data: 0.0000  max mem: 19057
+Evaluation itm re-rank:  [ 200/5000]  eta: 0:47:14    time: 0.5876  data: 0.0000  max mem: 19057
+Evaluation itm re-rank:  [ 300/5000]  eta: 0:45:59    time: 0.5799  data: 0.0000  max mem: 19057
+Evaluation itm re-rank:  [ 400/5000]  eta: 0:45:05    time: 0.6212  data: 0.0000  max mem: 19057
+Evaluation itm re-rank:  [ 500/5000]  eta: 0:44:09    time: 0.5903  data: 0.0000  max mem: 19057
+Evaluation itm re-rank:  [ 600/5000]  eta: 0:43:13    time: 0.5880  data: 0.0000  max mem: 19057
+Evaluation itm re-rank:  [ 700/5000]  eta: 0:42:15    time: 0.5963  data: 0.0000  max mem: 19057
+Evaluation itm re-rank:  [ 800/5000]  eta: 0:41:12    time: 0.5908  data: 0.0000  max mem: 19058
+Evaluation itm re-rank:  [ 900/5000]  eta: 0:40:12    time: 0.5783  data: 0.0000  max mem: 19058
+Evaluation itm re-rank:  [1000/5000]  eta: 0:39:12    time: 0.5983  data: 0.0000  max mem: 19058
+Evaluation itm re-rank:  [1100/5000]  eta: 0:38:13    time: 0.5932  data: 0.0000  max mem: 19058
+Evaluation itm re-rank:  [1200/5000]  eta: 0:37:17    time: 0.5776  data: 0.0000  max mem: 19058
+Evaluation itm re-rank:  [1300/5000]  eta: 0:36:16    time: 0.5806  data: 0.0000  max mem: 19058
