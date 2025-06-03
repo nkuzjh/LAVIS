@@ -1,0 +1,1414 @@
+2025-06-03 10:17:32,761 [INFO] 
+=====  Running Parameters    =====
+2025-06-03 10:17:32,761 [INFO] {
+    "batch_size_eval": 16,
+    "batch_size_train": 16,
+    "device": "cuda",
+    "dist_url": "env://",
+    "distributed": false,
+    "evaluate": true,
+    "k_test": 128,
+    "num_workers": 4,
+    "output_dir": "output/BLIP2/Retrieval_COCO_zhh_lr5e-6_wd0_wotemper_QfomerTentwoUnc_topk_gradacc_offline_multiepochs5/t2i",
+    "seed": 42,
+    "task": "retrieval",
+    "test_splits": [
+        "test"
+    ],
+    "train_splits": [
+        "train"
+    ],
+    "use_dist_eval_sampler": false,
+    "valid_splits": [
+        "val"
+    ],
+    "world_size": 1
+}
+2025-06-03 10:17:32,761 [INFO] 
+======  Dataset Attributes  ======
+2025-06-03 10:17:32,761 [INFO] 
+======== coco_retrieval =======
+2025-06-03 10:17:32,762 [INFO] {
+    "build_info": {
+        "annotations": {
+            "test": {
+                "md5": "3ff34b0ef2db02d01c37399f6a2a6cd1",
+                "storage": "coco/annotations/coco_karpathy_test.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_test.json"
+            },
+            "train": {
+                "md5": "aa31ac474cf6250ebb81d18348a07ed8",
+                "storage": "coco/annotations/coco_karpathy_train.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_train.json"
+            },
+            "val": {
+                "md5": "b273847456ef5580e33713b1f7de52a0",
+                "storage": "coco/annotations/coco_karpathy_val.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_val.json"
+            }
+        },
+        "images": {
+            "storage": "coco/images/"
+        }
+    },
+    "data_type": "images",
+    "text_processor": {
+        "eval": {
+            "name": "blip_caption"
+        },
+        "train": {
+            "name": "blip_caption"
+        }
+    },
+    "vis_processor": {
+        "eval": {
+            "image_size": 364,
+            "name": "blip_image_eval"
+        },
+        "train": {
+            "image_size": 364,
+            "name": "blip_image_train"
+        }
+    }
+}
+2025-06-03 10:17:32,762 [INFO] 
+======  Model Attributes  ======
+2025-06-03 10:17:32,762 [INFO] {
+    "arch": "blip2",
+    "drop_path_rate": 0,
+    "finetuned": "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth",
+    "freeze_vit": false,
+    "image_size": 364,
+    "load_finetuned": true,
+    "model_type": "coco",
+    "num_query_token": 32,
+    "pretrained": "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_pretrained.pth",
+    "use_grad_checkpoint": false,
+    "vit_precision": "fp32"
+}
+2025-06-03 10:17:32,762 [INFO] 
+======  TTA Attributes  ======
+2025-06-03 10:17:32,762 [INFO] {
+    "config": "configs/tta/tent.yaml",
+    "init_lr": 5e-06,
+    "name": "zhh_topk",
+    "offline_multi_epochs": 5,
+    "online": false,
+    "tta_task": "t2i",
+    "weight_decay": 0.0,
+    "wo_rerank": false
+}
+2025-06-03 10:17:32,763 [INFO] Building datasets...
+2025-06-03 10:17:33,386 [WARNING] /home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/huggingface_hub/file_download.py:1142: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+
+2025-06-03 10:17:44,251 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/eva_vit.py:446: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  state_dict = torch.load(cached_file, map_location="cpu")
+
+2025-06-03 10:17:47,849 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/base_model.py:42: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(url_or_filename, map_location="cpu")
+
+2025-06-03 10:17:49,944 [INFO] Missing keys []
+2025-06-03 10:17:49,945 [INFO] load checkpoint from /home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth
+2025-06-03 10:17:50,084 [INFO] dataset_ratios not specified, datasets will be concatenated (map-style datasets) or chained (webdataset.DataPipeline).
+2025-06-03 10:17:50,084 [INFO] Loaded 566747 records for train split from the dataset.
+2025-06-03 10:17:50,084 [INFO] Loaded 5000 records for val split from the dataset.
+2025-06-03 10:17:50,084 [INFO] Loaded 5000 records for test split from the dataset.
+2025-06-03 10:17:51,204 [INFO] tta_cfg.name: zhh_topk
+2025-06-03 10:17:51,222 [INFO] start tta epoch 0 for t2i task
+2025-06-03 10:17:51,222 [INFO] Computing features for evaluation...
+2025-06-03 10:17:51,222 [INFO]     text features...
+2025-06-03 10:18:00,555 [INFO]     image features...
+Not using distributed mode
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_train.json
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_val.json
+Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_test.json
+Position interpolate from 16x16 to 26x26
+ text_batch_i:  0 text_batch_i:  256 text_batch_i:  512 text_batch_i:  768 text_batch_i:  1024 text_batch_i:  1280 text_batch_i:  1536 text_batch_i:  1792 text_batch_i:  2048 text_batch_i:  2304 text_batch_i:  2560 text_batch_i:  2816 text_batch_i:  3072 text_batch_i:  3328 text_batch_i:  3584 text_batch_i:  3840 text_batch_i:  4096 text_batch_i:  4352 text_batch_i:  4608 text_batch_i:  4864 text_batch_i:  5120 text_batch_i:  5376 text_batch_i:  5632 text_batch_i:  5888 text_batch_i:  6144 text_batch_i:  6400 text_batch_i:  6656 text_batch_i:  6912 text_batch_i:  7168 text_batch_i:  7424 text_batch_i:  7680 text_batch_i:  7936 text_batch_i:  8192 text_batch_i:  8448 text_batch_i:  8704 text_batch_i:  8960 text_batch_i:  9216 text_batch_i:  9472 text_batch_i:  9728 text_batch_i:  9984 text_batch_i:  10240 text_batch_i:  10496 text_batch_i:  10752 text_batch_i:  11008 text_batch_i:  11264 text_batch_i:  11520 text_batch_i:  11776 text_batch_i:  12032 text_batch_i:  12288 text_batch_i:  12544 text_batch_i:  12800 text_batch_i:  13056 text_batch_i:  13312 text_batch_i:  13568 text_batch_i:  13824 text_batch_i:  14080 text_batch_i:  14336 text_batch_i:  14592 text_batch_i:  14848 text_batch_i:  15104 text_batch_i:  15360 text_batch_i:  15616 text_batch_i:  15872 text_batch_i:  16128 text_batch_i:  16384 text_batch_i:  16640 text_batch_i:  16896 text_batch_i:  17152 text_batch_i:  17408 text_batch_i:  17664 text_batch_i:  17920 text_batch_i:  18176 text_batch_i:  18432 text_batch_i:  18688 text_batch_i:  18944 text_batch_i:  19200 text_batch_i:  19456 text_batch_i:  19712 text_batch_i:  19968 text_batch_i:  20224 text_batch_i:  20480 text_batch_i:  20736 text_batch_i:  20992 text_batch_i:  21248 text_batch_i:  21504 text_batch_i:  21760 text_batch_i:  22016 text_batch_i:  22272 text_batch_i:  22528 text_batch_i:  22784 text_batch_i:  23040 text_batch_i:  23296 text_batch_i:  23552 text_batch_i:  23808 text_batch_i:  24064 text_batch_i:  24320 text_batch_i:  24576 text_batch_i:  24832
+2025-06-03 10:24:56,443 [INFO]     similarity matrix...
+Evaluation itm re-rank:  [    0/25010]  eta: 5:01:41    time: 0.7238  data: 0.0906  max mem: 19533
+Evaluation itm re-rank:  [   50/25010]  eta: 4:19:38    time: 0.6222  data: 0.0000  max mem: 19544
+Evaluation itm re-rank:  [  100/25010]  eta: 4:17:57    time: 0.6186  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  150/25010]  eta: 4:16:30    time: 0.6141  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  200/25010]  eta: 4:15:14    time: 0.6107  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  250/25010]  eta: 4:19:15    time: 0.6442  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  300/25010]  eta: 4:19:45    time: 0.6442  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  350/25010]  eta: 4:19:51    time: 0.6378  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  400/25010]  eta: 4:19:43    time: 0.6385  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  450/25010]  eta: 4:19:31    time: 0.6414  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  500/25010]  eta: 4:19:13    time: 0.6423  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  550/25010]  eta: 4:18:53    time: 0.6423  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  600/25010]  eta: 4:18:18    time: 0.6288  data: 0.0000  max mem: 19545
+Evaluation itm re-rank:  [  650/25010]  eta: 4:18:00    time: 0.6436  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [  700/25010]  eta: 4:17:31    time: 0.6364  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [  750/25010]  eta: 4:17:05    time: 0.6307  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [  800/25010]  eta: 4:16:38    time: 0.6424  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [  850/25010]  eta: 4:16:10    time: 0.6409  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [  900/25010]  eta: 4:15:37    time: 0.6322  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [  950/25010]  eta: 4:15:08    time: 0.6379  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1000/25010]  eta: 4:14:43    time: 0.6431  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1050/25010]  eta: 4:14:14    time: 0.6440  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1100/25010]  eta: 4:13:40    time: 0.6297  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1150/25010]  eta: 4:13:11    time: 0.6443  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1200/25010]  eta: 4:12:40    time: 0.6325  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1250/25010]  eta: 4:12:14    time: 0.6471  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1300/25010]  eta: 4:11:45    time: 0.6406  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1350/25010]  eta: 4:11:14    time: 0.6386  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1400/25010]  eta: 4:10:42    time: 0.6331  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1450/25010]  eta: 4:10:13    time: 0.6416  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1500/25010]  eta: 4:09:43    time: 0.6431  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1550/25010]  eta: 4:09:10    time: 0.6316  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1600/25010]  eta: 4:08:40    time: 0.6417  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1650/25010]  eta: 4:08:07    time: 0.6347  data: 0.0000  max mem: 19546
+Evaluation itm re-rank:  [ 1700/25010]  eta: 4:07:37    time: 0.6404  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 1750/25010]  eta: 4:07:05    time: 0.6342  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 1800/25010]  eta: 4:06:36    time: 0.6451  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 1850/25010]  eta: 4:06:03    time: 0.6324  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 1900/25010]  eta: 4:05:34    time: 0.6441  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 1950/25010]  eta: 4:05:00    time: 0.6311  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2000/25010]  eta: 4:04:31    time: 0.6476  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2050/25010]  eta: 4:03:58    time: 0.6349  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2100/25010]  eta: 4:03:29    time: 0.6318  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2150/25010]  eta: 4:02:59    time: 0.6476  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2200/25010]  eta: 4:02:27    time: 0.6395  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2250/25010]  eta: 4:01:52    time: 0.6268  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2300/25010]  eta: 4:01:21    time: 0.6435  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2350/25010]  eta: 4:00:48    time: 0.6399  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2400/25010]  eta: 4:00:13    time: 0.6275  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2450/25010]  eta: 3:59:35    time: 0.6263  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2500/25010]  eta: 3:59:00    time: 0.6301  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2550/25010]  eta: 3:58:25    time: 0.6328  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2600/25010]  eta: 3:57:49    time: 0.6236  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2650/25010]  eta: 3:57:15    time: 0.6320  data: 0.0000  max mem: 19547
+Evaluation itm re-rank:  [ 2700/25010]  eta: 3:56:39    time: 0.6247  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 2750/25010]  eta: 3:56:06    time: 0.6273  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 2800/25010]  eta: 3:55:32    time: 0.6344  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 2850/25010]  eta: 3:54:57    time: 0.6281  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 2900/25010]  eta: 3:54:23    time: 0.6289  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 2950/25010]  eta: 3:53:50    time: 0.6262  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3000/25010]  eta: 3:53:16    time: 0.6306  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3050/25010]  eta: 3:52:41    time: 0.6279  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3100/25010]  eta: 3:52:09    time: 0.6386  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3150/25010]  eta: 3:51:34    time: 0.6260  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3200/25010]  eta: 3:51:01    time: 0.6382  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3250/25010]  eta: 3:50:26    time: 0.6264  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3300/25010]  eta: 3:49:54    time: 0.6360  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3350/25010]  eta: 3:49:20    time: 0.6344  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3400/25010]  eta: 3:48:46    time: 0.6236  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3450/25010]  eta: 3:48:13    time: 0.6340  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3500/25010]  eta: 3:47:40    time: 0.6274  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3550/25010]  eta: 3:47:07    time: 0.6353  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3600/25010]  eta: 3:46:33    time: 0.6222  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3650/25010]  eta: 3:46:00    time: 0.6348  data: 0.0000  max mem: 19548
+Evaluation itm re-rank:  [ 3700/25010]  eta: 3:45:27    time: 0.6240  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 3750/25010]  eta: 3:44:54    time: 0.6363  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 3800/25010]  eta: 3:44:21    time: 0.6226  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 3850/25010]  eta: 3:43:48    time: 0.6331  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 3900/25010]  eta: 3:43:14    time: 0.6262  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 3950/25010]  eta: 3:42:42    time: 0.6251  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4000/25010]  eta: 3:42:08    time: 0.6280  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4050/25010]  eta: 3:41:35    time: 0.6319  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4100/25010]  eta: 3:41:02    time: 0.6276  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4150/25010]  eta: 3:40:29    time: 0.6280  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4200/25010]  eta: 3:39:56    time: 0.6275  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4250/25010]  eta: 3:39:23    time: 0.6319  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4300/25010]  eta: 3:38:51    time: 0.6349  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4350/25010]  eta: 3:38:17    time: 0.6299  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4400/25010]  eta: 3:37:46    time: 0.6346  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4450/25010]  eta: 3:37:14    time: 0.6383  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4500/25010]  eta: 3:36:40    time: 0.6254  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4550/25010]  eta: 3:36:09    time: 0.6373  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4600/25010]  eta: 3:35:37    time: 0.6298  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4650/25010]  eta: 3:35:04    time: 0.6242  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4700/25010]  eta: 3:34:32    time: 0.6319  data: 0.0000  max mem: 19549
+Evaluation itm re-rank:  [ 4750/25010]  eta: 3:33:59    time: 0.6328  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 4800/25010]  eta: 3:33:26    time: 0.6265  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 4850/25010]  eta: 3:32:55    time: 0.6221  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 4900/25010]  eta: 3:32:23    time: 0.6346  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 4950/25010]  eta: 3:31:50    time: 0.6230  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5000/25010]  eta: 3:31:18    time: 0.6370  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5050/25010]  eta: 3:30:46    time: 0.6253  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5100/25010]  eta: 3:30:13    time: 0.6285  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5150/25010]  eta: 3:29:40    time: 0.6229  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5200/25010]  eta: 3:29:06    time: 0.6247  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5250/25010]  eta: 3:28:32    time: 0.6206  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5300/25010]  eta: 3:27:58    time: 0.6170  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5350/25010]  eta: 3:27:23    time: 0.6180  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5400/25010]  eta: 3:26:48    time: 0.6149  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5450/25010]  eta: 3:26:13    time: 0.6134  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5500/25010]  eta: 3:25:38    time: 0.6141  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5550/25010]  eta: 3:25:03    time: 0.6128  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5600/25010]  eta: 3:24:28    time: 0.6155  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5650/25010]  eta: 3:23:53    time: 0.6111  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5700/25010]  eta: 3:23:18    time: 0.6117  data: 0.0000  max mem: 19550
+Evaluation itm re-rank:  [ 5750/25010]  eta: 3:22:43    time: 0.6116  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 5800/25010]  eta: 3:22:08    time: 0.6124  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 5850/25010]  eta: 3:21:58    time: 0.6656  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 5900/25010]  eta: 3:21:37    time: 0.6844  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 5950/25010]  eta: 3:21:11    time: 0.6680  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6000/25010]  eta: 3:20:43    time: 0.6509  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6050/25010]  eta: 3:20:15    time: 0.6498  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6100/25010]  eta: 3:19:46    time: 0.6509  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6150/25010]  eta: 3:19:17    time: 0.6534  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6200/25010]  eta: 3:18:47    time: 0.6488  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6250/25010]  eta: 3:18:18    time: 0.6505  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6300/25010]  eta: 3:17:49    time: 0.6503  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6350/25010]  eta: 3:17:19    time: 0.6518  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6400/25010]  eta: 3:16:50    time: 0.6513  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6450/25010]  eta: 3:16:21    time: 0.6521  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6500/25010]  eta: 3:15:51    time: 0.6490  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6550/25010]  eta: 3:15:21    time: 0.6498  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6600/25010]  eta: 3:14:52    time: 0.6514  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6650/25010]  eta: 3:14:22    time: 0.6477  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6700/25010]  eta: 3:13:52    time: 0.6495  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6750/25010]  eta: 3:13:23    time: 0.6512  data: 0.0000  max mem: 19551
+Evaluation itm re-rank:  [ 6800/25010]  eta: 3:12:53    time: 0.6466  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 6850/25010]  eta: 3:12:23    time: 0.6490  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 6900/25010]  eta: 3:11:53    time: 0.6530  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 6950/25010]  eta: 3:11:23    time: 0.6463  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7000/25010]  eta: 3:10:53    time: 0.6483  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7050/25010]  eta: 3:10:23    time: 0.6502  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7100/25010]  eta: 3:09:53    time: 0.6510  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7150/25010]  eta: 3:09:23    time: 0.6487  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7200/25010]  eta: 3:08:53    time: 0.6498  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7250/25010]  eta: 3:08:22    time: 0.6503  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7300/25010]  eta: 3:07:52    time: 0.6509  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7350/25010]  eta: 3:07:22    time: 0.6484  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7400/25010]  eta: 3:06:52    time: 0.6498  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7450/25010]  eta: 3:06:21    time: 0.6527  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7500/25010]  eta: 3:05:51    time: 0.6484  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7550/25010]  eta: 3:05:21    time: 0.6480  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7600/25010]  eta: 3:04:50    time: 0.6504  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7650/25010]  eta: 3:04:22    time: 0.6585  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7700/25010]  eta: 3:03:52    time: 0.6537  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7750/25010]  eta: 3:03:22    time: 0.6463  data: 0.0000  max mem: 19552
+Evaluation itm re-rank:  [ 7800/25010]  eta: 3:02:51    time: 0.6449  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 7850/25010]  eta: 3:02:20    time: 0.6485  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 7900/25010]  eta: 3:01:50    time: 0.6499  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 7950/25010]  eta: 3:01:19    time: 0.6446  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8000/25010]  eta: 3:00:48    time: 0.6488  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8050/25010]  eta: 3:00:17    time: 0.6455  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8100/25010]  eta: 2:59:46    time: 0.6473  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8150/25010]  eta: 2:59:15    time: 0.6481  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8200/25010]  eta: 2:58:44    time: 0.6491  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8250/25010]  eta: 2:58:14    time: 0.6519  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8300/25010]  eta: 2:57:43    time: 0.6484  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8350/25010]  eta: 2:57:12    time: 0.6491  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8400/25010]  eta: 2:56:42    time: 0.6510  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8450/25010]  eta: 2:56:11    time: 0.6505  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8500/25010]  eta: 2:55:39    time: 0.6496  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8550/25010]  eta: 2:55:08    time: 0.6463  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8600/25010]  eta: 2:54:37    time: 0.6411  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8650/25010]  eta: 2:54:06    time: 0.6511  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8700/25010]  eta: 2:53:35    time: 0.6485  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8750/25010]  eta: 2:53:04    time: 0.6597  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8800/25010]  eta: 2:52:33    time: 0.6509  data: 0.0000  max mem: 19553
+Evaluation itm re-rank:  [ 8850/25010]  eta: 2:52:02    time: 0.6456  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 8900/25010]  eta: 2:51:31    time: 0.6414  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 8950/25010]  eta: 2:50:59    time: 0.6423  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9000/25010]  eta: 2:50:27    time: 0.6403  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9050/25010]  eta: 2:49:56    time: 0.6415  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9100/25010]  eta: 2:49:24    time: 0.6394  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9150/25010]  eta: 2:48:52    time: 0.6433  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9200/25010]  eta: 2:48:21    time: 0.6412  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9250/25010]  eta: 2:47:49    time: 0.6396  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9300/25010]  eta: 2:47:17    time: 0.6405  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9350/25010]  eta: 2:46:46    time: 0.6411  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9400/25010]  eta: 2:46:14    time: 0.6480  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9450/25010]  eta: 2:45:42    time: 0.6396  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9500/25010]  eta: 2:45:11    time: 0.6419  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9550/25010]  eta: 2:44:39    time: 0.6460  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9600/25010]  eta: 2:44:07    time: 0.6410  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9650/25010]  eta: 2:43:35    time: 0.6426  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9700/25010]  eta: 2:43:04    time: 0.6410  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9750/25010]  eta: 2:42:32    time: 0.6415  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9800/25010]  eta: 2:42:00    time: 0.6441  data: 0.0000  max mem: 19554
+Evaluation itm re-rank:  [ 9850/25010]  eta: 2:41:29    time: 0.6431  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [ 9900/25010]  eta: 2:40:57    time: 0.6402  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [ 9950/25010]  eta: 2:40:25    time: 0.6406  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10000/25010]  eta: 2:39:53    time: 0.6412  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10050/25010]  eta: 2:39:21    time: 0.6416  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10100/25010]  eta: 2:38:49    time: 0.6401  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10150/25010]  eta: 2:38:18    time: 0.6427  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10200/25010]  eta: 2:37:46    time: 0.6440  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10250/25010]  eta: 2:37:15    time: 0.6467  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10300/25010]  eta: 2:36:43    time: 0.6415  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10350/25010]  eta: 2:36:11    time: 0.6431  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10400/25010]  eta: 2:35:39    time: 0.6430  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10450/25010]  eta: 2:35:07    time: 0.6400  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10500/25010]  eta: 2:34:36    time: 0.6431  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10550/25010]  eta: 2:34:04    time: 0.6459  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10600/25010]  eta: 2:33:32    time: 0.6437  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10650/25010]  eta: 2:33:01    time: 0.6442  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10700/25010]  eta: 2:32:29    time: 0.6457  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10750/25010]  eta: 2:31:57    time: 0.6429  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10800/25010]  eta: 2:31:26    time: 0.6406  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10850/25010]  eta: 2:30:54    time: 0.6458  data: 0.0000  max mem: 19555
+Evaluation itm re-rank:  [10900/25010]  eta: 2:30:22    time: 0.6429  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [10950/25010]  eta: 2:29:50    time: 0.6403  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11000/25010]  eta: 2:29:19    time: 0.6433  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11050/25010]  eta: 2:28:47    time: 0.6451  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11100/25010]  eta: 2:28:15    time: 0.6407  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11150/25010]  eta: 2:27:43    time: 0.6451  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11200/25010]  eta: 2:27:12    time: 0.6423  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11250/25010]  eta: 2:26:40    time: 0.6436  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11300/25010]  eta: 2:26:08    time: 0.6425  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11350/25010]  eta: 2:25:36    time: 0.6422  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11400/25010]  eta: 2:25:05    time: 0.6435  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11450/25010]  eta: 2:24:33    time: 0.6434  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11500/25010]  eta: 2:24:01    time: 0.6415  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11550/25010]  eta: 2:23:29    time: 0.6415  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11600/25010]  eta: 2:22:58    time: 0.6455  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11650/25010]  eta: 2:22:26    time: 0.6444  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11700/25010]  eta: 2:21:54    time: 0.6401  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11750/25010]  eta: 2:21:22    time: 0.6433  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11800/25010]  eta: 2:20:50    time: 0.6427  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11850/25010]  eta: 2:20:19    time: 0.6451  data: 0.0000  max mem: 19556
+Evaluation itm re-rank:  [11900/25010]  eta: 2:19:47    time: 0.6413  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [11950/25010]  eta: 2:19:15    time: 0.6467  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12000/25010]  eta: 2:18:43    time: 0.6438  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12050/25010]  eta: 2:18:11    time: 0.6415  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12100/25010]  eta: 2:17:40    time: 0.6458  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12150/25010]  eta: 2:17:08    time: 0.6443  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12200/25010]  eta: 2:16:36    time: 0.6419  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12250/25010]  eta: 2:16:04    time: 0.6435  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12300/25010]  eta: 2:15:32    time: 0.6406  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12350/25010]  eta: 2:15:00    time: 0.6437  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12400/25010]  eta: 2:14:29    time: 0.6441  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12450/25010]  eta: 2:13:57    time: 0.6467  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12500/25010]  eta: 2:13:25    time: 0.6436  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12550/25010]  eta: 2:12:53    time: 0.6430  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12600/25010]  eta: 2:12:22    time: 0.6445  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12650/25010]  eta: 2:11:50    time: 0.6488  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12700/25010]  eta: 2:11:18    time: 0.6479  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12750/25010]  eta: 2:10:46    time: 0.6414  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12800/25010]  eta: 2:10:15    time: 0.6417  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12850/25010]  eta: 2:09:43    time: 0.6414  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12900/25010]  eta: 2:09:11    time: 0.6417  data: 0.0000  max mem: 19557
+Evaluation itm re-rank:  [12950/25010]  eta: 2:08:39    time: 0.6450  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13000/25010]  eta: 2:08:08    time: 0.6482  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13050/25010]  eta: 2:07:36    time: 0.6459  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13100/25010]  eta: 2:07:04    time: 0.6473  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13150/25010]  eta: 2:06:32    time: 0.6440  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13200/25010]  eta: 2:06:00    time: 0.6425  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13250/25010]  eta: 2:05:28    time: 0.6417  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13300/25010]  eta: 2:04:57    time: 0.6442  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13350/25010]  eta: 2:04:25    time: 0.6442  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13400/25010]  eta: 2:03:53    time: 0.6443  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13450/25010]  eta: 2:03:21    time: 0.6432  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13500/25010]  eta: 2:02:50    time: 0.6436  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13550/25010]  eta: 2:02:18    time: 0.6440  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13600/25010]  eta: 2:01:46    time: 0.6430  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13650/25010]  eta: 2:01:14    time: 0.6443  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13700/25010]  eta: 2:00:42    time: 0.6444  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13750/25010]  eta: 2:00:11    time: 0.6440  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13800/25010]  eta: 1:59:39    time: 0.6441  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13850/25010]  eta: 1:59:07    time: 0.6446  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13900/25010]  eta: 1:58:35    time: 0.6464  data: 0.0000  max mem: 19558
+Evaluation itm re-rank:  [13950/25010]  eta: 1:58:03    time: 0.6491  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14000/25010]  eta: 1:57:32    time: 0.6467  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14050/25010]  eta: 1:57:00    time: 0.6486  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14100/25010]  eta: 1:56:28    time: 0.6453  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14150/25010]  eta: 1:55:56    time: 0.6441  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14200/25010]  eta: 1:55:24    time: 0.6420  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14250/25010]  eta: 1:54:52    time: 0.6430  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14300/25010]  eta: 1:54:20    time: 0.6458  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14350/25010]  eta: 1:53:48    time: 0.6451  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14400/25010]  eta: 1:53:17    time: 0.6475  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14450/25010]  eta: 1:52:45    time: 0.6421  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14500/25010]  eta: 1:52:13    time: 0.6425  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14550/25010]  eta: 1:51:41    time: 0.6427  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14600/25010]  eta: 1:51:09    time: 0.6438  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14650/25010]  eta: 1:50:37    time: 0.6448  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14700/25010]  eta: 1:50:05    time: 0.6441  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14750/25010]  eta: 1:49:33    time: 0.6455  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14800/25010]  eta: 1:49:02    time: 0.6429  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14850/25010]  eta: 1:48:30    time: 0.6467  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14900/25010]  eta: 1:47:58    time: 0.6446  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [14950/25010]  eta: 1:47:26    time: 0.6436  data: 0.0000  max mem: 19559
+Evaluation itm re-rank:  [15000/25010]  eta: 1:46:54    time: 0.6445  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15050/25010]  eta: 1:46:22    time: 0.6468  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15100/25010]  eta: 1:45:50    time: 0.6442  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15150/25010]  eta: 1:45:18    time: 0.6439  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15200/25010]  eta: 1:44:47    time: 0.6414  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15250/25010]  eta: 1:44:15    time: 0.6437  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15300/25010]  eta: 1:43:43    time: 0.6458  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15350/25010]  eta: 1:43:11    time: 0.6484  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15400/25010]  eta: 1:42:39    time: 0.6417  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15450/25010]  eta: 1:42:07    time: 0.6441  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15500/25010]  eta: 1:41:35    time: 0.6431  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15550/25010]  eta: 1:41:03    time: 0.6434  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15600/25010]  eta: 1:40:31    time: 0.6424  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15650/25010]  eta: 1:39:59    time: 0.6457  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15700/25010]  eta: 1:39:27    time: 0.6460  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15750/25010]  eta: 1:38:56    time: 0.6478  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15800/25010]  eta: 1:38:24    time: 0.6459  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15850/25010]  eta: 1:37:52    time: 0.6403  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15900/25010]  eta: 1:37:19    time: 0.6403  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [15950/25010]  eta: 1:36:47    time: 0.6402  data: 0.0000  max mem: 19560
+Evaluation itm re-rank:  [16000/25010]  eta: 1:36:15    time: 0.6394  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16050/25010]  eta: 1:35:43    time: 0.6393  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16100/25010]  eta: 1:35:11    time: 0.6417  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16150/25010]  eta: 1:34:39    time: 0.6418  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16200/25010]  eta: 1:34:07    time: 0.6406  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16250/25010]  eta: 1:33:35    time: 0.6406  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16300/25010]  eta: 1:33:03    time: 0.6401  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16350/25010]  eta: 1:32:31    time: 0.6418  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16400/25010]  eta: 1:31:59    time: 0.6404  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16450/25010]  eta: 1:31:27    time: 0.6407  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16500/25010]  eta: 1:30:55    time: 0.6376  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16550/25010]  eta: 1:30:22    time: 0.6394  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16600/25010]  eta: 1:29:50    time: 0.6394  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16650/25010]  eta: 1:29:18    time: 0.6398  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16700/25010]  eta: 1:28:46    time: 0.6409  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16750/25010]  eta: 1:28:14    time: 0.6391  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16800/25010]  eta: 1:27:42    time: 0.6455  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16850/25010]  eta: 1:27:10    time: 0.6386  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16900/25010]  eta: 1:26:38    time: 0.6415  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [16950/25010]  eta: 1:26:06    time: 0.6427  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [17000/25010]  eta: 1:25:34    time: 0.6404  data: 0.0000  max mem: 19561
+Evaluation itm re-rank:  [17050/25010]  eta: 1:25:02    time: 0.6400  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17100/25010]  eta: 1:24:30    time: 0.6407  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17150/25010]  eta: 1:23:58    time: 0.6409  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17200/25010]  eta: 1:23:26    time: 0.6396  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17250/25010]  eta: 1:22:54    time: 0.6431  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17300/25010]  eta: 1:22:22    time: 0.6390  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17350/25010]  eta: 1:21:50    time: 0.6405  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17400/25010]  eta: 1:21:17    time: 0.6422  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17450/25010]  eta: 1:20:45    time: 0.6418  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17500/25010]  eta: 1:20:13    time: 0.6426  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17550/25010]  eta: 1:19:41    time: 0.6454  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17600/25010]  eta: 1:19:09    time: 0.6404  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17650/25010]  eta: 1:18:37    time: 0.6387  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17700/25010]  eta: 1:18:05    time: 0.6414  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17750/25010]  eta: 1:17:33    time: 0.6424  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17800/25010]  eta: 1:17:01    time: 0.6409  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17850/25010]  eta: 1:16:29    time: 0.6409  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17900/25010]  eta: 1:15:57    time: 0.6397  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [17950/25010]  eta: 1:15:25    time: 0.6397  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [18000/25010]  eta: 1:14:53    time: 0.6407  data: 0.0000  max mem: 19562
+Evaluation itm re-rank:  [18050/25010]  eta: 1:14:21    time: 0.6417  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18100/25010]  eta: 1:13:49    time: 0.6417  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18150/25010]  eta: 1:13:17    time: 0.6417  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18200/25010]  eta: 1:12:45    time: 0.6418  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18250/25010]  eta: 1:12:13    time: 0.6414  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18300/25010]  eta: 1:11:41    time: 0.6484  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18350/25010]  eta: 1:11:09    time: 0.6503  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18400/25010]  eta: 1:10:37    time: 0.6444  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18450/25010]  eta: 1:10:05    time: 0.6425  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18500/25010]  eta: 1:09:33    time: 0.6461  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18550/25010]  eta: 1:09:01    time: 0.6431  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18600/25010]  eta: 1:08:29    time: 0.6462  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18650/25010]  eta: 1:07:57    time: 0.6434  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18700/25010]  eta: 1:07:25    time: 0.6454  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18750/25010]  eta: 1:06:53    time: 0.6411  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18800/25010]  eta: 1:06:21    time: 0.6471  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18850/25010]  eta: 1:05:49    time: 0.6470  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18900/25010]  eta: 1:05:17    time: 0.6454  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [18950/25010]  eta: 1:04:45    time: 0.6436  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [19000/25010]  eta: 1:04:13    time: 0.6437  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [19050/25010]  eta: 1:03:41    time: 0.6443  data: 0.0000  max mem: 19563
+Evaluation itm re-rank:  [19100/25010]  eta: 1:03:09    time: 0.6438  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19150/25010]  eta: 1:02:37    time: 0.6498  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19200/25010]  eta: 1:02:05    time: 0.6448  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19250/25010]  eta: 1:01:33    time: 0.6460  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19300/25010]  eta: 1:01:01    time: 0.6418  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19350/25010]  eta: 1:00:29    time: 0.6439  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19400/25010]  eta: 0:59:57    time: 0.6424  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19450/25010]  eta: 0:59:25    time: 0.6436  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19500/25010]  eta: 0:58:53    time: 0.6501  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19550/25010]  eta: 0:58:21    time: 0.6450  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19600/25010]  eta: 0:57:49    time: 0.6531  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19650/25010]  eta: 0:57:17    time: 0.6420  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19700/25010]  eta: 0:56:45    time: 0.6395  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19750/25010]  eta: 0:56:13    time: 0.6396  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19800/25010]  eta: 0:55:41    time: 0.6434  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19850/25010]  eta: 0:55:09    time: 0.6417  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19900/25010]  eta: 0:54:37    time: 0.6391  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [19950/25010]  eta: 0:54:05    time: 0.6395  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [20000/25010]  eta: 0:53:32    time: 0.6410  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [20050/25010]  eta: 0:53:00    time: 0.6407  data: 0.0000  max mem: 19564
+Evaluation itm re-rank:  [20100/25010]  eta: 0:52:28    time: 0.6446  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20150/25010]  eta: 0:51:56    time: 0.6440  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20200/25010]  eta: 0:51:24    time: 0.6413  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20250/25010]  eta: 0:50:52    time: 0.6416  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20300/25010]  eta: 0:50:20    time: 0.6391  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20350/25010]  eta: 0:49:48    time: 0.6452  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20400/25010]  eta: 0:49:16    time: 0.6396  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20450/25010]  eta: 0:48:44    time: 0.6400  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20500/25010]  eta: 0:48:12    time: 0.6435  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20550/25010]  eta: 0:47:40    time: 0.6416  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20600/25010]  eta: 0:47:08    time: 0.6433  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20650/25010]  eta: 0:46:36    time: 0.6433  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20700/25010]  eta: 0:46:04    time: 0.6438  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20750/25010]  eta: 0:45:32    time: 0.6406  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20800/25010]  eta: 0:44:59    time: 0.6393  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20850/25010]  eta: 0:44:27    time: 0.6403  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20900/25010]  eta: 0:43:55    time: 0.6430  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [20950/25010]  eta: 0:43:23    time: 0.6396  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [21000/25010]  eta: 0:42:51    time: 0.6452  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [21050/25010]  eta: 0:42:19    time: 0.6485  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [21100/25010]  eta: 0:41:47    time: 0.6450  data: 0.0000  max mem: 19565
+Evaluation itm re-rank:  [21150/25010]  eta: 0:41:15    time: 0.6457  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21200/25010]  eta: 0:40:43    time: 0.6465  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21250/25010]  eta: 0:40:11    time: 0.6437  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21300/25010]  eta: 0:39:39    time: 0.6442  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21350/25010]  eta: 0:39:07    time: 0.6439  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21400/25010]  eta: 0:38:35    time: 0.6417  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21450/25010]  eta: 0:38:03    time: 0.6422  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21500/25010]  eta: 0:37:31    time: 0.6407  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21550/25010]  eta: 0:36:59    time: 0.6400  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21600/25010]  eta: 0:36:27    time: 0.6422  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21650/25010]  eta: 0:35:55    time: 0.6436  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21700/25010]  eta: 0:35:23    time: 0.6422  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21750/25010]  eta: 0:34:50    time: 0.6430  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21800/25010]  eta: 0:34:18    time: 0.6420  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21850/25010]  eta: 0:33:46    time: 0.6426  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21900/25010]  eta: 0:33:14    time: 0.6426  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [21950/25010]  eta: 0:32:42    time: 0.6411  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [22000/25010]  eta: 0:32:10    time: 0.6408  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [22050/25010]  eta: 0:31:38    time: 0.6461  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [22100/25010]  eta: 0:31:06    time: 0.6437  data: 0.0000  max mem: 19566
+Evaluation itm re-rank:  [22150/25010]  eta: 0:30:34    time: 0.6454  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22200/25010]  eta: 0:30:02    time: 0.6444  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22250/25010]  eta: 0:29:30    time: 0.6473  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22300/25010]  eta: 0:28:58    time: 0.6434  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22350/25010]  eta: 0:28:26    time: 0.6452  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22400/25010]  eta: 0:27:54    time: 0.6512  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22450/25010]  eta: 0:27:22    time: 0.6416  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22500/25010]  eta: 0:26:50    time: 0.6450  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22550/25010]  eta: 0:26:18    time: 0.6458  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22600/25010]  eta: 0:25:46    time: 0.6420  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22650/25010]  eta: 0:25:13    time: 0.6431  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22700/25010]  eta: 0:24:41    time: 0.6483  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22750/25010]  eta: 0:24:09    time: 0.6418  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22800/25010]  eta: 0:23:37    time: 0.6444  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22850/25010]  eta: 0:23:05    time: 0.6457  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22900/25010]  eta: 0:22:33    time: 0.6436  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [22950/25010]  eta: 0:22:01    time: 0.6438  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [23000/25010]  eta: 0:21:29    time: 0.6412  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [23050/25010]  eta: 0:20:57    time: 0.6417  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [23100/25010]  eta: 0:20:25    time: 0.6477  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [23150/25010]  eta: 0:19:53    time: 0.6435  data: 0.0000  max mem: 19567
+Evaluation itm re-rank:  [23200/25010]  eta: 0:19:21    time: 0.6422  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23250/25010]  eta: 0:18:49    time: 0.6427  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23300/25010]  eta: 0:18:17    time: 0.6430  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23350/25010]  eta: 0:17:45    time: 0.6434  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23400/25010]  eta: 0:17:12    time: 0.6413  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23450/25010]  eta: 0:16:40    time: 0.6484  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23500/25010]  eta: 0:16:08    time: 0.6461  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23550/25010]  eta: 0:15:36    time: 0.6895  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23600/25010]  eta: 0:15:04    time: 0.6482  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23650/25010]  eta: 0:14:32    time: 0.6406  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23700/25010]  eta: 0:14:00    time: 0.6472  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23750/25010]  eta: 0:13:28    time: 0.6413  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23800/25010]  eta: 0:12:56    time: 0.6444  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23850/25010]  eta: 0:12:24    time: 0.6513  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23900/25010]  eta: 0:11:52    time: 0.6441  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [23950/25010]  eta: 0:11:20    time: 0.6452  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [24000/25010]  eta: 0:10:48    time: 0.6456  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [24050/25010]  eta: 0:10:16    time: 0.6465  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [24100/25010]  eta: 0:09:44    time: 0.6470  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [24150/25010]  eta: 0:09:11    time: 0.6438  data: 0.0000  max mem: 19568
+Evaluation itm re-rank:  [24200/25010]  eta: 0:08:39    time: 0.6440  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24250/25010]  eta: 0:08:07    time: 0.6461  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24300/25010]  eta: 0:07:35    time: 0.6451  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24350/25010]  eta: 0:07:03    time: 0.6431  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24400/25010]  eta: 0:06:31    time: 0.6438  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24450/25010]  eta: 0:05:59    time: 0.6439  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24500/25010]  eta: 0:05:27    time: 0.6445  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24550/25010]  eta: 0:04:55    time: 0.6502  data: 0.0000  max mem: 19569
+2025-06-03 14:52:31,010 [INFO] Evaluation time 4:34:39
+2025-06-03 14:53:21,746 [INFO] report t2i metrics online, at epoch 0 :
+2025-06-03 14:53:23,381 [INFO] {'txt_r1': -999, 'txt_r5': -999, 'txt_r10': -999, 'txt_r_mean': -999, 'img_r1': 67.23310675729708, 'img_r5': 87.53698520591763, 'img_r10': 92.45901639344262, 'img_r_mean': 82.40970278555245, 'r_mean': -999, 'agg_metrics': -999}
+2025-06-03 14:53:23,589 [INFO] Computing features for evaluation...
+Evaluation itm re-rank:  [24600/25010]  eta: 0:04:23    time: 0.6442  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24650/25010]  eta: 0:03:51    time: 0.6449  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24700/25010]  eta: 0:03:18    time: 0.6409  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24750/25010]  eta: 0:02:46    time: 0.6476  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24800/25010]  eta: 0:02:14    time: 0.6481  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24850/25010]  eta: 0:01:42    time: 0.6459  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24900/25010]  eta: 0:01:10    time: 0.6432  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [24950/25010]  eta: 0:00:38    time: 0.6444  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [25000/25010]  eta: 0:00:06    time: 0.6414  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [25009/25010]  eta: 0:00:00    time: 0.6434  data: 0.0000  max mem: 19569
+Evaluation itm re-rank: Total time: 4:27:34 (0.6419 s / it)
+Evaluation:  [   0/5000]  eta: 0:19:29    time: 0.2338  data: 0.0051  max mem: 19569
+Evaluation:  [  50/5000]  eta: 0:31:31    time: 0.3852  data: 0.0000  max mem: 19569
+Evaluation:  [ 100/5000]  eta: 0:31:18    time: 0.3870  data: 0.0000  max mem: 19569
+Evaluation:  [ 150/5000]  eta: 0:31:05    time: 0.3894  data: 0.0000  max mem: 19569
+Evaluation:  [ 200/5000]  eta: 0:30:46    time: 0.3856  data: 0.0000  max mem: 19569
+Evaluation:  [ 250/5000]  eta: 0:30:28    time: 0.3872  data: 0.0000  max mem: 19569
+Evaluation:  [ 300/5000]  eta: 0:30:09    time: 0.3821  data: 0.0000  max mem: 19569
+Evaluation:  [ 350/5000]  eta: 0:29:50    time: 0.3853  data: 0.0000  max mem: 19569
+Evaluation:  [ 400/5000]  eta: 0:29:32    time: 0.3874  data: 0.0000  max mem: 19569
+Evaluation:  [ 450/5000]  eta: 0:29:13    time: 0.3855  data: 0.0000  max mem: 19569
+Evaluation:  [ 500/5000]  eta: 0:28:54    time: 0.3831  data: 0.0000  max mem: 19569
+Evaluation:  [ 550/5000]  eta: 0:28:35    time: 0.3874  data: 0.0000  max mem: 19569
+Evaluation:  [ 600/5000]  eta: 0:28:16    time: 0.3896  data: 0.0000  max mem: 19569
+Evaluation:  [ 650/5000]  eta: 0:27:56    time: 0.3852  data: 0.0000  max mem: 19569
+Evaluation:  [ 700/5000]  eta: 0:27:37    time: 0.3835  data: 0.0000  max mem: 19569
+Evaluation:  [ 750/5000]  eta: 0:27:19    time: 0.3882  data: 0.0000  max mem: 19569
+Evaluation:  [ 800/5000]  eta: 0:27:00    time: 0.3890  data: 0.0000  max mem: 19569
+Evaluation:  [ 850/5000]  eta: 0:26:41    time: 0.3875  data: 0.0000  max mem: 19569
+Evaluation:  [ 900/5000]  eta: 0:26:22    time: 0.3864  data: 0.0000  max mem: 19569
+Evaluation:  [ 950/5000]  eta: 0:26:03    time: 0.3847  data: 0.0000  max mem: 19569
+Evaluation:  [1000/5000]  eta: 0:25:44    time: 0.3921  data: 0.0000  max mem: 19569
+Evaluation:  [1050/5000]  eta: 0:25:25    time: 0.3831  data: 0.0000  max mem: 19569
+Evaluation:  [1100/5000]  eta: 0:25:06    time: 0.3828  data: 0.0000  max mem: 19569
+Evaluation:  [1150/5000]  eta: 0:24:46    time: 0.3863  data: 0.0000  max mem: 19569
+Evaluation:  [1200/5000]  eta: 0:24:25    time: 0.3746  data: 0.0000  max mem: 19569
+Evaluation:  [1250/5000]  eta: 0:24:04    time: 0.3702  data: 0.0000  max mem: 19569
+Evaluation:  [1300/5000]  eta: 0:23:42    time: 0.3696  data: 0.0000  max mem: 19569
+Evaluation:  [1350/5000]  eta: 0:23:21    time: 0.3699  data: 0.0000  max mem: 19569
+Evaluation:  [1400/5000]  eta: 0:23:00    time: 0.3693  data: 0.0000  max mem: 19569
+Evaluation:  [1450/5000]  eta: 0:22:39    time: 0.3694  data: 0.0000  max mem: 19569
+Evaluation:  [1500/5000]  eta: 0:22:18    time: 0.3694  data: 0.0000  max mem: 19569
+Evaluation:  [1550/5000]  eta: 0:21:58    time: 0.3694  data: 0.0000  max mem: 19569
+Evaluation:  [1600/5000]  eta: 0:21:37    time: 0.3694  data: 0.0000  max mem: 19569
+Evaluation:  [1650/5000]  eta: 0:21:17    time: 0.3695  data: 0.0000  max mem: 19569
+Evaluation:  [1700/5000]  eta: 0:20:57    time: 0.3708  data: 0.0000  max mem: 19569
+Evaluation:  [1750/5000]  eta: 0:20:37    time: 0.3694  data: 0.0000  max mem: 19569
+Evaluation:  [1800/5000]  eta: 0:20:17    time: 0.3695  data: 0.0000  max mem: 19569
+Evaluation:  [1850/5000]  eta: 0:19:57    time: 0.3696  data: 0.0000  max mem: 19569
+Evaluation:  [1900/5000]  eta: 0:19:37    time: 0.3696  data: 0.0000  max mem: 19569
+Evaluation:  [1950/5000]  eta: 0:19:17    time: 0.3695  data: 0.0000  max mem: 19569
+Evaluation:  [2000/5000]  eta: 0:18:58    time: 0.3701  data: 0.0000  max mem: 19569
+Evaluation:  [2050/5000]  eta: 0:18:38    time: 0.3701  data: 0.0000  max mem: 19569
+Evaluation:  [2100/5000]  eta: 0:18:18    time: 0.3699  data: 0.0000  max mem: 19569
+Evaluation:  [2150/5000]  eta: 0:17:59    time: 0.3704  data: 0.0000  max mem: 19569
+Evaluation:  [2200/5000]  eta: 0:17:39    time: 0.3697  data: 0.0000  max mem: 19569
+Evaluation:  [2250/5000]  eta: 0:17:20    time: 0.3699  data: 0.0000  max mem: 19569
+Evaluation:  [2300/5000]  eta: 0:17:00    time: 0.3700  data: 0.0000  max mem: 19569
+Evaluation:  [2350/5000]  eta: 0:16:41    time: 0.3696  data: 0.0000  max mem: 19569
+Evaluation:  [2400/5000]  eta: 0:16:22    time: 0.3696  data: 0.0000  max mem: 19569
+Evaluation:  [2450/5000]  eta: 0:16:02    time: 0.3698  data: 0.0000  max mem: 19569
+Evaluation:  [2500/5000]  eta: 0:15:44    time: 0.3808  data: 0.0000  max mem: 19569
+Evaluation:  [2550/5000]  eta: 0:15:25    time: 0.3756  data: 0.0000  max mem: 19569
+Evaluation:  [2600/5000]  eta: 0:15:06    time: 0.3746  data: 0.0000  max mem: 19569
+Evaluation:  [2650/5000]  eta: 0:14:47    time: 0.3758  data: 0.0000  max mem: 19569
+Evaluation:  [2700/5000]  eta: 0:14:28    time: 0.3751  data: 0.0000  max mem: 19569
+Evaluation:  [2750/5000]  eta: 0:14:09    time: 0.3775  data: 0.0000  max mem: 19569
+Evaluation:  [2800/5000]  eta: 0:13:50    time: 0.3766  data: 0.0000  max mem: 19569
+Evaluation:  [2850/5000]  eta: 0:13:31    time: 0.3781  data: 0.0000  max mem: 19569
+Evaluation:  [2900/5000]  eta: 0:13:12    time: 0.3774  data: 0.0000  max mem: 19569
+Evaluation:  [2950/5000]  eta: 0:12:53    time: 0.3757  data: 0.0000  max mem: 19569
+Evaluation:  [3000/5000]  eta: 0:12:34    time: 0.3760  data: 0.0000  max mem: 19569
+Evaluation:  [3050/5000]  eta: 0:12:15    time: 0.3748  data: 0.0000  max mem: 19569
+Evaluation:  [3100/5000]  eta: 0:11:57    time: 0.3797  data: 0.0000  max mem: 19569
+Evaluation:  [3150/5000]  eta: 0:11:38    time: 0.3784  data: 0.0000  max mem: 19569
+Evaluation:  [3200/5000]  eta: 0:11:19    time: 0.3773  data: 0.0000  max mem: 19569
+Evaluation:  [3250/5000]  eta: 0:11:00    time: 0.3766  data: 0.0000  max mem: 19569
+Evaluation:  [3300/5000]  eta: 0:10:41    time: 0.3780  data: 0.0000  max mem: 19569
+Evaluation:  [3350/5000]  eta: 0:10:22    time: 0.3766  data: 0.0000  max mem: 19569
+Evaluation:  [3400/5000]  eta: 0:10:03    time: 0.3774  data: 0.0000  max mem: 19569
+Evaluation:  [3450/5000]  eta: 0:09:44    time: 0.3764  data: 0.0000  max mem: 19569
+Evaluation:  [3500/5000]  eta: 0:09:26    time: 0.3773  data: 0.0000  max mem: 19569
+Evaluation:  [3550/5000]  eta: 0:09:07    time: 0.3774  data: 0.0000  max mem: 19569
+Evaluation:  [3600/5000]  eta: 0:08:48    time: 0.3785  data: 0.0000  max mem: 19569
+Evaluation:  [3650/5000]  eta: 0:08:29    time: 0.3772  data: 0.0000  max mem: 19569
+Evaluation:  [3700/5000]  eta: 0:08:10    time: 0.3783  data: 0.0000  max mem: 19569
+Evaluation:  [3750/5000]  eta: 0:07:51    time: 0.3769  data: 0.0000  max mem: 19569
+Evaluation:  [3800/5000]  eta: 0:07:32    time: 0.3766  data: 0.0000  max mem: 19569
+Evaluation:  [3850/5000]  eta: 0:07:13    time: 0.3762  data: 0.0000  max mem: 19569
+Evaluation:  [3900/5000]  eta: 0:06:55    time: 0.3771  data: 0.0000  max mem: 19569
+Evaluation:  [3950/5000]  eta: 0:06:36    time: 0.3781  data: 0.0000  max mem: 19569
+Evaluation:  [4000/5000]  eta: 0:06:17    time: 0.3782  data: 0.0000  max mem: 19569
+Evaluation:  [4050/5000]  eta: 0:05:58    time: 0.3836  data: 0.0000  max mem: 19569
+Evaluation:  [4100/5000]  eta: 0:05:39    time: 0.3794  data: 0.0000  max mem: 19569
+Evaluation:  [4150/5000]  eta: 0:05:20    time: 0.3772  data: 0.0000  max mem: 19569
+Evaluation:  [4200/5000]  eta: 0:05:01    time: 0.3778  data: 0.0000  max mem: 19569
+Evaluation:  [4250/5000]  eta: 0:04:43    time: 0.3783  data: 0.0000  max mem: 19569
+Evaluation:  [4300/5000]  eta: 0:04:24    time: 0.3770  data: 0.0000  max mem: 19569
+Evaluation:  [4350/5000]  eta: 0:04:05    time: 0.3784  data: 0.0000  max mem: 19569
+Evaluation:  [4400/5000]  eta: 0:03:46    time: 0.3780  data: 0.0000  max mem: 19569
+Evaluation:  [4450/5000]  eta: 0:03:27    time: 0.3767  data: 0.0000  max mem: 19569
+Evaluation:  [4500/5000]  eta: 0:03:08    time: 0.3775  data: 0.0000  max mem: 19569
+Evaluation:  [4550/5000]  eta: 0:02:49    time: 0.3772  data: 0.0000  max mem: 19569
+Evaluation:  [4600/5000]  eta: 0:02:30    time: 0.3763  data: 0.0000  max mem: 19569
+Evaluation:  [4650/5000]  eta: 0:02:12    time: 0.3777  data: 0.0000  max mem: 19569
+Evaluation:  [4700/5000]  eta: 0:01:53    time: 0.3767  data: 0.0000  max mem: 19569
+Evaluation:  [4750/5000]  eta: 0:01:34    time: 0.3757  data: 0.0000  max mem: 19569
+Evaluation:  [4800/5000]  eta: 0:01:15    time: 0.3781  data: 0.0000  max mem: 19569
+Evaluation:  [4850/5000]  eta: 0:00:56    time: 0.3771  data: 0.0000  max mem: 19569
+Evaluation:  [4900/5000]  eta: 0:00:37    time: 0.3794  data: 0.0000  max mem: 19569
+Evaluation:  [4950/5000]  eta: 0:00:18    time: 0.3789  data: 0.0000  max mem: 19569
+Evaluation:  [4999/5000]  eta: 0:00:00    time: 0.3784  data: 0.0000  max mem: 19569
+Evaluation: Total time: 0:31:27 (0.3774 s / it)
+Evaluation:  [    0/25010]  eta: 2:12:06    time: 0.3169  data: 0.1454  max mem: 19569
+Evaluation:  [   50/25010]  eta: 3:08:00    time: 0.4414  data: 0.0000  max mem: 19569
+Evaluation:  [  100/25010]  eta: 3:05:11    time: 0.4411  data: 0.0000  max mem: 19569
+Evaluation:  [  150/25010]  eta: 3:04:14    time: 0.4433  data: 0.0000  max mem: 19569
+Evaluation:  [  200/25010]  eta: 3:03:38    time: 0.4428  data: 0.0000  max mem: 19569
+Evaluation:  [  250/25010]  eta: 3:02:47    time: 0.4370  data: 0.0000  max mem: 19569
+Evaluation:  [  300/25010]  eta: 3:02:07    time: 0.4375  data: 0.0000  max mem: 19569
+Evaluation:  [  350/25010]  eta: 3:01:35    time: 0.4389  data: 0.0000  max mem: 19569
+Evaluation:  [  400/25010]  eta: 3:01:07    time: 0.4415  data: 0.0000  max mem: 19569
+Evaluation:  [  450/25010]  eta: 3:00:40    time: 0.4393  data: 0.0000  max mem: 19569
+Evaluation:  [  500/25010]  eta: 3:00:18    time: 0.4406  data: 0.0000  max mem: 19569
+Evaluation:  [  550/25010]  eta: 2:59:51    time: 0.4393  data: 0.0000  max mem: 19569
+Evaluation:  [  600/25010]  eta: 2:59:22    time: 0.4376  data: 0.0000  max mem: 19569
+Evaluation:  [  650/25010]  eta: 2:58:59    time: 0.4398  data: 0.0000  max mem: 19569
+Evaluation:  [  700/25010]  eta: 2:58:34    time: 0.4399  data: 0.0000  max mem: 19569
+Evaluation:  [  750/25010]  eta: 2:58:12    time: 0.4414  data: 0.0000  max mem: 19569
+Evaluation:  [  800/25010]  eta: 2:57:49    time: 0.4409  data: 0.0000  max mem: 19569
+Evaluation:  [  850/25010]  eta: 2:57:33    time: 0.4483  data: 0.0000  max mem: 19569
+Evaluation:  [  900/25010]  eta: 2:57:14    time: 0.4425  data: 0.0000  max mem: 19569
+Evaluation:  [  950/25010]  eta: 2:56:52    time: 0.4398  data: 0.0000  max mem: 19569
+Evaluation:  [ 1000/25010]  eta: 2:56:29    time: 0.4409  data: 0.0000  max mem: 19569
+Evaluation:  [ 1050/25010]  eta: 2:56:05    time: 0.4386  data: 0.0000  max mem: 19569
+Evaluation:  [ 1100/25010]  eta: 2:55:43    time: 0.4424  data: 0.0000  max mem: 19569
+Evaluation:  [ 1150/25010]  eta: 2:55:21    time: 0.4422  data: 0.0000  max mem: 19569
+Evaluation:  [ 1200/25010]  eta: 2:54:59    time: 0.4416  data: 0.0000  max mem: 19569
+Evaluation:  [ 1250/25010]  eta: 2:54:39    time: 0.4429  data: 0.0000  max mem: 19569
+Evaluation:  [ 1300/25010]  eta: 2:54:15    time: 0.4380  data: 0.0000  max mem: 19569
+Evaluation:  [ 1350/25010]  eta: 2:53:52    time: 0.4388  data: 0.0000  max mem: 19569
+Evaluation:  [ 1400/25010]  eta: 2:53:30    time: 0.4398  data: 0.0000  max mem: 19569
+Evaluation:  [ 1450/25010]  eta: 2:53:08    time: 0.4393  data: 0.0000  max mem: 19569
+Evaluation:  [ 1500/25010]  eta: 2:52:46    time: 0.4401  data: 0.0000  max mem: 19569
+Evaluation:  [ 1550/25010]  eta: 2:52:22    time: 0.4422  data: 0.0000  max mem: 19569
+Evaluation:  [ 1600/25010]  eta: 2:52:00    time: 0.4415  data: 0.0000  max mem: 19569
+Evaluation:  [ 1650/25010]  eta: 2:51:38    time: 0.4415  data: 0.0000  max mem: 19569
+Evaluation:  [ 1700/25010]  eta: 2:51:17    time: 0.4419  data: 0.0000  max mem: 19569
+Evaluation:  [ 1750/25010]  eta: 2:50:54    time: 0.4372  data: 0.0000  max mem: 19569
+Evaluation:  [ 1800/25010]  eta: 2:50:32    time: 0.4403  data: 0.0000  max mem: 19569
+Evaluation:  [ 1850/25010]  eta: 2:50:10    time: 0.4399  data: 0.0000  max mem: 19569
+Evaluation:  [ 1900/25010]  eta: 2:49:48    time: 0.4405  data: 0.0000  max mem: 19569
+Evaluation:  [ 1950/25010]  eta: 2:49:25    time: 0.4405  data: 0.0000  max mem: 19569
+Evaluation:  [ 2000/25010]  eta: 2:49:03    time: 0.4393  data: 0.0000  max mem: 19569
+Evaluation:  [ 2050/25010]  eta: 2:48:40    time: 0.4404  data: 0.0000  max mem: 19569
+Evaluation:  [ 2100/25010]  eta: 2:48:18    time: 0.4423  data: 0.0000  max mem: 19569
+Evaluation:  [ 2150/25010]  eta: 2:47:57    time: 0.4416  data: 0.0000  max mem: 19569
+Evaluation:  [ 2200/25010]  eta: 2:47:34    time: 0.4391  data: 0.0000  max mem: 19569
+Evaluation:  [ 2250/25010]  eta: 2:47:12    time: 0.4405  data: 0.0000  max mem: 19569
+Evaluation:  [ 2300/25010]  eta: 2:46:50    time: 0.4421  data: 0.0000  max mem: 19569
+Evaluation:  [ 2350/25010]  eta: 2:46:29    time: 0.4421  data: 0.0000  max mem: 19569
+Evaluation:  [ 2400/25010]  eta: 2:46:07    time: 0.4421  data: 0.0000  max mem: 19569
+Evaluation:  [ 2450/25010]  eta: 2:45:45    time: 0.4412  data: 0.0000  max mem: 19569
+Evaluation:  [ 2500/25010]  eta: 2:45:24    time: 0.4422  data: 0.0000  max mem: 19569
+Evaluation:  [ 2550/25010]  eta: 2:45:02    time: 0.4410  data: 0.0000  max mem: 19569
+Evaluation:  [ 2600/25010]  eta: 2:44:40    time: 0.4402  data: 0.0000  max mem: 19569
+Evaluation:  [ 2650/25010]  eta: 2:44:18    time: 0.4408  data: 0.0000  max mem: 19569
+Evaluation:  [ 2700/25010]  eta: 2:43:57    time: 0.4422  data: 0.0000  max mem: 19569
+Evaluation:  [ 2750/25010]  eta: 2:43:34    time: 0.4398  data: 0.0000  max mem: 19569
+Evaluation:  [ 2800/25010]  eta: 2:43:11    time: 0.4387  data: 0.0000  max mem: 19569
+Evaluation:  [ 2850/25010]  eta: 2:42:49    time: 0.4408  data: 0.0000  max mem: 19569
+Evaluation:  [ 2900/25010]  eta: 2:42:27    time: 0.4437  data: 0.0000  max mem: 19569
+Evaluation:  [ 2950/25010]  eta: 2:42:06    time: 0.4418  data: 0.0000  max mem: 19569
+Evaluation:  [ 3000/25010]  eta: 2:41:44    time: 0.4419  data: 0.0000  max mem: 19569
+Evaluation:  [ 3050/25010]  eta: 2:41:21    time: 0.4417  data: 0.0000  max mem: 19569
+Evaluation:  [ 3100/25010]  eta: 2:40:59    time: 0.4411  data: 0.0000  max mem: 19569
+Evaluation:  [ 3150/25010]  eta: 2:40:37    time: 0.4388  data: 0.0000  max mem: 19569
+Evaluation:  [ 3200/25010]  eta: 2:40:15    time: 0.4411  data: 0.0000  max mem: 19569
+Evaluation:  [ 3250/25010]  eta: 2:39:53    time: 0.4398  data: 0.0000  max mem: 19569
+Evaluation:  [ 3300/25010]  eta: 2:39:31    time: 0.4436  data: 0.0000  max mem: 19569
+Evaluation:  [ 3350/25010]  eta: 2:39:09    time: 0.4416  data: 0.0000  max mem: 19569
+Evaluation:  [ 3400/25010]  eta: 2:38:47    time: 0.4407  data: 0.0000  max mem: 19569
+Evaluation:  [ 3450/25010]  eta: 2:38:25    time: 0.4380  data: 0.0000  max mem: 19569
+Evaluation:  [ 3500/25010]  eta: 2:38:03    time: 0.4400  data: 0.0000  max mem: 19569
+Evaluation:  [ 3550/25010]  eta: 2:37:41    time: 0.4406  data: 0.0000  max mem: 19569
+Evaluation:  [ 3600/25010]  eta: 2:37:18    time: 0.4405  data: 0.0000  max mem: 19569
+Evaluation:  [ 3650/25010]  eta: 2:36:56    time: 0.4388  data: 0.0000  max mem: 19569
+Evaluation:  [ 3700/25010]  eta: 2:36:34    time: 0.4377  data: 0.0000  max mem: 19569
+Evaluation:  [ 3750/25010]  eta: 2:36:12    time: 0.4428  data: 0.0000  max mem: 19569
+Evaluation:  [ 3800/25010]  eta: 2:35:50    time: 0.4395  data: 0.0000  max mem: 19569
+Evaluation:  [ 3850/25010]  eta: 2:35:27    time: 0.4392  data: 0.0000  max mem: 19569
+Evaluation:  [ 3900/25010]  eta: 2:35:05    time: 0.4382  data: 0.0000  max mem: 19569
+Evaluation:  [ 3950/25010]  eta: 2:34:43    time: 0.4410  data: 0.0000  max mem: 19569
+Evaluation:  [ 4000/25010]  eta: 2:34:21    time: 0.4417  data: 0.0000  max mem: 19569
+Evaluation:  [ 4050/25010]  eta: 2:33:59    time: 0.4417  data: 0.0000  max mem: 19569
+Evaluation:  [ 4100/25010]  eta: 2:33:36    time: 0.4373  data: 0.0000  max mem: 19569
+Evaluation:  [ 4150/25010]  eta: 2:33:14    time: 0.4430  data: 0.0000  max mem: 19569
+Evaluation:  [ 4200/25010]  eta: 2:32:52    time: 0.4391  data: 0.0000  max mem: 19569
+Evaluation:  [ 4250/25010]  eta: 2:32:29    time: 0.4406  data: 0.0000  max mem: 19569
+Evaluation:  [ 4300/25010]  eta: 2:32:07    time: 0.4401  data: 0.0000  max mem: 19569
+Evaluation:  [ 4350/25010]  eta: 2:31:45    time: 0.4407  data: 0.0000  max mem: 19569
+Evaluation:  [ 4400/25010]  eta: 2:31:22    time: 0.4378  data: 0.0000  max mem: 19569
+Evaluation:  [ 4450/25010]  eta: 2:31:00    time: 0.4431  data: 0.0000  max mem: 19569
+Evaluation:  [ 4500/25010]  eta: 2:30:38    time: 0.4396  data: 0.0000  max mem: 19569
+Evaluation:  [ 4550/25010]  eta: 2:30:16    time: 0.4430  data: 0.0000  max mem: 19569
+Evaluation:  [ 4600/25010]  eta: 2:29:54    time: 0.4398  data: 0.0000  max mem: 19569
+Evaluation:  [ 4650/25010]  eta: 2:29:32    time: 0.4395  data: 0.0000  max mem: 19569
+Evaluation:  [ 4700/25010]  eta: 2:29:10    time: 0.4425  data: 0.0000  max mem: 19569
+Evaluation:  [ 4750/25010]  eta: 2:28:48    time: 0.4411  data: 0.0000  max mem: 19569
+Evaluation:  [ 4800/25010]  eta: 2:28:26    time: 0.4414  data: 0.0000  max mem: 19569
+Evaluation:  [ 4850/25010]  eta: 2:28:03    time: 0.4344  data: 0.0000  max mem: 19569
+Evaluation:  [ 4900/25010]  eta: 2:27:39    time: 0.4338  data: 0.0000  max mem: 19569
+Evaluation:  [ 4950/25010]  eta: 2:27:15    time: 0.4312  data: 0.0000  max mem: 19569
+Evaluation:  [ 5000/25010]  eta: 2:26:51    time: 0.4299  data: 0.0000  max mem: 19569
+Evaluation:  [ 5050/25010]  eta: 2:26:27    time: 0.4297  data: 0.0000  max mem: 19569
+Evaluation:  [ 5100/25010]  eta: 2:26:03    time: 0.4291  data: 0.0000  max mem: 19569
+Evaluation:  [ 5150/25010]  eta: 2:25:39    time: 0.4297  data: 0.0000  max mem: 19569
+Evaluation:  [ 5200/25010]  eta: 2:25:15    time: 0.4297  data: 0.0000  max mem: 19569
+Evaluation:  [ 5250/25010]  eta: 2:24:51    time: 0.4291  data: 0.0000  max mem: 19569
+Evaluation:  [ 5300/25010]  eta: 2:24:27    time: 0.4296  data: 0.0000  max mem: 19569
+Evaluation:  [ 5350/25010]  eta: 2:24:03    time: 0.4292  data: 0.0000  max mem: 19569
+Evaluation:  [ 5400/25010]  eta: 2:23:39    time: 0.4299  data: 0.0000  max mem: 19569
+Evaluation:  [ 5450/25010]  eta: 2:23:16    time: 0.4293  data: 0.0000  max mem: 19569
+Evaluation:  [ 5500/25010]  eta: 2:22:52    time: 0.4296  data: 0.0000  max mem: 19569
+Evaluation:  [ 5550/25010]  eta: 2:22:28    time: 0.4293  data: 0.0000  max mem: 19569
+Evaluation:  [ 5600/25010]  eta: 2:22:04    time: 0.4291  data: 0.0000  max mem: 19569
+Evaluation:  [ 5650/25010]  eta: 2:21:41    time: 0.4301  data: 0.0000  max mem: 19569
+Evaluation:  [ 5700/25010]  eta: 2:21:17    time: 0.4296  data: 0.0000  max mem: 19569
+Evaluation:  [ 5750/25010]  eta: 2:20:54    time: 0.4297  data: 0.0000  max mem: 19569
+Evaluation:  [ 5800/25010]  eta: 2:20:30    time: 0.4303  data: 0.0000  max mem: 19569
+Evaluation:  [ 5850/25010]  eta: 2:20:07    time: 0.4298  data: 0.0000  max mem: 19569
+Evaluation:  [ 5900/25010]  eta: 2:19:43    time: 0.4290  data: 0.0000  max mem: 19569
+Evaluation:  [ 5950/25010]  eta: 2:19:35    time: 0.5210  data: 0.0000  max mem: 19569
+Evaluation:  [ 6000/25010]  eta: 2:19:22    time: 0.4962  data: 0.0000  max mem: 19569
+Evaluation:  [ 6050/25010]  eta: 2:19:07    time: 0.4731  data: 0.0000  max mem: 19569
+Evaluation:  [ 6100/25010]  eta: 2:18:48    time: 0.4615  data: 0.0000  max mem: 19569
+Evaluation:  [ 6150/25010]  eta: 2:18:30    time: 0.4724  data: 0.0000  max mem: 19569
+Evaluation:  [ 6200/25010]  eta: 2:18:10    time: 0.4556  data: 0.0000  max mem: 19569
+Evaluation:  [ 6250/25010]  eta: 2:17:51    time: 0.4575  data: 0.0000  max mem: 19569
+Evaluation:  [ 6300/25010]  eta: 2:17:31    time: 0.4547  data: 0.0000  max mem: 19569
+Evaluation:  [ 6350/25010]  eta: 2:17:12    time: 0.4572  data: 0.0000  max mem: 19569
+Evaluation:  [ 6400/25010]  eta: 2:16:52    time: 0.4560  data: 0.0000  max mem: 19569
+Evaluation:  [ 6450/25010]  eta: 2:16:32    time: 0.4588  data: 0.0000  max mem: 19569
+Evaluation:  [ 6500/25010]  eta: 2:16:11    time: 0.4570  data: 0.0000  max mem: 19569
+Evaluation:  [ 6550/25010]  eta: 2:15:51    time: 0.4561  data: 0.0000  max mem: 19569
+Evaluation:  [ 6600/25010]  eta: 2:15:31    time: 0.4602  data: 0.0000  max mem: 19569
+Evaluation:  [ 6650/25010]  eta: 2:15:11    time: 0.4572  data: 0.0000  max mem: 19569
+Evaluation:  [ 6700/25010]  eta: 2:14:51    time: 0.4569  data: 0.0000  max mem: 19569
+Evaluation:  [ 6750/25010]  eta: 2:14:30    time: 0.4567  data: 0.0000  max mem: 19569
+Evaluation:  [ 6800/25010]  eta: 2:14:10    time: 0.4550  data: 0.0000  max mem: 19569
+Evaluation:  [ 6850/25010]  eta: 2:13:50    time: 0.4530  data: 0.0000  max mem: 19569
+Evaluation:  [ 6900/25010]  eta: 2:13:29    time: 0.4542  data: 0.0000  max mem: 19569
+Evaluation:  [ 6950/25010]  eta: 2:13:09    time: 0.4544  data: 0.0000  max mem: 19569
+Evaluation:  [ 7000/25010]  eta: 2:12:49    time: 0.4558  data: 0.0000  max mem: 19569
+Evaluation:  [ 7050/25010]  eta: 2:12:28    time: 0.4566  data: 0.0000  max mem: 19569
+Evaluation:  [ 7100/25010]  eta: 2:12:07    time: 0.4553  data: 0.0000  max mem: 19569
+Evaluation:  [ 7150/25010]  eta: 2:11:47    time: 0.4549  data: 0.0000  max mem: 19569
+Evaluation:  [ 7200/25010]  eta: 2:11:26    time: 0.4568  data: 0.0000  max mem: 19569
+Evaluation:  [ 7250/25010]  eta: 2:11:05    time: 0.4569  data: 0.0000  max mem: 19569
+Evaluation:  [ 7300/25010]  eta: 2:10:45    time: 0.4551  data: 0.0000  max mem: 19569
+Evaluation:  [ 7350/25010]  eta: 2:10:24    time: 0.4551  data: 0.0000  max mem: 19569
+Evaluation:  [ 7400/25010]  eta: 2:10:03    time: 0.4569  data: 0.0000  max mem: 19569
+Evaluation:  [ 7450/25010]  eta: 2:09:43    time: 0.4545  data: 0.0000  max mem: 19569
+Evaluation:  [ 7500/25010]  eta: 2:09:22    time: 0.4510  data: 0.0000  max mem: 19569
+Evaluation:  [ 7550/25010]  eta: 2:09:01    time: 0.4542  data: 0.0000  max mem: 19569
+Evaluation:  [ 7600/25010]  eta: 2:08:40    time: 0.4542  data: 0.0000  max mem: 19569
+Evaluation:  [ 7650/25010]  eta: 2:08:19    time: 0.4548  data: 0.0000  max mem: 19569
+Evaluation:  [ 7700/25010]  eta: 2:07:58    time: 0.4555  data: 0.0000  max mem: 19569
+Evaluation:  [ 7750/25010]  eta: 2:07:37    time: 0.4541  data: 0.0000  max mem: 19569
+Evaluation:  [ 7800/25010]  eta: 2:07:17    time: 0.4605  data: 0.0000  max mem: 19569
+Evaluation:  [ 7850/25010]  eta: 2:06:56    time: 0.4572  data: 0.0000  max mem: 19569
+Evaluation:  [ 7900/25010]  eta: 2:06:35    time: 0.4570  data: 0.0000  max mem: 19569
+Evaluation:  [ 7950/25010]  eta: 2:06:14    time: 0.4570  data: 0.0000  max mem: 19569
+Evaluation:  [ 8000/25010]  eta: 2:05:53    time: 0.4563  data: 0.0000  max mem: 19569
+Evaluation:  [ 8050/25010]  eta: 2:05:32    time: 0.4555  data: 0.0000  max mem: 19569
+Evaluation:  [ 8100/25010]  eta: 2:05:11    time: 0.4555  data: 0.0000  max mem: 19569
+Evaluation:  [ 8150/25010]  eta: 2:04:49    time: 0.4545  data: 0.0000  max mem: 19569
+Evaluation:  [ 8200/25010]  eta: 2:04:28    time: 0.4539  data: 0.0000  max mem: 19569
+Evaluation:  [ 8250/25010]  eta: 2:04:07    time: 0.4549  data: 0.0000  max mem: 19569
+Evaluation:  [ 8300/25010]  eta: 2:03:46    time: 0.4524  data: 0.0000  max mem: 19569
+Evaluation:  [ 8350/25010]  eta: 2:03:25    time: 0.4519  data: 0.0000  max mem: 19569
+Evaluation:  [ 8400/25010]  eta: 2:03:04    time: 0.4551  data: 0.0000  max mem: 19569
+Evaluation:  [ 8450/25010]  eta: 2:02:43    time: 0.4545  data: 0.0000  max mem: 19569
+Evaluation:  [ 8500/25010]  eta: 2:02:22    time: 0.4582  data: 0.0000  max mem: 19569
+Evaluation:  [ 8550/25010]  eta: 2:02:00    time: 0.4562  data: 0.0000  max mem: 19569
+Evaluation:  [ 8600/25010]  eta: 2:01:39    time: 0.4540  data: 0.0000  max mem: 19569
+Evaluation:  [ 8650/25010]  eta: 2:01:18    time: 0.4564  data: 0.0000  max mem: 19569
+Evaluation:  [ 8700/25010]  eta: 2:00:57    time: 0.4567  data: 0.0000  max mem: 19569
+Evaluation:  [ 8750/25010]  eta: 2:00:35    time: 0.4557  data: 0.0000  max mem: 19569
+Evaluation:  [ 8800/25010]  eta: 2:00:14    time: 0.4544  data: 0.0000  max mem: 19569
+Evaluation:  [ 8850/25010]  eta: 1:59:52    time: 0.4488  data: 0.0000  max mem: 19569
+Evaluation:  [ 8900/25010]  eta: 1:59:31    time: 0.4509  data: 0.0000  max mem: 19569
+Evaluation:  [ 8950/25010]  eta: 1:59:11    time: 0.4811  data: 0.0000  max mem: 19569
+Evaluation:  [ 9000/25010]  eta: 1:58:50    time: 0.4606  data: 0.0000  max mem: 19569
+Evaluation:  [ 9050/25010]  eta: 1:58:29    time: 0.4557  data: 0.0000  max mem: 19569
+Evaluation:  [ 9100/25010]  eta: 1:58:07    time: 0.4550  data: 0.0000  max mem: 19569
+Evaluation:  [ 9150/25010]  eta: 1:57:46    time: 0.4534  data: 0.0000  max mem: 19569
+Evaluation:  [ 9200/25010]  eta: 1:57:24    time: 0.4517  data: 0.0000  max mem: 19569
+Evaluation:  [ 9250/25010]  eta: 1:57:03    time: 0.4519  data: 0.0000  max mem: 19569
+Evaluation:  [ 9300/25010]  eta: 1:56:41    time: 0.4536  data: 0.0000  max mem: 19569
+Evaluation:  [ 9350/25010]  eta: 1:56:20    time: 0.4524  data: 0.0000  max mem: 19569
+Evaluation:  [ 9400/25010]  eta: 1:55:58    time: 0.4546  data: 0.0000  max mem: 19569
+Evaluation:  [ 9450/25010]  eta: 1:55:37    time: 0.4560  data: 0.0000  max mem: 19569
+Evaluation:  [ 9500/25010]  eta: 1:55:15    time: 0.4568  data: 0.0000  max mem: 19569
+Evaluation:  [ 9550/25010]  eta: 1:54:54    time: 0.4552  data: 0.0000  max mem: 19569
+Evaluation:  [ 9600/25010]  eta: 1:54:32    time: 0.4562  data: 0.0000  max mem: 19569
+Evaluation:  [ 9650/25010]  eta: 1:54:10    time: 0.4558  data: 0.0000  max mem: 19569
+Evaluation:  [ 9700/25010]  eta: 1:53:49    time: 0.4565  data: 0.0000  max mem: 19569
+Evaluation:  [ 9750/25010]  eta: 1:53:27    time: 0.4580  data: 0.0000  max mem: 19569
+Evaluation:  [ 9800/25010]  eta: 1:53:06    time: 0.4552  data: 0.0000  max mem: 19569
+Evaluation:  [ 9850/25010]  eta: 1:52:44    time: 0.4539  data: 0.0000  max mem: 19569
+Evaluation:  [ 9900/25010]  eta: 1:52:22    time: 0.4574  data: 0.0000  max mem: 19569
+Evaluation:  [ 9950/25010]  eta: 1:52:01    time: 0.4532  data: 0.0000  max mem: 19569
+Evaluation:  [10000/25010]  eta: 1:51:39    time: 0.4522  data: 0.0000  max mem: 19569
+Evaluation:  [10050/25010]  eta: 1:51:17    time: 0.4523  data: 0.0000  max mem: 19569
+Evaluation:  [10100/25010]  eta: 1:50:56    time: 0.4545  data: 0.0000  max mem: 19569
+Evaluation:  [10150/25010]  eta: 1:50:34    time: 0.4558  data: 0.0000  max mem: 19569
+Evaluation:  [10200/25010]  eta: 1:50:12    time: 0.4565  data: 0.0000  max mem: 19569
+Evaluation:  [10250/25010]  eta: 1:49:50    time: 0.4564  data: 0.0000  max mem: 19569
+Evaluation:  [10300/25010]  eta: 1:49:29    time: 0.4504  data: 0.0000  max mem: 19569
+Evaluation:  [10350/25010]  eta: 1:49:11    time: 0.5060  data: 0.0000  max mem: 19569
+Evaluation:  [10400/25010]  eta: 1:48:52    time: 0.5050  data: 0.0000  max mem: 19569
+Evaluation:  [10450/25010]  eta: 1:48:34    time: 0.5077  data: 0.0000  max mem: 19569
+Evaluation:  [10500/25010]  eta: 1:48:16    time: 0.5082  data: 0.0000  max mem: 19569
+Evaluation:  [10550/25010]  eta: 1:47:58    time: 0.5062  data: 0.0000  max mem: 19569
+Evaluation:  [10600/25010]  eta: 1:47:39    time: 0.5073  data: 0.0000  max mem: 19569
+Evaluation:  [10650/25010]  eta: 1:47:21    time: 0.5071  data: 0.0000  max mem: 19569
+Evaluation:  [10700/25010]  eta: 1:47:02    time: 0.5084  data: 0.0000  max mem: 19569
+Evaluation:  [10750/25010]  eta: 1:46:43    time: 0.5002  data: 0.0000  max mem: 19569
+Evaluation:  [10800/25010]  eta: 1:46:25    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [10850/25010]  eta: 1:46:05    time: 0.4989  data: 0.0000  max mem: 19569
+Evaluation:  [10900/25010]  eta: 1:45:47    time: 0.5015  data: 0.0000  max mem: 19569
+Evaluation:  [10950/25010]  eta: 1:45:28    time: 0.5073  data: 0.0000  max mem: 19569
+Evaluation:  [11000/25010]  eta: 1:45:09    time: 0.5019  data: 0.0000  max mem: 19569
+Evaluation:  [11050/25010]  eta: 1:44:49    time: 0.5027  data: 0.0000  max mem: 19569
+Evaluation:  [11100/25010]  eta: 1:44:30    time: 0.5039  data: 0.0000  max mem: 19569
+Evaluation:  [11150/25010]  eta: 1:44:11    time: 0.5069  data: 0.0000  max mem: 19569
+Evaluation:  [11200/25010]  eta: 1:43:52    time: 0.5045  data: 0.0000  max mem: 19569
+Evaluation:  [11250/25010]  eta: 1:43:32    time: 0.5032  data: 0.0000  max mem: 19569
+Evaluation:  [11300/25010]  eta: 1:43:13    time: 0.5059  data: 0.0000  max mem: 19569
+Evaluation:  [11350/25010]  eta: 1:42:54    time: 0.5062  data: 0.0000  max mem: 19569
+Evaluation:  [11400/25010]  eta: 1:42:34    time: 0.5037  data: 0.0000  max mem: 19569
+Evaluation:  [11450/25010]  eta: 1:42:15    time: 0.5031  data: 0.0000  max mem: 19569
+Evaluation:  [11500/25010]  eta: 1:41:55    time: 0.5069  data: 0.0000  max mem: 19569
+Evaluation:  [11550/25010]  eta: 1:41:36    time: 0.5038  data: 0.0000  max mem: 19569
+Evaluation:  [11600/25010]  eta: 1:41:16    time: 0.5037  data: 0.0000  max mem: 19569
+Evaluation:  [11650/25010]  eta: 1:40:56    time: 0.5024  data: 0.0000  max mem: 19569
+Evaluation:  [11700/25010]  eta: 1:40:36    time: 0.4998  data: 0.0000  max mem: 19569
+Evaluation:  [11750/25010]  eta: 1:40:16    time: 0.5070  data: 0.0000  max mem: 19569
+Evaluation:  [11800/25010]  eta: 1:39:56    time: 0.5059  data: 0.0000  max mem: 19569
+Evaluation:  [11850/25010]  eta: 1:39:36    time: 0.5038  data: 0.0000  max mem: 19569
+Evaluation:  [11900/25010]  eta: 1:39:17    time: 0.5045  data: 0.0000  max mem: 19569
+Evaluation:  [11950/25010]  eta: 1:38:57    time: 0.5060  data: 0.0000  max mem: 19569
+Evaluation:  [12000/25010]  eta: 1:38:37    time: 0.5064  data: 0.0000  max mem: 19569
+Evaluation:  [12050/25010]  eta: 1:38:17    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [12100/25010]  eta: 1:37:56    time: 0.5023  data: 0.0000  max mem: 19569
+Evaluation:  [12150/25010]  eta: 1:37:36    time: 0.5060  data: 0.0000  max mem: 19569
+Evaluation:  [12200/25010]  eta: 1:37:16    time: 0.5082  data: 0.0000  max mem: 19569
+Evaluation:  [12250/25010]  eta: 1:36:56    time: 0.5057  data: 0.0000  max mem: 19569
+Evaluation:  [12300/25010]  eta: 1:36:36    time: 0.5045  data: 0.0000  max mem: 19569
+Evaluation:  [12350/25010]  eta: 1:36:15    time: 0.5001  data: 0.0000  max mem: 19569
+Evaluation:  [12400/25010]  eta: 1:35:55    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [12450/25010]  eta: 1:35:34    time: 0.4999  data: 0.0000  max mem: 19569
+Evaluation:  [12500/25010]  eta: 1:35:14    time: 0.5032  data: 0.0000  max mem: 19569
+Evaluation:  [12550/25010]  eta: 1:34:53    time: 0.5004  data: 0.0000  max mem: 19569
+Evaluation:  [12600/25010]  eta: 1:34:33    time: 0.5039  data: 0.0000  max mem: 19569
+Evaluation:  [12650/25010]  eta: 1:34:12    time: 0.5023  data: 0.0000  max mem: 19569
+Evaluation:  [12700/25010]  eta: 1:33:51    time: 0.5024  data: 0.0000  max mem: 19569
+Evaluation:  [12750/25010]  eta: 1:33:31    time: 0.5016  data: 0.0000  max mem: 19569
+Evaluation:  [12800/25010]  eta: 1:33:10    time: 0.5046  data: 0.0000  max mem: 19569
+Evaluation:  [12850/25010]  eta: 1:32:49    time: 0.5053  data: 0.0000  max mem: 19569
+Evaluation:  [12900/25010]  eta: 1:32:29    time: 0.5061  data: 0.0000  max mem: 19569
+Evaluation:  [12950/25010]  eta: 1:32:08    time: 0.5018  data: 0.0000  max mem: 19569
+Evaluation:  [13000/25010]  eta: 1:31:47    time: 0.5037  data: 0.0000  max mem: 19569
+Evaluation:  [13050/25010]  eta: 1:31:26    time: 0.5046  data: 0.0000  max mem: 19569
+Evaluation:  [13100/25010]  eta: 1:31:05    time: 0.5061  data: 0.0000  max mem: 19569
+Evaluation:  [13150/25010]  eta: 1:30:44    time: 0.5050  data: 0.0000  max mem: 19569
+Evaluation:  [13200/25010]  eta: 1:30:24    time: 0.5031  data: 0.0000  max mem: 19569
+Evaluation:  [13250/25010]  eta: 1:30:03    time: 0.5051  data: 0.0000  max mem: 19569
+Evaluation:  [13300/25010]  eta: 1:29:42    time: 0.5017  data: 0.0000  max mem: 19569
+Evaluation:  [13350/25010]  eta: 1:29:20    time: 0.5059  data: 0.0000  max mem: 19569
+Evaluation:  [13400/25010]  eta: 1:28:59    time: 0.5021  data: 0.0000  max mem: 19569
+Evaluation:  [13450/25010]  eta: 1:28:38    time: 0.5045  data: 0.0000  max mem: 19569
+Evaluation:  [13500/25010]  eta: 1:28:17    time: 0.5068  data: 0.0000  max mem: 19569
+Evaluation:  [13550/25010]  eta: 1:27:56    time: 0.5012  data: 0.0000  max mem: 19569
+Evaluation:  [13600/25010]  eta: 1:27:35    time: 0.5004  data: 0.0000  max mem: 19569
+Evaluation:  [13650/25010]  eta: 1:27:14    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [13700/25010]  eta: 1:26:52    time: 0.5049  data: 0.0000  max mem: 19569
+Evaluation:  [13750/25010]  eta: 1:26:31    time: 0.5070  data: 0.0000  max mem: 19569
+Evaluation:  [13800/25010]  eta: 1:26:10    time: 0.5031  data: 0.0000  max mem: 19569
+Evaluation:  [13850/25010]  eta: 1:25:49    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [13900/25010]  eta: 1:25:27    time: 0.5035  data: 0.0000  max mem: 19569
+Evaluation:  [13950/25010]  eta: 1:25:06    time: 0.5042  data: 0.0000  max mem: 19569
+Evaluation:  [14000/25010]  eta: 1:24:44    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [14050/25010]  eta: 1:24:23    time: 0.5050  data: 0.0000  max mem: 19569
+Evaluation:  [14100/25010]  eta: 1:24:02    time: 0.5065  data: 0.0000  max mem: 19569
+Evaluation:  [14150/25010]  eta: 1:23:40    time: 0.5042  data: 0.0000  max mem: 19569
+Evaluation:  [14200/25010]  eta: 1:23:19    time: 0.5065  data: 0.0000  max mem: 19569
+Evaluation:  [14250/25010]  eta: 1:22:57    time: 0.5001  data: 0.0000  max mem: 19569
+Evaluation:  [14300/25010]  eta: 1:22:36    time: 0.5031  data: 0.0000  max mem: 19569
+Evaluation:  [14350/25010]  eta: 1:22:14    time: 0.5064  data: 0.0000  max mem: 19569
+Evaluation:  [14400/25010]  eta: 1:21:52    time: 0.5001  data: 0.0000  max mem: 19569
+Evaluation:  [14450/25010]  eta: 1:21:31    time: 0.5045  data: 0.0000  max mem: 19569
+Evaluation:  [14500/25010]  eta: 1:21:09    time: 0.5025  data: 0.0000  max mem: 19569
+Evaluation:  [14550/25010]  eta: 1:20:47    time: 0.5039  data: 0.0000  max mem: 19569
+Evaluation:  [14600/25010]  eta: 1:20:25    time: 0.5056  data: 0.0000  max mem: 19569
+Evaluation:  [14650/25010]  eta: 1:20:04    time: 0.5043  data: 0.0000  max mem: 19569
+Evaluation:  [14700/25010]  eta: 1:19:42    time: 0.5038  data: 0.0000  max mem: 19569
+Evaluation:  [14750/25010]  eta: 1:19:20    time: 0.5064  data: 0.0000  max mem: 19569
+Evaluation:  [14800/25010]  eta: 1:18:58    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [14850/25010]  eta: 1:18:36    time: 0.5033  data: 0.0000  max mem: 19569
+Evaluation:  [14900/25010]  eta: 1:18:14    time: 0.5020  data: 0.0000  max mem: 19569
+Evaluation:  [14950/25010]  eta: 1:17:53    time: 0.5025  data: 0.0000  max mem: 19569
+Evaluation:  [15000/25010]  eta: 1:17:31    time: 0.5019  data: 0.0000  max mem: 19569
+Evaluation:  [15050/25010]  eta: 1:17:09    time: 0.5036  data: 0.0000  max mem: 19569
+Evaluation:  [15100/25010]  eta: 1:16:47    time: 0.5053  data: 0.0000  max mem: 19569
+Evaluation:  [15150/25010]  eta: 1:16:25    time: 0.5020  data: 0.0000  max mem: 19569
+Evaluation:  [15200/25010]  eta: 1:16:03    time: 0.5061  data: 0.0000  max mem: 19569
+Evaluation:  [15250/25010]  eta: 1:15:41    time: 0.5025  data: 0.0000  max mem: 19569
+Evaluation:  [15300/25010]  eta: 1:15:19    time: 0.5047  data: 0.0000  max mem: 19569
+Evaluation:  [15350/25010]  eta: 1:14:57    time: 0.5019  data: 0.0000  max mem: 19569
+Evaluation:  [15400/25010]  eta: 1:14:34    time: 0.5059  data: 0.0000  max mem: 19569
+Evaluation:  [15450/25010]  eta: 1:14:12    time: 0.5055  data: 0.0000  max mem: 19569
+Evaluation:  [15500/25010]  eta: 1:13:50    time: 0.5027  data: 0.0000  max mem: 19569
+Evaluation:  [15550/25010]  eta: 1:13:28    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [15600/25010]  eta: 1:13:06    time: 0.5022  data: 0.0000  max mem: 19569
+Evaluation:  [15650/25010]  eta: 1:12:44    time: 0.5058  data: 0.0000  max mem: 19569
+Evaluation:  [15700/25010]  eta: 1:12:22    time: 0.5029  data: 0.0000  max mem: 19569
+Evaluation:  [15750/25010]  eta: 1:11:59    time: 0.5062  data: 0.0000  max mem: 19569
+Evaluation:  [15800/25010]  eta: 1:11:37    time: 0.5045  data: 0.0000  max mem: 19569
+Evaluation:  [15850/25010]  eta: 1:11:15    time: 0.5043  data: 0.0000  max mem: 19569
+Evaluation:  [15900/25010]  eta: 1:10:53    time: 0.5053  data: 0.0000  max mem: 19569
+Evaluation:  [15950/25010]  eta: 1:10:30    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [16000/25010]  eta: 1:10:08    time: 0.5027  data: 0.0000  max mem: 19569
+Evaluation:  [16050/25010]  eta: 1:09:46    time: 0.5057  data: 0.0000  max mem: 19569
+Evaluation:  [16100/25010]  eta: 1:09:23    time: 0.5045  data: 0.0000  max mem: 19569
+Evaluation:  [16150/25010]  eta: 1:09:01    time: 0.5049  data: 0.0000  max mem: 19569
+Evaluation:  [16200/25010]  eta: 1:08:38    time: 0.4982  data: 0.0000  max mem: 19569
+Evaluation:  [16250/25010]  eta: 1:08:16    time: 0.5016  data: 0.0000  max mem: 19569
+Evaluation:  [16300/25010]  eta: 1:07:54    time: 0.5031  data: 0.0000  max mem: 19569
+Evaluation:  [16350/25010]  eta: 1:07:31    time: 0.5058  data: 0.0000  max mem: 19569
+Evaluation:  [16400/25010]  eta: 1:07:09    time: 0.5046  data: 0.0000  max mem: 19569
+Evaluation:  [16450/25010]  eta: 1:06:46    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [16500/25010]  eta: 1:06:24    time: 0.5062  data: 0.0000  max mem: 19569
+Evaluation:  [16550/25010]  eta: 1:06:01    time: 0.5029  data: 0.0000  max mem: 19569
+Evaluation:  [16600/25010]  eta: 1:05:39    time: 0.5057  data: 0.0000  max mem: 19569
+Evaluation:  [16650/25010]  eta: 1:05:16    time: 0.4967  data: 0.0000  max mem: 19569
+Evaluation:  [16700/25010]  eta: 1:04:54    time: 0.5041  data: 0.0000  max mem: 19569
+Evaluation:  [16750/25010]  eta: 1:04:31    time: 0.5046  data: 0.0000  max mem: 19569
+Evaluation:  [16800/25010]  eta: 1:04:09    time: 0.5058  data: 0.0000  max mem: 19569
+Evaluation:  [16850/25010]  eta: 1:03:46    time: 0.5035  data: 0.0000  max mem: 19569
+Evaluation:  [16900/25010]  eta: 1:03:23    time: 0.5076  data: 0.0000  max mem: 19569
+Evaluation:  [16950/25010]  eta: 1:03:01    time: 0.5056  data: 0.0000  max mem: 19569
+Evaluation:  [17000/25010]  eta: 1:02:38    time: 0.5072  data: 0.0000  max mem: 19569
+Evaluation:  [17050/25010]  eta: 1:02:16    time: 0.5079  data: 0.0000  max mem: 19569
+Evaluation:  [17100/25010]  eta: 1:01:53    time: 0.5037  data: 0.0000  max mem: 19569
+Evaluation:  [17150/25010]  eta: 1:01:30    time: 0.5044  data: 0.0000  max mem: 19569
+Evaluation:  [17200/25010]  eta: 1:01:08    time: 0.5068  data: 0.0000  max mem: 19569
+Evaluation:  [17250/25010]  eta: 1:00:45    time: 0.5001  data: 0.0000  max mem: 19569
+Evaluation:  [17300/25010]  eta: 1:00:22    time: 0.5011  data: 0.0000  max mem: 19569
+Evaluation:  [17350/25010]  eta: 0:59:59    time: 0.5068  data: 0.0000  max mem: 19569
+Evaluation:  [17400/25010]  eta: 0:59:37    time: 0.4998  data: 0.0000  max mem: 19569
+Evaluation:  [17450/25010]  eta: 0:59:14    time: 0.5021  data: 0.0000  max mem: 19569
+Evaluation:  [17500/25010]  eta: 0:58:51    time: 0.5026  data: 0.0000  max mem: 19569
+Evaluation:  [17550/25010]  eta: 0:58:28    time: 0.4988  data: 0.0000  max mem: 19569
+Evaluation:  [17600/25010]  eta: 0:58:05    time: 0.5036  data: 0.0000  max mem: 19569
+Evaluation:  [17650/25010]  eta: 0:57:42    time: 0.5050  data: 0.0000  max mem: 19569
+Evaluation:  [17700/25010]  eta: 0:57:20    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [17750/25010]  eta: 0:56:57    time: 0.4996  data: 0.0000  max mem: 19569
+Evaluation:  [17800/25010]  eta: 0:56:34    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [17850/25010]  eta: 0:56:11    time: 0.5055  data: 0.0000  max mem: 19569
+Evaluation:  [17900/25010]  eta: 0:55:48    time: 0.5030  data: 0.0000  max mem: 19569
+Evaluation:  [17950/25010]  eta: 0:55:25    time: 0.5012  data: 0.0000  max mem: 19569
+Evaluation:  [18000/25010]  eta: 0:55:02    time: 0.4982  data: 0.0000  max mem: 19569
+Evaluation:  [18050/25010]  eta: 0:54:39    time: 0.5055  data: 0.0000  max mem: 19569
+Evaluation:  [18100/25010]  eta: 0:54:16    time: 0.5053  data: 0.0000  max mem: 19569
+Evaluation:  [18150/25010]  eta: 0:53:53    time: 0.5004  data: 0.0000  max mem: 19569
+Evaluation:  [18200/25010]  eta: 0:53:30    time: 0.5025  data: 0.0000  max mem: 19569
+Evaluation:  [18250/25010]  eta: 0:53:08    time: 0.5061  data: 0.0000  max mem: 19569
+Evaluation:  [18300/25010]  eta: 0:52:45    time: 0.5049  data: 0.0000  max mem: 19569
+Evaluation:  [18350/25010]  eta: 0:52:22    time: 0.5050  data: 0.0000  max mem: 19569
+Evaluation:  [18400/25010]  eta: 0:51:59    time: 0.5021  data: 0.0000  max mem: 19569
+Evaluation:  [18450/25010]  eta: 0:51:35    time: 0.5044  data: 0.0000  max mem: 19569
+Evaluation:  [18500/25010]  eta: 0:51:12    time: 0.5040  data: 0.0000  max mem: 19569
+Evaluation:  [18550/25010]  eta: 0:50:49    time: 0.5046  data: 0.0000  max mem: 19569
+Evaluation:  [18600/25010]  eta: 0:50:26    time: 0.4989  data: 0.0000  max mem: 19569
+Evaluation:  [18650/25010]  eta: 0:50:03    time: 0.5043  data: 0.0000  max mem: 19569
+Evaluation:  [18700/25010]  eta: 0:49:40    time: 0.5045  data: 0.0000  max mem: 19569
+Evaluation:  [18750/25010]  eta: 0:49:17    time: 0.5051  data: 0.0000  max mem: 19569
+Evaluation:  [18800/25010]  eta: 0:48:54    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [18850/25010]  eta: 0:48:31    time: 0.5029  data: 0.0000  max mem: 19569
+Evaluation:  [18900/25010]  eta: 0:48:08    time: 0.5041  data: 0.0000  max mem: 19569
+Evaluation:  [18950/25010]  eta: 0:47:45    time: 0.5067  data: 0.0000  max mem: 19569
+Evaluation:  [19000/25010]  eta: 0:47:21    time: 0.5035  data: 0.0000  max mem: 19569
+Evaluation:  [19050/25010]  eta: 0:46:58    time: 0.5007  data: 0.0000  max mem: 19569
+Evaluation:  [19100/25010]  eta: 0:46:35    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [19150/25010]  eta: 0:46:12    time: 0.5043  data: 0.0000  max mem: 19569
+Evaluation:  [19200/25010]  eta: 0:45:49    time: 0.5013  data: 0.0000  max mem: 19569
+Evaluation:  [19250/25010]  eta: 0:45:25    time: 0.5016  data: 0.0000  max mem: 19569
+Evaluation:  [19300/25010]  eta: 0:45:02    time: 0.5003  data: 0.0000  max mem: 19569
+Evaluation:  [19350/25010]  eta: 0:44:39    time: 0.5059  data: 0.0000  max mem: 19569
+Evaluation:  [19400/25010]  eta: 0:44:16    time: 0.5040  data: 0.0000  max mem: 19569
+Evaluation:  [19450/25010]  eta: 0:43:53    time: 0.5042  data: 0.0000  max mem: 19569
+Evaluation:  [19500/25010]  eta: 0:43:29    time: 0.5065  data: 0.0000  max mem: 19569
+Evaluation:  [19550/25010]  eta: 0:43:06    time: 0.5036  data: 0.0000  max mem: 19569
+Evaluation:  [19600/25010]  eta: 0:42:43    time: 0.4985  data: 0.0000  max mem: 19569
+Evaluation:  [19650/25010]  eta: 0:42:19    time: 0.5015  data: 0.0000  max mem: 19569
+Evaluation:  [19700/25010]  eta: 0:41:56    time: 0.5051  data: 0.0000  max mem: 19569
+Evaluation:  [19750/25010]  eta: 0:41:33    time: 0.4968  data: 0.0000  max mem: 19569
+Evaluation:  [19800/25010]  eta: 0:41:09    time: 0.5054  data: 0.0000  max mem: 19569
+Evaluation:  [19850/25010]  eta: 0:40:46    time: 0.5077  data: 0.0000  max mem: 19569
+Evaluation:  [19900/25010]  eta: 0:40:23    time: 0.5009  data: 0.0000  max mem: 19569
+Evaluation:  [19950/25010]  eta: 0:39:59    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [20000/25010]  eta: 0:39:36    time: 0.5036  data: 0.0000  max mem: 19569
+Evaluation:  [20050/25010]  eta: 0:39:13    time: 0.5035  data: 0.0000  max mem: 19569
+Evaluation:  [20100/25010]  eta: 0:38:49    time: 0.5020  data: 0.0000  max mem: 19569
+Evaluation:  [20150/25010]  eta: 0:38:26    time: 0.5014  data: 0.0000  max mem: 19569
+Evaluation:  [20200/25010]  eta: 0:38:03    time: 0.5030  data: 0.0000  max mem: 19569
+Evaluation:  [20250/25010]  eta: 0:37:39    time: 0.5030  data: 0.0000  max mem: 19569
+Evaluation:  [20300/25010]  eta: 0:37:16    time: 0.4982  data: 0.0000  max mem: 19569
+Evaluation:  [20350/25010]  eta: 0:36:52    time: 0.4971  data: 0.0000  max mem: 19569
+Evaluation:  [20400/25010]  eta: 0:36:29    time: 0.4985  data: 0.0000  max mem: 19569
+Evaluation:  [20450/25010]  eta: 0:36:05    time: 0.5039  data: 0.0000  max mem: 19569
+Evaluation:  [20500/25010]  eta: 0:35:42    time: 0.5058  data: 0.0000  max mem: 19569
+Evaluation:  [20550/25010]  eta: 0:35:19    time: 0.5035  data: 0.0000  max mem: 19569
+Evaluation:  [20600/25010]  eta: 0:34:55    time: 0.5055  data: 0.0000  max mem: 19569
+Evaluation:  [20650/25010]  eta: 0:34:32    time: 0.5051  data: 0.0000  max mem: 19569
+Evaluation:  [20700/25010]  eta: 0:34:08    time: 0.5018  data: 0.0000  max mem: 19569
+Evaluation:  [20750/25010]  eta: 0:33:45    time: 0.5025  data: 0.0000  max mem: 19569
+Evaluation:  [20800/25010]  eta: 0:33:21    time: 0.5056  data: 0.0000  max mem: 19569
+Evaluation:  [20850/25010]  eta: 0:32:58    time: 0.5056  data: 0.0000  max mem: 19569
+Evaluation:  [20900/25010]  eta: 0:32:34    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [20950/25010]  eta: 0:32:11    time: 0.5039  data: 0.0000  max mem: 19569
+Evaluation:  [21000/25010]  eta: 0:31:47    time: 0.5002  data: 0.0000  max mem: 19569
+Evaluation:  [21050/25010]  eta: 0:31:24    time: 0.5002  data: 0.0000  max mem: 19569
+Evaluation:  [21100/25010]  eta: 0:31:00    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [21150/25010]  eta: 0:30:37    time: 0.5039  data: 0.0000  max mem: 19569
+Evaluation:  [21200/25010]  eta: 0:30:13    time: 0.5034  data: 0.0000  max mem: 19569
+Evaluation:  [21250/25010]  eta: 0:29:49    time: 0.5060  data: 0.0000  max mem: 19569
+Evaluation:  [21300/25010]  eta: 0:29:26    time: 0.4999  data: 0.0000  max mem: 19569
+Evaluation:  [21350/25010]  eta: 0:29:02    time: 0.5038  data: 0.0000  max mem: 19569
+Evaluation:  [21400/25010]  eta: 0:28:39    time: 0.5039  data: 0.0000  max mem: 19569
+Evaluation:  [21450/25010]  eta: 0:28:15    time: 0.5002  data: 0.0000  max mem: 19569
+Evaluation:  [21500/25010]  eta: 0:27:52    time: 0.5062  data: 0.0000  max mem: 19569
+Evaluation:  [21550/25010]  eta: 0:27:28    time: 0.4961  data: 0.0000  max mem: 19569
+Evaluation:  [21600/25010]  eta: 0:27:04    time: 0.5055  data: 0.0000  max mem: 19569
+Evaluation:  [21650/25010]  eta: 0:26:41    time: 0.5058  data: 0.0000  max mem: 19569
+Evaluation:  [21700/25010]  eta: 0:26:17    time: 0.5002  data: 0.0000  max mem: 19569
+Evaluation:  [21750/25010]  eta: 0:25:53    time: 0.5056  data: 0.0000  max mem: 19569
+Evaluation:  [21800/25010]  eta: 0:25:30    time: 0.4964  data: 0.0000  max mem: 19569
+Evaluation:  [21850/25010]  eta: 0:25:06    time: 0.5036  data: 0.0000  max mem: 19569
+Evaluation:  [21900/25010]  eta: 0:24:42    time: 0.5029  data: 0.0000  max mem: 19569
+Evaluation:  [21950/25010]  eta: 0:24:19    time: 0.5037  data: 0.0000  max mem: 19569
+Evaluation:  [22000/25010]  eta: 0:23:55    time: 0.5064  data: 0.0000  max mem: 19569
+Evaluation:  [22050/25010]  eta: 0:23:32    time: 0.5051  data: 0.0000  max mem: 19569
+Evaluation:  [22100/25010]  eta: 0:23:08    time: 0.5042  data: 0.0000  max mem: 19569
+Evaluation:  [22150/25010]  eta: 0:22:44    time: 0.4993  data: 0.0000  max mem: 19569
+Evaluation:  [22200/25010]  eta: 0:22:20    time: 0.5057  data: 0.0000  max mem: 19569
+Evaluation:  [22250/25010]  eta: 0:21:57    time: 0.5053  data: 0.0000  max mem: 19569
+Evaluation:  [22300/25010]  eta: 0:21:33    time: 0.5058  data: 0.0000  max mem: 19569
+Evaluation:  [22350/25010]  eta: 0:21:09    time: 0.5082  data: 0.0000  max mem: 19569
+Evaluation:  [22400/25010]  eta: 0:20:46    time: 0.5015  data: 0.0000  max mem: 19569
+Evaluation:  [22450/25010]  eta: 0:20:22    time: 0.5017  data: 0.0000  max mem: 19569
+Evaluation:  [22500/25010]  eta: 0:19:58    time: 0.4989  data: 0.0000  max mem: 19569
+Evaluation:  [22550/25010]  eta: 0:19:34    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [22600/25010]  eta: 0:19:11    time: 0.5043  data: 0.0000  max mem: 19569
+Evaluation:  [22650/25010]  eta: 0:18:47    time: 0.5050  data: 0.0000  max mem: 19569
+Evaluation:  [22700/25010]  eta: 0:18:23    time: 0.5049  data: 0.0000  max mem: 19569
+Evaluation:  [22750/25010]  eta: 0:17:59    time: 0.5019  data: 0.0000  max mem: 19569
+Evaluation:  [22800/25010]  eta: 0:17:36    time: 0.5046  data: 0.0000  max mem: 19569
+Evaluation:  [22850/25010]  eta: 0:17:12    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [22900/25010]  eta: 0:16:48    time: 0.5024  data: 0.0000  max mem: 19569
+Evaluation:  [22950/25010]  eta: 0:16:24    time: 0.5036  data: 0.0000  max mem: 19569
+Evaluation:  [23000/25010]  eta: 0:16:01    time: 0.5069  data: 0.0000  max mem: 19569
+Evaluation:  [23050/25010]  eta: 0:15:37    time: 0.5057  data: 0.0000  max mem: 19569
+Evaluation:  [23100/25010]  eta: 0:15:13    time: 0.5011  data: 0.0000  max mem: 19569
+Evaluation:  [23150/25010]  eta: 0:14:49    time: 0.5018  data: 0.0000  max mem: 19569
+2025-06-03 18:52:40,968 [INFO] Evaluation time 3:59:17
+2025-06-03 18:52:45,424 [INFO] report t2i metrics offline, at epoch 0 :
+2025-06-03 18:52:48,910 [INFO] {'txt_r1': 84.36, 'txt_r5': 96.46, 'txt_r10': 98.32, 'txt_r_mean': 93.04666666666667, 'img_r1': 67.45301879248301, 'img_r5': 87.48100759696122, 'img_r10': 92.47900839664135, 'img_r_mean': 82.47101159536186, 'r_mean': 87.75883913101427, 'agg_metrics': 93.04666666666667}
+2025-06-03 18:53:10,209 [INFO] save t2i tta model at epoch 0 to /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/output/BLIP2/Retrieval_COCO_zhh_lr5e-6_wd0_wotemper_QfomerTentwoUnc_topk_gradacc_offline_multiepochs5/t2i/20250603101/t2i_tta_model_model_epoch_0.pth
+2025-06-03 18:53:10,431 [INFO] start tta epoch 1 for t2i task
+2025-06-03 18:53:10,442 [INFO] Computing features for evaluation...
+2025-06-03 18:53:10,443 [INFO]     text features...
+2025-06-03 18:53:25,521 [INFO]     image features...
+Evaluation:  [23200/25010]  eta: 0:14:25    time: 0.5022  data: 0.0000  max mem: 19569
+Evaluation:  [23250/25010]  eta: 0:14:02    time: 0.5061  data: 0.0000  max mem: 19569
+Evaluation:  [23300/25010]  eta: 0:13:38    time: 0.5028  data: 0.0000  max mem: 19569
+Evaluation:  [23350/25010]  eta: 0:13:14    time: 0.4964  data: 0.0000  max mem: 19569
+Evaluation:  [23400/25010]  eta: 0:12:50    time: 0.5000  data: 0.0000  max mem: 19569
+Evaluation:  [23450/25010]  eta: 0:12:26    time: 0.5044  data: 0.0000  max mem: 19569
+Evaluation:  [23500/25010]  eta: 0:12:02    time: 0.5008  data: 0.0000  max mem: 19569
+Evaluation:  [23550/25010]  eta: 0:11:38    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [23600/25010]  eta: 0:11:15    time: 0.5041  data: 0.0000  max mem: 19569
+Evaluation:  [23650/25010]  eta: 0:10:51    time: 0.5059  data: 0.0000  max mem: 19569
+Evaluation:  [23700/25010]  eta: 0:10:27    time: 0.5067  data: 0.0000  max mem: 19569
+Evaluation:  [23750/25010]  eta: 0:10:03    time: 0.5045  data: 0.0000  max mem: 19569
+Evaluation:  [23800/25010]  eta: 0:09:39    time: 0.5006  data: 0.0000  max mem: 19569
+Evaluation:  [23850/25010]  eta: 0:09:15    time: 0.5046  data: 0.0000  max mem: 19569
+Evaluation:  [23900/25010]  eta: 0:08:51    time: 0.4964  data: 0.0000  max mem: 19569
+Evaluation:  [23950/25010]  eta: 0:08:27    time: 0.5032  data: 0.0000  max mem: 19569
+Evaluation:  [24000/25010]  eta: 0:08:03    time: 0.5006  data: 0.0000  max mem: 19569
+Evaluation:  [24050/25010]  eta: 0:07:40    time: 0.5045  data: 0.0000  max mem: 19569
+Evaluation:  [24100/25010]  eta: 0:07:16    time: 0.5014  data: 0.0000  max mem: 19569
+Evaluation:  [24150/25010]  eta: 0:06:52    time: 0.5039  data: 0.0000  max mem: 19569
+Evaluation:  [24200/25010]  eta: 0:06:28    time: 0.5042  data: 0.0000  max mem: 19569
+Evaluation:  [24250/25010]  eta: 0:06:04    time: 0.5068  data: 0.0000  max mem: 19569
+Evaluation:  [24300/25010]  eta: 0:05:40    time: 0.5048  data: 0.0000  max mem: 19569
+Evaluation:  [24350/25010]  eta: 0:05:16    time: 0.5049  data: 0.0000  max mem: 19569
+Evaluation:  [24400/25010]  eta: 0:04:52    time: 0.5055  data: 0.0000  max mem: 19569
+Evaluation:  [24450/25010]  eta: 0:04:28    time: 0.5040  data: 0.0000  max mem: 19569
+Evaluation:  [24500/25010]  eta: 0:04:04    time: 0.5026  data: 0.0000  max mem: 19569
+Evaluation:  [24550/25010]  eta: 0:03:40    time: 0.5052  data: 0.0000  max mem: 19569
+Evaluation:  [24600/25010]  eta: 0:03:16    time: 0.5033  data: 0.0000  max mem: 19569
+Evaluation:  [24650/25010]  eta: 0:02:52    time: 0.5005  data: 0.0000  max mem: 19569
+Evaluation:  [24700/25010]  eta: 0:02:28    time: 0.5035  data: 0.0000  max mem: 19569
+Evaluation:  [24750/25010]  eta: 0:02:04    time: 0.5043  data: 0.0000  max mem: 19569
+Evaluation:  [24800/25010]  eta: 0:01:40    time: 0.5047  data: 0.0000  max mem: 19569
+Evaluation:  [24850/25010]  eta: 0:01:16    time: 0.5054  data: 0.0000  max mem: 19569
+Evaluation:  [24900/25010]  eta: 0:00:52    time: 0.5050  data: 0.0000  max mem: 19569
+Evaluation:  [24950/25010]  eta: 0:00:28    time: 0.5050  data: 0.0000  max mem: 19569
+Evaluation:  [25000/25010]  eta: 0:00:04    time: 0.5053  data: 0.0000  max mem: 19569
+Evaluation:  [25009/25010]  eta: 0:00:00    time: 0.5064  data: 0.0000  max mem: 19569
+Evaluation: Total time: 3:20:09 (0.4802 s / it)
+ text_batch_i:  0 text_batch_i:  256 text_batch_i:  512 text_batch_i:  768 text_batch_i:  1024 text_batch_i:  1280 text_batch_i:  1536 text_batch_i:  1792 text_batch_i:  2048 text_batch_i:  2304 text_batch_i:  2560 text_batch_i:  2816 text_batch_i:  3072 text_batch_i:  3328 text_batch_i:  3584 text_batch_i:  3840 text_batch_i:  4096 text_batch_i:  4352 text_batch_i:  4608 text_batch_i:  4864 text_batch_i:  5120 text_batch_i:  5376 text_batch_i:  5632 text_batch_i:  5888 text_batch_i:  6144 text_batch_i:  6400 text_batch_i:  6656 text_batch_i:  6912 text_batch_i:  7168 text_batch_i:  7424 text_batch_i:  7680 text_batch_i:  7936 text_batch_i:  8192 text_batch_i:  8448 text_batch_i:  8704 text_batch_i:  8960 text_batch_i:  9216 text_batch_i:  9472 text_batch_i:  9728 text_batch_i:  9984 text_batch_i:  10240 text_batch_i:  10496 text_batch_i:  10752 text_batch_i:  11008 text_batch_i:  11264 text_batch_i:  11520 text_batch_i:  11776 text_batch_i:  12032 text_batch_i:  12288 text_batch_i:  12544 text_batch_i:  12800 text_batch_i:  13056 text_batch_i:  13312 text_batch_i:  13568 text_batch_i:  13824 text_batch_i:  14080 text_batch_i:  14336 text_batch_i:  14592 text_batch_i:  14848 text_batch_i:  15104 text_batch_i:  15360 text_batch_i:  15616 text_batch_i:  15872 text_batch_i:  16128 text_batch_i:  16384 text_batch_i:  16640 text_batch_i:  16896 text_batch_i:  17152 text_batch_i:  17408 text_batch_i:  17664 text_batch_i:  17920 text_batch_i:  18176 text_batch_i:  18432 text_batch_i:  18688 text_batch_i:  18944 text_batch_i:  19200 text_batch_i:  19456 text_batch_i:  19712 text_batch_i:  19968 text_batch_i:  20224 text_batch_i:  20480 text_batch_i:  20736 text_batch_i:  20992 text_batch_i:  21248 text_batch_i:  21504 text_batch_i:  21760 text_batch_i:  22016 text_batch_i:  22272 text_batch_i:  22528 text_batch_i:  22784 text_batch_i:  23040 text_batch_i:  23296 text_batch_i:  23552 text_batch_i:  23808 text_batch_i:  24064 text_batch_i:  24320 text_batch_i:  24576 text_batch_i:  24832
+2025-06-03 19:00:52,840 [INFO]     similarity matrix...
+Evaluation itm re-rank:  [    0/25010]  eta: 4:23:42    time: 0.6327  data: 0.1200  max mem: 19569
+Evaluation itm re-rank:  [   50/25010]  eta: 4:39:06    time: 0.6633  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  100/25010]  eta: 4:36:39    time: 0.6599  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  150/25010]  eta: 4:36:29    time: 0.6620  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  200/25010]  eta: 4:35:16    time: 0.6632  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  250/25010]  eta: 4:34:21    time: 0.6618  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  300/25010]  eta: 4:33:34    time: 0.6601  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  350/25010]  eta: 4:32:45    time: 0.6601  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  400/25010]  eta: 4:32:03    time: 0.6609  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  450/25010]  eta: 4:31:25    time: 0.6615  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  500/25010]  eta: 4:30:52    time: 0.6598  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  550/25010]  eta: 4:30:16    time: 0.6615  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  600/25010]  eta: 4:29:37    time: 0.6606  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  650/25010]  eta: 4:29:00    time: 0.6583  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  700/25010]  eta: 4:28:25    time: 0.6601  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  750/25010]  eta: 4:27:51    time: 0.6623  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  800/25010]  eta: 4:27:15    time: 0.6647  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  850/25010]  eta: 4:26:37    time: 0.6605  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  900/25010]  eta: 4:26:01    time: 0.6585  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [  950/25010]  eta: 4:25:24    time: 0.6611  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1000/25010]  eta: 4:24:48    time: 0.6585  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1050/25010]  eta: 4:24:14    time: 0.6647  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1100/25010]  eta: 4:23:38    time: 0.6580  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1150/25010]  eta: 4:23:05    time: 0.6551  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1200/25010]  eta: 4:22:26    time: 0.6549  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1250/25010]  eta: 4:21:45    time: 0.6541  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1300/25010]  eta: 4:21:06    time: 0.6549  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1350/25010]  eta: 4:20:25    time: 0.6509  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1400/25010]  eta: 4:19:46    time: 0.6538  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1450/25010]  eta: 4:19:05    time: 0.6502  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1500/25010]  eta: 4:18:25    time: 0.6515  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1550/25010]  eta: 4:17:47    time: 0.6525  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1600/25010]  eta: 4:17:07    time: 0.6488  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1650/25010]  eta: 4:16:28    time: 0.6503  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1700/25010]  eta: 4:15:49    time: 0.6486  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1750/25010]  eta: 4:15:09    time: 0.6450  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1800/25010]  eta: 4:14:31    time: 0.6456  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1850/25010]  eta: 4:13:52    time: 0.6494  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1900/25010]  eta: 4:13:13    time: 0.6472  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 1950/25010]  eta: 4:12:34    time: 0.6468  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2000/25010]  eta: 4:11:57    time: 0.6493  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2050/25010]  eta: 4:11:18    time: 0.6449  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2100/25010]  eta: 4:10:40    time: 0.6448  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2150/25010]  eta: 4:10:05    time: 0.6470  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2200/25010]  eta: 4:09:28    time: 0.6482  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2250/25010]  eta: 4:08:50    time: 0.6458  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2300/25010]  eta: 4:08:13    time: 0.6457  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2350/25010]  eta: 4:07:35    time: 0.6439  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2400/25010]  eta: 4:06:57    time: 0.6429  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2450/25010]  eta: 4:06:20    time: 0.6446  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2500/25010]  eta: 4:05:44    time: 0.6449  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2550/25010]  eta: 4:05:07    time: 0.6462  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2600/25010]  eta: 4:04:31    time: 0.6470  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2650/25010]  eta: 4:03:54    time: 0.6472  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2700/25010]  eta: 4:03:18    time: 0.6470  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2750/25010]  eta: 4:02:42    time: 0.6461  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2800/25010]  eta: 4:02:05    time: 0.6445  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2850/25010]  eta: 4:01:30    time: 0.6477  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2900/25010]  eta: 4:00:57    time: 0.6678  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 2950/25010]  eta: 4:00:23    time: 0.6578  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3000/25010]  eta: 3:59:49    time: 0.6519  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3050/25010]  eta: 3:59:14    time: 0.6489  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3100/25010]  eta: 3:58:38    time: 0.6441  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3150/25010]  eta: 3:58:02    time: 0.6412  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3200/25010]  eta: 3:57:26    time: 0.6456  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3250/25010]  eta: 3:56:49    time: 0.6419  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3300/25010]  eta: 3:56:13    time: 0.6417  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3350/25010]  eta: 3:55:36    time: 0.6396  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3400/25010]  eta: 3:55:01    time: 0.6434  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3450/25010]  eta: 3:54:25    time: 0.6394  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3500/25010]  eta: 3:53:50    time: 0.6484  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3550/25010]  eta: 3:53:15    time: 0.6406  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3600/25010]  eta: 3:52:40    time: 0.6420  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3650/25010]  eta: 3:52:05    time: 0.6439  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3700/25010]  eta: 3:51:29    time: 0.6408  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3750/25010]  eta: 3:50:54    time: 0.6411  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3800/25010]  eta: 3:50:19    time: 0.6417  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3850/25010]  eta: 3:49:44    time: 0.6457  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3900/25010]  eta: 3:49:09    time: 0.6464  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 3950/25010]  eta: 3:48:34    time: 0.6433  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4000/25010]  eta: 3:47:59    time: 0.6405  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4050/25010]  eta: 3:47:24    time: 0.6409  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4100/25010]  eta: 3:46:49    time: 0.6431  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4150/25010]  eta: 3:46:14    time: 0.6400  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4200/25010]  eta: 3:45:39    time: 0.6440  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4250/25010]  eta: 3:45:04    time: 0.6394  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4300/25010]  eta: 3:44:30    time: 0.6470  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4350/25010]  eta: 3:43:55    time: 0.6419  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4400/25010]  eta: 3:43:20    time: 0.6416  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4450/25010]  eta: 3:42:51    time: 0.6898  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4500/25010]  eta: 3:42:19    time: 0.6517  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4550/25010]  eta: 3:41:49    time: 0.6688  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4600/25010]  eta: 3:41:20    time: 0.6784  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4650/25010]  eta: 3:40:49    time: 0.6739  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4700/25010]  eta: 3:40:15    time: 0.6459  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4750/25010]  eta: 3:39:41    time: 0.6446  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4800/25010]  eta: 3:39:07    time: 0.6473  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4850/25010]  eta: 3:38:33    time: 0.6403  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4900/25010]  eta: 3:38:00    time: 0.6464  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 4950/25010]  eta: 3:37:26    time: 0.6447  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5000/25010]  eta: 3:36:53    time: 0.6477  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5050/25010]  eta: 3:36:20    time: 0.6430  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5100/25010]  eta: 3:35:46    time: 0.6432  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5150/25010]  eta: 3:35:12    time: 0.6433  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5200/25010]  eta: 3:34:40    time: 0.6422  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5250/25010]  eta: 3:34:09    time: 0.6567  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5300/25010]  eta: 3:33:38    time: 0.6543  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5350/25010]  eta: 3:33:06    time: 0.6399  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5400/25010]  eta: 3:32:31    time: 0.6396  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5450/25010]  eta: 3:31:59    time: 0.6689  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5500/25010]  eta: 3:31:26    time: 0.6520  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5550/25010]  eta: 3:30:52    time: 0.6362  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5600/25010]  eta: 3:30:17    time: 0.6348  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5650/25010]  eta: 3:29:43    time: 0.6399  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5700/25010]  eta: 3:29:08    time: 0.6377  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5750/25010]  eta: 3:28:33    time: 0.6364  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5800/25010]  eta: 3:27:59    time: 0.6394  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5850/25010]  eta: 3:27:24    time: 0.6362  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5900/25010]  eta: 3:26:50    time: 0.6352  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 5950/25010]  eta: 3:26:15    time: 0.6382  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6000/25010]  eta: 3:25:41    time: 0.6373  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6050/25010]  eta: 3:25:07    time: 0.6379  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6100/25010]  eta: 3:24:33    time: 0.6387  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6150/25010]  eta: 3:23:58    time: 0.6378  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6200/25010]  eta: 3:23:24    time: 0.6385  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6250/25010]  eta: 3:22:50    time: 0.6368  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6300/25010]  eta: 3:22:16    time: 0.6400  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6350/25010]  eta: 3:21:43    time: 0.6455  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6400/25010]  eta: 3:21:09    time: 0.6383  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6450/25010]  eta: 3:20:35    time: 0.6355  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6500/25010]  eta: 3:19:59    time: 0.6198  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6550/25010]  eta: 3:19:22    time: 0.6087  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6600/25010]  eta: 3:18:46    time: 0.6191  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6650/25010]  eta: 3:18:13    time: 0.6482  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6700/25010]  eta: 3:17:39    time: 0.6215  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6750/25010]  eta: 3:17:04    time: 0.6322  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6800/25010]  eta: 3:16:28    time: 0.6140  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6850/25010]  eta: 3:15:50    time: 0.6100  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6900/25010]  eta: 3:15:13    time: 0.6107  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 6950/25010]  eta: 3:14:36    time: 0.6113  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7000/25010]  eta: 3:14:00    time: 0.6122  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7050/25010]  eta: 3:13:23    time: 0.6121  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7100/25010]  eta: 3:12:46    time: 0.6108  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7150/25010]  eta: 3:12:10    time: 0.6113  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7200/25010]  eta: 3:11:33    time: 0.6096  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7250/25010]  eta: 3:11:47    time: 1.6019  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7300/25010]  eta: 3:11:15    time: 0.6565  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7350/25010]  eta: 3:10:42    time: 0.6388  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7400/25010]  eta: 3:10:09    time: 0.6483  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7450/25010]  eta: 3:09:37    time: 0.6440  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7500/25010]  eta: 3:09:02    time: 0.6360  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7550/25010]  eta: 3:08:27    time: 0.6307  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7600/25010]  eta: 3:07:53    time: 0.6291  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7650/25010]  eta: 3:07:18    time: 0.6339  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7700/25010]  eta: 3:06:44    time: 0.6275  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7750/25010]  eta: 3:06:09    time: 0.6286  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7800/25010]  eta: 3:05:35    time: 0.6258  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7850/25010]  eta: 3:05:00    time: 0.6237  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7900/25010]  eta: 3:04:26    time: 0.6315  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 7950/25010]  eta: 3:03:52    time: 0.6258  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 8000/25010]  eta: 3:03:17    time: 0.6337  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 8050/25010]  eta: 3:02:47    time: 0.6834  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 8100/25010]  eta: 3:02:14    time: 0.6639  data: 0.0000  max mem: 19569
+Evaluation itm re-rank:  [ 8150/25010]  eta: 3:01:43    time: 0.6488  data: 0.0000  max mem: 19569

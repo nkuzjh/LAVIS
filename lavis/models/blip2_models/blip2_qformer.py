@@ -27,6 +27,13 @@ from lavis.models.blip2_models.blip2 import (
     compute_t2i_sim_matrix_adapt_zhh,
     compute_i2t_sim_matrix_adapt_zhh_topk,
     compute_t2i_sim_matrix_adapt_zhh_topk,
+    compute_sim_matrix_sample_selction,
+    compute_i2t_sim_matrix_adapt_zhh_topk_sample_selection,
+    compute_t2i_sim_matrix_adapt_zhh_topk_sample_selection,
+    compute_i2t_sim_matrix,
+    compute_t2i_sim_matrix,
+    compute_i2t_sim_matrix_adapt_itm,
+    compute_t2i_sim_matrix_adapt_itm,
 )
 from lavis.models.blip_models.blip_outputs import BlipOutput, BlipOutputFeatures
 
@@ -382,14 +389,27 @@ class Blip2Qformer(Blip2Base):
         return text_output.last_hidden_state[:, 0, :]
 
     def compute_itm(self, image_inputs, text_ids, text_atts): # shape = #128,677,1408 #128,35 #128,35
+        # self.visual_encoder.to('cpu')
+        # self.ln_vision.to('cpu')
+        # self.vision_proj.to('cpu')
+        # self.text_proj.to('cpu')
+        # torch.cuda.empty_cache()
+
+        # self.query_tokens.to(image_inputs.device)
+        # self.Qformer.to(image_inputs.device)
+        # self.itm_head.to(image_inputs.device)
         image_atts = torch.ones(image_inputs.size()[:-1], dtype=torch.long).to(
             image_inputs.device
         )#  image_inputs.shape=128,677,1408 -> image_atts.shape=128,677
-        query_tokens = self.query_tokens.expand(image_inputs.shape[0], -1, -1) #self.query_tokens.shape=1,32,768 -> query_tokens.shap=128,32,768
+        query_tokens = self.query_tokens.expand(image_inputs.shape[0], -1, -1).to(
+            image_inputs.device
+        ) #self.query_tokens.shape=1,32,768 -> query_tokens.shap=128,32,768
         query_atts = torch.ones(query_tokens.size()[:-1], dtype=torch.long).to(
             image_inputs.device
         )# 128,32
-        attention_mask = torch.cat([query_atts, text_atts], dim=1) #128,67
+        attention_mask = torch.cat([query_atts, text_atts], dim=1).to(
+            image_inputs.device
+        ) #128,67
         output_itm = self.Qformer.bert(
             text_ids, #128,35
             query_embeds=query_tokens, #128,32,768
@@ -401,6 +421,7 @@ class Blip2Qformer(Blip2Base):
         vl_embeddings = output_itm.last_hidden_state[:, : query_tokens.size(1), :]#128,32,768
         itm_logit = self.itm_head(vl_embeddings)# 128,32,2
         itm_logit = itm_logit[:, :, 1].mean(dim=1) #itm_logit[:, :, 1].shape=128,32 #itm_logit[:, :, 1].mean(dim=1).shape=128
+        # self.to(image_inputs.device)
         return itm_logit
 
     @torch.no_grad()
@@ -620,4 +641,57 @@ class Blip2Qformer(Blip2Base):
         k_test = task_cfg.k_test
 
         score_t2i = compute_t2i_sim_matrix_adapt_zhh_topk(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+        return score_t2i
+
+    def compute_sim_matrix_sample_selction(self, data_loader, task_cfg, optimizer, tta_cfg):
+        k_test = task_cfg.k_test
+
+        return compute_sim_matrix_sample_selction(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+
+    def compute_i2t_sim_matrix_adapt_zhh_topk_sample_selection(self, data_loader, task_cfg, optimizer, tta_cfg, selected_sample_idx_i2t, sims_matrix_i2t, sims_matrix_t2i, vit_feats, text_ids, text_atts):
+        k_test = task_cfg.k_test
+
+        score_t2i = compute_i2t_sim_matrix_adapt_zhh_topk_sample_selection(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, selected_sample_idx_i2t=selected_sample_idx_i2t, sims_matrix_i2t=sims_matrix_i2t, sims_matrix_t2i=sims_matrix_t2i, vit_feats=vit_feats, text_ids=text_ids, text_atts=text_atts)
+        return score_t2i
+
+    def compute_t2i_sim_matrix_adapt_zhh_topk_sample_selection(self, data_loader, task_cfg, optimizer, tta_cfg, selected_sample_idx_t2i):
+        k_test = task_cfg.k_test
+
+        score_t2i = compute_t2i_sim_matrix_adapt_zhh_topk_sample_selection(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, selected_sample_idx_t2i=selected_sample_idx_t2i, sims_matrix_i2t=sims_matrix_i2t, sims_matrix_t2i=sims_matrix_t2i, vit_feats=vit_feats, text_ids=text_ids, text_atts=text_atts)
+        return score_t2i
+
+    def compute_i2t_sim_matrix_adapt_itm(self, data_loader, task_cfg, optimizer, tta_cfg):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        score_i2t = compute_i2t_sim_matrix_adapt_itm(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
+        return score_i2t
+
+    def compute_t2i_sim_matrix_adapt_itm(self, data_loader, task_cfg, optimizer, tta_cfg):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        score_t2i = compute_t2i_sim_matrix_adapt_itm(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
+        return score_t2i
+
+    def compute_i2t_sim_matrix(self, data_loader, task_cfg, optimizer, tta_cfg):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        score_i2t = compute_i2t_sim_matrix(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+        return score_i2t
+
+    def compute_t2i_sim_matrix(self, data_loader, task_cfg, optimizer):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        score_t2i = compute_t2i_sim_matrix(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
         return score_t2i

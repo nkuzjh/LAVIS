@@ -151,6 +151,10 @@ class Config:
     def model_cfg(self):
         return self.config.model
 
+    @property
+    def tta_cfg(self):
+        return self.config.tta
+
     def pretty_print(self):
         logging.info("\n=====  Running Parameters    =====")
         logging.info(self._convert_node_to_json(self.config.run))
@@ -168,6 +172,10 @@ class Config:
 
         logging.info(f"\n======  Model Attributes  ======")
         logging.info(self._convert_node_to_json(self.config.model))
+
+        logging.info("\n======  TTA Attributes  ======")
+        if "tta" in self.config.keys():
+            logging.info(self._convert_node_to_json(self.config.tta))
 
     def _convert_node_to_json(self, node):
         container = OmegaConf.to_container(node, resolve=True)

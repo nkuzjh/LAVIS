@@ -95,14 +95,17 @@ def main():
 if __name__ == "__main__":
     main()
 
+
+
 # TTA tent:
 # debug args: --cfg-path lavis/projects/blip2/eval/ret_coco_eval_tent.yaml --is_tta True
 # CUDA_VISIBLE_DEVICES=1 python -m torch.distributed.run --nproc_per_node=1 ../evaluate_tta.py --tta True --cfg-path ../lavis/projects/blip2/eval/ret_coco_eval_tent.yaml
 
 
+
 # TTA zhh:
 # debug args: --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh.yaml --is_tta True
-# CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh.yaml >ret_coco_eval_zhh.out &
+# CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh.yaml >ret_coco_eval_zhh_wotemper.out &
 
 # {'txt_r1': 77.84, 'txt_r5': 94.2, 'txt_r10': 97.1, 'txt_r_mean': 89.71333333333332, 'img_r1': 58.220711715313875, 'img_r5': 81.17153138744503, 'img_r10': 87.68092762894842, 'img_r_mean': 75.6910569105691, 'r_mean': 82.7021951219512, 'agg_metrics': 89.71333333333332}
 
@@ -121,11 +124,78 @@ if __name__ == "__main__":
 # Qformer + Tent without Uncertainty
 # {"txt_r1": 82.36, "txt_r5": 95.74, "txt_r10": 97.96, "txt_r_mean": 92.02, "img_r1": 66.01759296281487, "img_r5": 86.74130347860856, "img_r10": 91.96321471411436, "img_r_mean": 81.57403705184593, "r_mean": 86.79701852592297, "agg_metrics": 92.02}
 
+# cosine similarity结果除以temperature，再作为uncertainty
+# tent lr=1e-4 wd=0.0
+# Qformer + Tent without Uncertainty
+# gradient accumulation steps = 64 ??? 后续发现代码没有实现 grad_accu
+# {'txt_r1': 82.36, 'txt_r5': 95.74, 'txt_r10': 97.96, 'txt_r_mean': 92.02, 'img_r1': 66.01759296281487, 'img_r5': 86.74130347860856, 'img_r10': 91.96321471411436, 'img_r_mean': 81.57403705184593, 'r_mean': 86.79701852592297, 'agg_metrics': 92.02}
 
-# TTA zhh topk:
+# cosine similarity结果除以temperature，再作为uncertainty
+# tent lr=1e-4 wd=0.0
+# Qformer + Tent without Uncertainty
+# rerank_score = itm_score +　cosine similarity without dividing temperature
+
+
+
+# cosine similarity结果除以temperature，再作为uncertainty
+# tent lr=5e-6 wd=0.0
+# Qformer + Tent without Uncertainty
+# rerank_score = itm_score +　cosine similarity without dividing temperature
+
+
+
+
+# TTA zhh_topk
+# 互相top1-topk的概率均值作为unc加权:
 # debug args: --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh_topk.yaml --is_tta True
-# CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh_topk.yaml >ret_coco_eval_zhh_topk.out &
+# CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh_topk.yaml >ret_coco_eval_zhh_topk_wotemper_i2t.out &
+# CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh_topk_t2i.yaml >ret_coco_eval_zhh_topk_wotemper_t2i.out &
 
 # {"txt_r1": 82.34, "txt_r5": 95.76, "txt_r10": 98.02, "txt_r_mean": 92.04, "img_r1": 65.98960415833666, "img_r5": 86.61335465813674, "img_r10": 91.99120351859256, "img_r_mean": 81.53138744502199, "r_mean": 86.785693722511, "agg_metrics": 92.04}
 
 # 增加itm tta loss的梯度累积，accumulate batch size = 64
+# {"txt_r1": 83.02, "txt_r5": 96.34, "txt_r10": 98.2, "txt_r_mean": 92.52, "img_r1": 67.46501399440224, "img_r5": 87.51299480207916, "img_r10": 92.67093162734906, "img_r_mean": 82.54964680794349, "r_mean": 87.53482340397174, "agg_metrics": 92.52}
+
+# 增加itm tta loss的梯度累积，accumulate batch size = 64
+# offline, online=False
+# {'txt_r1': 84.18, 'txt_r5': 96.22, 'txt_r10': 98.26, 'txt_r_mean': 92.88666666666667, 'img_r1': 66.57736905237905, 'img_r5': 86.76929228308677, 'img_r10': 92.04318272690924, 'img_r_mean': 81.79661468745836, 'r_mean': 87.34164067706251, 'agg_metrics': 92.88666666666667}
+
+# lr=5e-6 wd=0.0
+# 增加itm tta loss的梯度累积，accumulate batch size = 64
+# offline, online=False
+# multi_epochs=5
+# epoch 0: {"txt_r1": 84.06, "txt_r5": 96.42, "txt_r10": 98.1, "txt_r_mean": 92.86000000000001, "img_r1": 67.58096761295482, "img_r5": 87.3970411835266, "img_r10": 92.47101159536186, "img_r_mean": 82.48300679728109, "r_mean": 87.67150339864055, "agg_metrics": 92.86000000000001}
+# epoch 1: {"txt_r1": 84.58, "txt_r5": 96.78, "txt_r10": 98.34, "txt_r_mean": 93.23333333333335, "img_r1": 67.30907636945221, "img_r5": 87.19312275089965, "img_r10": 92.39504198320672, "img_r_mean": 82.29908036785287, "r_mean": 87.76620685059311, "agg_metrics": 93.23333333333335}
+
+# lr=5e-6 wd=0.0
+# 增加itm tta loss的梯度累积，accumulate batch size = 64
+# offline, online=False
+# rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature):
+# BUT continue ckpt from "Retrieval_COCO_zhh_lr5e-6_wd0_QfomerTentwoUnc_topk_gradacc_offline_multiepochs5/20250529105/i2t_tta_model_model_epoch_1.pth";
+# report i2t metrics online, at epoch 0, : {'txt_r1': 84.68, 'txt_r5': 96.5, 'txt_r10': 98.28, 'txt_r_mean': 93.15333333333335, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+# report i2t metrics offline, at epoch 0 : {'txt_r1': 84.16, 'txt_r5': 96.42, 'txt_r10': 98.2, 'txt_r_mean': 92.92666666666666, 'img_r1': 67.47700919632148, 'img_r5': 87.44102359056377, 'img_r10': 92.40703718512594, 'img_r_mean': 82.4416899906704, 'r_mean': 87.68417832866854, 'agg_metrics': 92.92666666666666}
+
+# lr=5e-6 wd=0.0
+# 增加itm tta loss的梯度累积，accumulate batch size = 64
+# offline, online=False
+# rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature)
+# multi_epochs=5
+#         i2t:
+# report i2t metrics online, at epoch 0 :
+# 2025-06-03 11:18:33,419 [INFO] {'txt_r1': 84.92, 'txt_r5': 96.38, 'txt_r10': 98.3, 'txt_r_mean': 93.2, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+# report i2t metrics offline, at epoch 0 :
+# 2025-06-03 15:08:39,379 [INFO] {'txt_r1': 84.06, 'txt_r5': 96.42, 'txt_r10': 98.1, 'txt_r_mean': 92.86000000000001, 'img_r1': 67.58096761295482, 'img_r5': 87.40103958416633, 'img_r10': 92.47101159536186, 'img_r_mean': 82.48433959749434, 'r_mean': 87.67216979874718, 'agg_metrics': 92.86000000000001}
+#         i2t:
+# report t2i metrics online, at epoch 0 :
+# 2025-06-03 14:53:23,381 [INFO] {'txt_r1': -999, 'txt_r5': -999, 'txt_r10': -999, 'txt_r_mean': -999, 'img_r1': 67.23310675729708, 'img_r5': 87.53698520591763, 'img_r10': 92.45901639344262, 'img_r_mean': 82.40970278555245, 'r_mean': -999, 'agg_metrics': -999}
+
+
+
+
+
+# TTA zhh_topk_ss
+# 互相top1-topk的概率均值作为unc加权
+# 增加互相recall时的sample selection
+# debug args: --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh_topk_ss.yaml --is_tta True
+# CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh_topk_ss.yaml >ret_coco_eval_zhh_topk_ss.out &
+

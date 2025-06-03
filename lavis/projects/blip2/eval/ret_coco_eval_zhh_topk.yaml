@@ -7,6 +7,8 @@ model:
   arch: blip2
   model_type: coco
   use_grad_checkpoint: False
+  # load_finetuned: True
+  # finetuned: "/home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/output/BLIP2/Retrieval_COCO_zhh_lr5e-6_wd0_QfomerTentwoUnc_topk_gradacc_offline_multiepochs5/20250529105/i2t_tta_model_model_epoch_1.pth"
 
 datasets:
   coco_retrieval: # name of the dataset builder
@@ -49,13 +51,17 @@ run:
 
   # misc
   seed: 42
-  output_dir: "output/BLIP2/Retrieval_COCO_zhh_lr1e-4_wd0_QfomerTentwoUnc_topk"
+  # output_dir: "output/BLIP2/Retrieval_COCO_zhh_lr5e-6_wd0_QfomerTentwoUnc_topk_gradacc_offline_multiepochs5/i2t_continue"
+  output_dir: "output/BLIP2/Retrieval_COCO_zhh_lr5e-6_wd0_wotemper_QfomerTentwoUnc_topk_gradacc_offline_multiepochs5/i2t"
 
   evaluate: True
 
 tta:
   name: "zhh_topk"
   config: "configs/tta/tent.yaml"
-  init_lr: 1e-4 #3e-4
+  init_lr: 5e-6 #1e-4 #3e-4
   weight_decay: 0.0 #1e-4
   wo_rerank: False
+  online: False
+  offline_multi_epochs: 5
+  tta_task: "i2t" # "i2t" or "t2i"

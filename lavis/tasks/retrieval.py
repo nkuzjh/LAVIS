@@ -31,7 +31,15 @@ class RetrievalTask(BaseTask):
 
     def evaluation(self, model, data_loader, wo_rerank, **kwargs):
         # score_i2t, score_t2i = model.compute_sim_matrix(model, data_loader)
-        score_i2t, score_t2i = model.compute_sim_matrix(data_loader, task_cfg=self.cfg, wo_rerank=wo_rerank)
+        score_i2t, score_t2i, sims_matrix = model.compute_sim_matrix(data_loader, task_cfg=self.cfg, wo_rerank=wo_rerank)
+
+        # import numpy as np
+        # np.save("sims_matrix.npy",sims_matrix)
+        # np.save("score_i2t.npy",score_i2t)
+        # np.save("score_t2i.npy",score_t2i)
+        # logging("score_i2t: \r\n", score_i2t)
+        # logging("score_t2i: \r\n", score_t2i)
+        # logging("sims_matrix: \r\n", sims_matrix)
 
         if is_main_process():
             eval_result = self._report_metrics(
@@ -46,10 +54,15 @@ class RetrievalTask(BaseTask):
 
         return eval_result
 
-    def evaluation_tta(self, model, data_loader, tta_cfg, **kwargs):
-        # score_i2t, score_t2i = model.compute_sim_matrix(model, data_loader)
-        # score_i2t, score_t2i = model.compute_sim_matrix(data_loader, task_cfg=self.cfg)
-        score_i2t, score_t2i = model(data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
+    def evaluation_tta(self, tta_model, data_loader, tta_cfg, **kwargs):
+        logging.info("tta_cfg.name: {}".format(tta_cfg.name))
+        if tta_cfg.name == "zhh_topk" or tta_cfg.name == "zhh_topk_ss":
+            if tta_cfg.online == True:
+                score_i2t, score_t2i = tta_model(data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
+            elif tta_cfg.online == False:
+                _, _, score_i2t, score_t2i = tta_model(data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
+        elif tta_cfg.name == "zhh" or tta_cfg.name == "tent":
+            score_i2t, score_t2i = tta_model(data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
 
         if is_main_process():
             eval_result = self._report_metrics(
