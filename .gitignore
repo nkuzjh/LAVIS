@@ -167,7 +167,9 @@ cache/
 *.jpg
 *.png
 *.json
+*.npy
 
 # experiment files
 lavis/output/
+*.out
 

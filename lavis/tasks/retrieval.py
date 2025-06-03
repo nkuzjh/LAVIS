@@ -56,7 +56,7 @@ class RetrievalTask(BaseTask):
 
     def evaluation_tta(self, tta_model, data_loader, tta_cfg, **kwargs):
         logging.info("tta_cfg.name: {}".format(tta_cfg.name))
-        if tta_cfg.name == "zhh_topk" or tta_cfg.name == "zhh_topk_ss":
+        if tta_cfg.name == "zhh_topk" or tta_cfg.name == "zhh_topk_ss" or tta_cfg.name == "itm_adapt":
             if tta_cfg.online == True:
                 score_i2t, score_t2i = tta_model(data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
             elif tta_cfg.online == False:

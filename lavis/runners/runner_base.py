@@ -33,7 +33,7 @@ from lavis.datasets.datasets.dataloader_utils import (
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader, DistributedSampler
 from torch.utils.data.dataset import ChainDataset
-from tent import tent, zhh
+from tta import tent, zhh, itm_adapt
 
 
 @registry.register_runner("runner_base")
@@ -496,6 +496,11 @@ class RunnerBase:
             params, param_names = zhh.collect_params_blip2(model)
             optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
             tta_model = zhh.Zhh_Blip2(model, optimizer)
+        elif tta_cfg.name == "itm_adapt":
+            model = itm_adapt.configure_model_blip2(model)
+            params, param_names = itm_adapt.collect_params_blip2(model)
+            optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
+            tta_model = itm_adapt.ITM_ADAPT(model, optimizer)
 
         self.task.before_evaluation(
             # model=model,
