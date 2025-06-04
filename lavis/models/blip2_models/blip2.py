@@ -24,7 +24,7 @@ from lavis.models.blip2_models.Qformer import BertConfig, BertLMHeadModel
 from lavis.models.eva_vit import create_eva_vit_g
 from lavis.models.clip_vit import create_clip_vit_L
 from transformers import BertTokenizer
-from tent.tent import softmax_entropy
+from tta.tent import softmax_entropy
 
 class Blip2Base(BaseModel):
     @classmethod
@@ -1796,7 +1796,7 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, **k
     itm_loss_backward_accum_bs = 64
     grad_accum_num = 0
     for i, sims_i2t in enumerate(
-        metric_logger.log_every(sims_matrix_i2t[start:end], 100, header)
+        metric_logger.log_every(sims_matrix_i2t[start:end], 50, header)
     ): # 遍历每个image与25010个text的sim_matrix
         topk_sim_i2t, topk_idx_i2t = sims_i2t.topk(k=k_test, dim=0) #sims.shape=25010 topk_sim.shape=128 topk_idx=top128_idx
         image_inputs = vit_feats[start + i].repeat(k_test, 1, 1).to(model.device) # vit_feats[i].shape=1,677,1408 image_inputs.shape=128,677,1408
@@ -1807,18 +1807,18 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, **k
         ).float() # score.shape=128
 
         if hasattr(tta_cfg, 'topk_match_coeffi') and tta_cfg.topk_match_coeffi == True:
-            proba_top1_sim_i2t = F.softmax(topk_sim_i2t)[0]
+            proba_top1_sim_i2t = F.softmax(topk_sim_i2t, dim=0)[0]
             proba_sim_t2i_top1_idx_i2t = torch.zeros(1).to(proba_top1_sim_i2t.device)
             topk_sim_t2i_top1_idx_i2t, topk_idx_t2i_top1_idx_i2t = sims_matrix_t2i[topk_idx_i2t[0]].topk(k=k_test, dim=0)
             if i in topk_idx_t2i_top1_idx_i2t:
                 idx_i_in_topk_idx_t2i_top1_idx_i2t = torch.where(topk_idx_t2i_top1_idx_i2t == i)
-                proba_sim_t2i_top1_idx_i2t = F.softmax(topk_sim_t2i_top1_idx_i2t)[idx_i_in_topk_idx_t2i_top1_idx_i2t]
+                proba_sim_t2i_top1_idx_i2t = F.softmax(topk_sim_t2i_top1_idx_i2t, dim=0)[idx_i_in_topk_idx_t2i_top1_idx_i2t]
             top1_match_coeffi = torch.exp(1 - (proba_top1_sim_i2t + proba_sim_t2i_top1_idx_i2t)/2 )
         else:
             top1_match_coeffi = torch.ones(1).to(model.device)
 
         # itm entropy adapt
-        loss_entropy_topk_gallery = -(F.softmax(score) * F.log_softmax(score)).sum()
+        loss_entropy_topk_gallery = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum()
         loss_entropy_uncertainty = loss_entropy_topk_gallery.mean() / top1_match_coeffi
         loss_entropy_uncertainty = loss_entropy_uncertainty / itm_loss_backward_accum_bs
         loss_entropy_uncertainty.backward()
@@ -1828,8 +1828,8 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, **k
             optimizer.zero_grad()
             grad_accum_num = 0
 
-        #score = itm_score
-        score_matrix_i2t[start+i, topk_idx_i2t] = score# + topk_sim_i2t
+        #score = itm_score + cos_sim
+        score_matrix_i2t[start+i, topk_idx_i2t] = score + topk_sim_i2t
 
     if dist_utils.is_dist_avail_and_initialized():
         dist.barrier()
@@ -1924,7 +1924,7 @@ def compute_t2i_sim_matrix_adapt_itm(model, data_loader, optimizer,  **kwargs):
     itm_loss_backward_accum_bs = 64
     grad_accum_num = 0
     for i, sims_t2i in enumerate(
-        metric_logger.log_every(sims_matrix_t2i[start:end], 100, header)
+        metric_logger.log_every(sims_matrix_t2i[start:end], 50, header)
     ): # 遍历每个image与25010个text的sim_matrix
         topk_sim_t2i, topk_idx_t2i = sims_t2i.topk(k=k_test, dim=0) #sims.shape=1,25010 topk_sim.shape=128 topk_idx=top128_idx
         image_inputs = vit_feats[topk_idx_t2i.cpu()].to(model.device) # vit_feats[start + i].shape=677,1408 image_inputs.shape=128,677,1408
@@ -1935,18 +1935,18 @@ def compute_t2i_sim_matrix_adapt_itm(model, data_loader, optimizer,  **kwargs):
         ).float() # score.shape=128
 
         if hasattr(tta_cfg, 'topk_match_coeffi') and tta_cfg.topk_match_coeffi == True:
-            proba_top1_sim_t2i = F.softmax(topk_sim_t2i)[0]
+            proba_top1_sim_t2i = F.softmax(topk_sim_t2i, dim=0)[0]
             proba_sim_i2t_top1_idx_t2i = torch.Tensor([0.]).to(proba_top1_sim_t2i.device)
             topk_sim_i2t_top1_idx_t2i, topk_idx_i2t_top1_idx_t2i = sims_matrix_i2t[topk_idx_t2i[0]].topk(k=k_test, dim=0)
             if i in topk_idx_i2t_top1_idx_t2i:
                 idx_of_i_in_topk_idx_i2t_top1_idx_t2i = torch.where(topk_idx_i2t_top1_idx_t2i == i)
-                proba_sim_i2t_top1_idx_t2i = F.softmax(topk_sim_i2t_top1_idx_t2i)[idx_of_i_in_topk_idx_i2t_top1_idx_t2i]
+                proba_sim_i2t_top1_idx_t2i = F.softmax(topk_sim_i2t_top1_idx_t2i, dim=0)[idx_of_i_in_topk_idx_i2t_top1_idx_t2i]
             top1_match_coeffi = torch.exp( 1 - (proba_top1_sim_t2i + proba_sim_i2t_top1_idx_t2i)/2 )
         else:
             top1_match_coeffi = torch.ones(1).to(model.device)
 
         # itm adapt
-        loss_entropy_topk_gallery = -(F.softmax(score) * F.log_softmax(score)).sum()
+        loss_entropy_topk_gallery = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum()
         loss_entropy_uncertainty = loss_entropy_topk_gallery.mean() / top1_match_coeffi
         loss_entropy_uncertainty = loss_entropy_uncertainty / itm_loss_backward_accum_bs
         loss_entropy_uncertainty.backward()
@@ -1956,8 +1956,8 @@ def compute_t2i_sim_matrix_adapt_itm(model, data_loader, optimizer,  **kwargs):
             optimizer.zero_grad()
             grad_accum_num = 0
 
-        #score = itm_score
-        score_matrix_t2i[start + i, topk_idx_t2i] = score #+ topk_sim_t2i
+        #score = itm_score + cos_sim
+        score_matrix_t2i[start + i, topk_idx_t2i] = score + topk_sim_t2i
 
     if dist_utils.is_dist_avail_and_initialized():
         dist.barrier()
@@ -1988,6 +1988,7 @@ def compute_i2t_sim_matrix(model, data_loader, **kwargs):
     text_ids = []
     text_embeds = []
     text_atts = []
+    logging.info("    text features...")
     for i in range(0, num_text, text_bs):
         text = texts[i : min(num_text, i + text_bs)]
         text_input = model.tokenizer(
@@ -2009,6 +2010,7 @@ def compute_i2t_sim_matrix(model, data_loader, **kwargs):
 
     vit_feats = []
     image_embeds = []
+    logging.info("    image features...")
     for samples in data_loader:
         image = samples["image"]
 
@@ -2024,6 +2026,7 @@ def compute_i2t_sim_matrix(model, data_loader, **kwargs):
     image_embeds = torch.cat(image_embeds, dim=0)
 
     sims_matrix = []
+    logging.info("    cosine similarity...")
     for image_embed in image_embeds: # 5000,32,256
         sim_q2t = image_embed @ text_embeds.t() # image_embed.shape=32,256 text_embeds.shape=25010,256
         sim_i2t, _ = sim_q2t.max(0) #32,25010
@@ -2081,6 +2084,7 @@ def compute_t2i_sim_matrix(model, data_loader, **kwargs):
     text_ids = []
     text_embeds = []
     text_atts = []
+    logging.info("    text features...")
     for i in range(0, num_text, text_bs):
         text = texts[i : min(num_text, i + text_bs)]
         text_input = model.tokenizer(
@@ -2102,6 +2106,7 @@ def compute_t2i_sim_matrix(model, data_loader, **kwargs):
 
     vit_feats = []
     image_embeds = []
+    logging.info("    image features...")
     for samples in data_loader:
         image = samples["image"]
 
@@ -2117,6 +2122,7 @@ def compute_t2i_sim_matrix(model, data_loader, **kwargs):
     image_embeds = torch.cat(image_embeds, dim=0)
 
     sims_matrix = []
+    logging.info("    cosine similarity...")
     for image_embed in image_embeds: # 5000,32,256
         sim_q2t = image_embed @ text_embeds.t() # image_embed.shape=32,256 text_embeds.shape=25010,256
         sim_i2t, _ = sim_q2t.max(0) #32,25010

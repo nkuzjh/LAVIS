@@ -173,3 +173,5 @@ cache/
 lavis/output/
 *.out
 
+lavis/configs/default.yaml
+lavis/configs/models/blip2/blip2_coco.yaml

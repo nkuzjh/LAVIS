@@ -678,13 +678,13 @@ class Blip2Qformer(Blip2Base):
         score_t2i = compute_t2i_sim_matrix_adapt_itm(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
         return score_t2i
 
-    def compute_i2t_sim_matrix(self, data_loader, task_cfg, optimizer, tta_cfg):
+    def compute_i2t_sim_matrix(self, data_loader, task_cfg):
         """
         Compute similarity i2t, t2i matrix for the given data loader.
         """
         k_test = task_cfg.k_test
 
-        score_i2t = compute_i2t_sim_matrix(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+        score_i2t = compute_i2t_sim_matrix(model=self, data_loader=data_loader, k_test=k_test)
         return score_i2t
 
     def compute_t2i_sim_matrix(self, data_loader, task_cfg, optimizer):
@@ -693,5 +693,5 @@ class Blip2Qformer(Blip2Base):
         """
         k_test = task_cfg.k_test
 
-        score_t2i = compute_t2i_sim_matrix(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test)
+        score_t2i = compute_t2i_sim_matrix(model=self, data_loader=data_loader, k_test=k_test)
         return score_t2i

@@ -1,289 +1,0 @@
-2025-05-26 17:59:48,472 [INFO] 
-=====  Running Parameters    =====
-2025-05-26 17:59:48,472 [INFO] {
-    "batch_size_eval": 16,
-    "batch_size_train": 16,
-    "device": "cuda",
-    "dist_url": "env://",
-    "distributed": false,
-    "evaluate": true,
-    "k_test": 128,
-    "num_workers": 4,
-    "output_dir": "output/BLIP2/Retrieval_COCO_zhh_lr1e-4_wd0_QfomerTentwoUnc_topk",
-    "seed": 42,
-    "task": "retrieval",
-    "test_splits": [
-        "test"
-    ],
-    "train_splits": [
-        "train"
-    ],
-    "use_dist_eval_sampler": false,
-    "valid_splits": [
-        "val"
-    ],
-    "world_size": 1
-}
-2025-05-26 17:59:48,472 [INFO] 
-======  Dataset Attributes  ======
-2025-05-26 17:59:48,472 [INFO] 
-======== coco_retrieval =======
-2025-05-26 17:59:48,473 [INFO] {
-    "build_info": {
-        "annotations": {
-            "test": {
-                "md5": "3ff34b0ef2db02d01c37399f6a2a6cd1",
-                "storage": "coco/annotations/coco_karpathy_test.json",
-                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_test.json"
-            },
-            "train": {
-                "md5": "aa31ac474cf6250ebb81d18348a07ed8",
-                "storage": "coco/annotations/coco_karpathy_train.json",
-                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_train.json"
-            },
-            "val": {
-                "md5": "b273847456ef5580e33713b1f7de52a0",
-                "storage": "coco/annotations/coco_karpathy_val.json",
-                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_val.json"
-            }
-        },
-        "images": {
-            "storage": "coco/images/"
-        }
-    },
-    "data_type": "images",
-    "text_processor": {
-        "eval": {
-            "name": "blip_caption"
-        },
-        "train": {
-            "name": "blip_caption"
-        }
-    },
-    "vis_processor": {
-        "eval": {
-            "image_size": 364,
-            "name": "blip_image_eval"
-        },
-        "train": {
-            "image_size": 364,
-            "name": "blip_image_train"
-        }
-    }
-}
-2025-05-26 17:59:48,473 [INFO] 
-======  Model Attributes  ======
-2025-05-26 17:59:48,473 [INFO] {
-    "arch": "blip2",
-    "drop_path_rate": 0,
-    "finetuned": "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth",
-    "freeze_vit": false,
-    "image_size": 364,
-    "load_finetuned": true,
-    "model_type": "coco",
-    "num_query_token": 32,
-    "pretrained": "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_pretrained.pth",
-    "use_grad_checkpoint": false,
-    "vit_precision": "fp32"
-}
-2025-05-26 17:59:48,473 [INFO] Building datasets...
-2025-05-26 17:59:49,073 [WARNING] /home/zhh/miniconda3/envs/blip2/lib/python3.11/site-packages/huggingface_hub/file_download.py:1142: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
-  warnings.warn(
-
-2025-05-26 18:00:18,176 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/eva_vit.py:446: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
-  state_dict = torch.load(cached_file, map_location="cpu")
-
-2025-05-26 18:01:00,870 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/base_model.py:42: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
-  checkpoint = torch.load(url_or_filename, map_location="cpu")
-
-2025-05-26 18:01:02,790 [INFO] Missing keys []
-2025-05-26 18:01:02,790 [INFO] load checkpoint from /home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth
-2025-05-26 18:01:02,880 [INFO] dataset_ratios not specified, datasets will be concatenated (map-style datasets) or chained (webdataset.DataPipeline).
-2025-05-26 18:01:02,880 [INFO] Loaded 566747 records for train split from the dataset.
-2025-05-26 18:01:02,880 [INFO] Loaded 5000 records for val split from the dataset.
-2025-05-26 18:01:02,880 [INFO] Loaded 5000 records for test split from the dataset.
-2025-05-26 18:01:04,004 [INFO] Computing features for evaluation...
-2025-05-26 18:01:04,006 [INFO]     text features...
-2025-05-26 18:01:13,732 [INFO]     image features...
-Not using distributed mode
-Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_train.json
-Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_val.json
-Using downloaded and verified file: /home/zhh/ssd/excute/deeplearning/projects/datasets/coco/annotations/coco_karpathy_test.json
-Position interpolate from 16x16 to 26x26
- text_batch_i:  0 text_batch_i:  256 text_batch_i:  512 text_batch_i:  768 text_batch_i:  1024 text_batch_i:  1280 text_batch_i:  1536 text_batch_i:  1792 text_batch_i:  2048 text_batch_i:  2304 text_batch_i:  2560 text_batch_i:  2816 text_batch_i:  3072 text_batch_i:  3328 text_batch_i:  3584 text_batch_i:  3840 text_batch_i:  4096 text_batch_i:  4352 text_batch_i:  4608 text_batch_i:  4864 text_batch_i:  5120 text_batch_i:  5376 text_batch_i:  5632 text_batch_i:  5888 text_batch_i:  6144 text_batch_i:  6400 text_batch_i:  6656 text_batch_i:  6912 text_batch_i:  7168 text_batch_i:  7424 text_batch_i:  7680 text_batch_i:  7936 text_batch_i:  8192 text_batch_i:  8448 text_batch_i:  8704 text_batch_i:  8960 text_batch_i:  9216 text_batch_i:  9472 text_batch_i:  9728 text_batch_i:  9984 text_batch_i:  10240 text_batch_i:  10496 text_batch_i:  10752 text_batch_i:  11008 text_batch_i:  11264 text_batch_i:  11520 text_batch_i:  11776 text_batch_i:  12032 text_batch_i:  12288 text_batch_i:  12544 text_batch_i:  12800 text_batch_i:  13056 text_batch_i:  13312 text_batch_i:  13568 text_batch_i:  13824 text_batch_i:  14080 text_batch_i:  14336 text_batch_i:  14592 text_batch_i:  14848 text_batch_i:  15104 text_batch_i:  15360 text_batch_i:  15616 text_batch_i:  15872 text_batch_i:  16128 text_batch_i:  16384 text_batch_i:  16640 text_batch_i:  16896 text_batch_i:  17152 text_batch_i:  17408 text_batch_i:  17664 text_batch_i:  17920 text_batch_i:  18176 text_batch_i:  18432 text_batch_i:  18688 text_batch_i:  18944 text_batch_i:  19200 text_batch_i:  19456 text_batch_i:  19712 text_batch_i:  19968 text_batch_i:  20224 text_batch_i:  20480 text_batch_i:  20736 text_batch_i:  20992 text_batch_i:  21248 text_batch_i:  21504 text_batch_i:  21760 text_batch_i:  22016 text_batch_i:  22272 text_batch_i:  22528 text_batch_i:  22784 text_batch_i:  23040 text_batch_i:  23296 text_batch_i:  23552 text_batch_i:  23808 text_batch_i:  24064 text_batch_i:  24320 text_batch_i:  24576 text_batch_i:  248322025-05-26 18:08:30,535 [INFO]     similarity matrix...
-2025-05-26 18:08:31,399 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:1256: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
-  proba_top1_sim_i2t = F.softmax(topk_sim_i2t)[0]
-
-2025-05-26 18:08:31,412 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:1261: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
-  proba_sim_t2i_top1_idx_i2t = F.softmax(topk_sim_t2i_top1_idx_i2t)[idx_i_in_topk_idx_t2i_top1_idx_i2t]
-
-2025-05-26 18:08:31,421 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:1265: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
-  loss_entropy_topk_gallery = -(F.softmax(score) * F.log_softmax(score)).sum()
-
-2025-05-26 18:08:31,421 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:1265: UserWarning: Implicit dimension choice for log_softmax has been deprecated. Change the call to include dim=X as an argument.
-  loss_entropy_topk_gallery = -(F.softmax(score) * F.log_softmax(score)).sum()
-
- image_batch_i:  0 image_batch_i:  16 image_batch_i:  32 image_batch_i:  48 image_batch_i:  64 image_batch_i:  80 image_batch_i:  96 image_batch_i:  112 image_batch_i:  128 image_batch_i:  144 image_batch_i:  160 image_batch_i:  176 image_batch_i:  192 image_batch_i:  208 image_batch_i:  224 image_batch_i:  240 image_batch_i:  256 image_batch_i:  272 image_batch_i:  288 image_batch_i:  304 image_batch_i:  320 image_batch_i:  336 image_batch_i:  352 image_batch_i:  368 image_batch_i:  384 image_batch_i:  400 image_batch_i:  416 image_batch_i:  432 image_batch_i:  448 image_batch_i:  464 image_batch_i:  480 image_batch_i:  496 image_batch_i:  512 image_batch_i:  528 image_batch_i:  544 image_batch_i:  560 image_batch_i:  576 image_batch_i:  592 image_batch_i:  608 image_batch_i:  624 image_batch_i:  640 image_batch_i:  656 image_batch_i:  672 image_batch_i:  688 image_batch_i:  704 image_batch_i:  720 image_batch_i:  736 image_batch_i:  752 image_batch_i:  768 image_batch_i:  784 image_batch_i:  800 image_batch_i:  816 image_batch_i:  832 image_batch_i:  848 image_batch_i:  864 image_batch_i:  880 image_batch_i:  896 image_batch_i:  912 image_batch_i:  928 image_batch_i:  944 image_batch_i:  960 image_batch_i:  976 image_batch_i:  992 image_batch_i:  1008 image_batch_i:  1024 image_batch_i:  1040 image_batch_i:  1056 image_batch_i:  1072 image_batch_i:  1088 image_batch_i:  1104 image_batch_i:  1120 image_batch_i:  1136 image_batch_i:  1152 image_batch_i:  1168 image_batch_i:  1184 image_batch_i:  1200 image_batch_i:  1216 image_batch_i:  1232 image_batch_i:  1248 image_batch_i:  1264 image_batch_i:  1280 image_batch_i:  1296 image_batch_i:  1312 image_batch_i:  1328 image_batch_i:  1344 image_batch_i:  1360 image_batch_i:  1376 image_batch_i:  1392 image_batch_i:  1408 image_batch_i:  1424 image_batch_i:  1440 image_batch_i:  1456 image_batch_i:  1472 image_batch_i:  1488 image_batch_i:  1504 image_batch_i:  1520 image_batch_i:  1536 image_batch_i:  1552 image_batch_i:  1568 image_batch_i:  1584 image_batch_i:  1600 image_batch_i:  1616 image_batch_i:  1632 image_batch_i:  1648 image_batch_i:  1664 image_batch_i:  1680 image_batch_i:  1696 image_batch_i:  1712 image_batch_i:  1728 image_batch_i:  1744 image_batch_i:  1760 image_batch_i:  1776 image_batch_i:  1792 image_batch_i:  1808 image_batch_i:  1824 image_batch_i:  1840 image_batch_i:  1856 image_batch_i:  1872 image_batch_i:  1888 image_batch_i:  1904 image_batch_i:  1920 image_batch_i:  1936 image_batch_i:  1952 image_batch_i:  1968 image_batch_i:  1984 image_batch_i:  2000 image_batch_i:  2016 image_batch_i:  2032 image_batch_i:  2048 image_batch_i:  2064 image_batch_i:  2080 image_batch_i:  2096 image_batch_i:  2112 image_batch_i:  2128 image_batch_i:  2144 image_batch_i:  2160 image_batch_i:  2176 image_batch_i:  2192 image_batch_i:  2208 image_batch_i:  2224 image_batch_i:  2240 image_batch_i:  2256 image_batch_i:  2272 image_batch_i:  2288 image_batch_i:  2304 image_batch_i:  2320 image_batch_i:  2336 image_batch_i:  2352 image_batch_i:  2368 image_batch_i:  2384 image_batch_i:  2400 image_batch_i:  2416 image_batch_i:  2432 image_batch_i:  2448 image_batch_i:  2464 image_batch_i:  2480 image_batch_i:  2496 image_batch_i:  2512 image_batch_i:  2528 image_batch_i:  2544 image_batch_i:  2560 image_batch_i:  2576 image_batch_i:  2592 image_batch_i:  2608 image_batch_i:  2624 image_batch_i:  2640 image_batch_i:  2656 image_batch_i:  2672 image_batch_i:  2688 image_batch_i:  2704 image_batch_i:  2720 image_batch_i:  2736 image_batch_i:  2752 image_batch_i:  2768 image_batch_i:  2784 image_batch_i:  2800 image_batch_i:  2816 image_batch_i:  2832 image_batch_i:  2848 image_batch_i:  2864 image_batch_i:  2880 image_batch_i:  2896 image_batch_i:  2912 image_batch_i:  2928 image_batch_i:  2944 image_batch_i:  2960 image_batch_i:  2976 image_batch_i:  2992 image_batch_i:  3008 image_batch_i:  3024 image_batch_i:  3040 image_batch_i:  3056 image_batch_i:  3072 image_batch_i:  3088 image_batch_i:  3104 image_batch_i:  3120 image_batch_i:  3136 image_batch_i:  3152 image_batch_i:  3168 image_batch_i:  3184 image_batch_i:  3200 image_batch_i:  3216 image_batch_i:  3232 image_batch_i:  3248 image_batch_i:  3264 image_batch_i:  3280 image_batch_i:  3296 image_batch_i:  3312 image_batch_i:  3328 image_batch_i:  3344 image_batch_i:  3360 image_batch_i:  3376 image_batch_i:  3392 image_batch_i:  3408 image_batch_i:  3424 image_batch_i:  3440 image_batch_i:  3456 image_batch_i:  3472 image_batch_i:  3488 image_batch_i:  3504 image_batch_i:  3520 image_batch_i:  3536 image_batch_i:  3552 image_batch_i:  3568 image_batch_i:  3584 image_batch_i:  3600 image_batch_i:  3616 image_batch_i:  3632 image_batch_i:  3648 image_batch_i:  3664 image_batch_i:  3680 image_batch_i:  3696 image_batch_i:  3712 image_batch_i:  3728 image_batch_i:  3744 image_batch_i:  3760 image_batch_i:  3776 image_batch_i:  3792 image_batch_i:  3808 image_batch_i:  3824 image_batch_i:  3840 image_batch_i:  3856 image_batch_i:  3872 image_batch_i:  3888 image_batch_i:  3904 image_batch_i:  3920 image_batch_i:  3936 image_batch_i:  3952 image_batch_i:  3968 image_batch_i:  3984 image_batch_i:  4000 image_batch_i:  4016 image_batch_i:  4032 image_batch_i:  4048 image_batch_i:  4064 image_batch_i:  4080 image_batch_i:  4096 image_batch_i:  4112 image_batch_i:  4128 image_batch_i:  4144 image_batch_i:  4160 image_batch_i:  4176 image_batch_i:  4192 image_batch_i:  4208 image_batch_i:  4224 image_batch_i:  4240 image_batch_i:  4256 image_batch_i:  4272 image_batch_i:  4288 image_batch_i:  4304 image_batch_i:  4320 image_batch_i:  4336 image_batch_i:  4352 image_batch_i:  4368 image_batch_i:  4384 image_batch_i:  4400 image_batch_i:  4416 image_batch_i:  4432 image_batch_i:  4448 image_batch_i:  4464 image_batch_i:  4480 image_batch_i:  4496 image_batch_i:  4512 image_batch_i:  4528 image_batch_i:  4544 image_batch_i:  4560 image_batch_i:  4576 image_batch_i:  4592 image_batch_i:  4608 image_batch_i:  4624 image_batch_i:  4640 image_batch_i:  4656 image_batch_i:  4672 image_batch_i:  4688 image_batch_i:  4704 image_batch_i:  4720 image_batch_i:  4736 image_batch_i:  4752 image_batch_i:  4768 image_batch_i:  4784 image_batch_i:  4800 image_batch_i:  4816 image_batch_i:  4832 image_batch_i:  4848 image_batch_i:  4864 image_batch_i:  4880 image_batch_i:  4896 image_batch_i:  4912 image_batch_i:  4928 image_batch_i:  4944 image_batch_i:  4960 image_batch_i:  4976 image_batch_i:  2496Evaluation itm re-rank:  [   0/5000]  eta: 0:41:58    time: 0.5037  data: 0.0042  max mem: 19529
-Evaluation itm re-rank:  [ 100/5000]  eta: 0:47:54    time: 0.5887  data: 0.0000  max mem: 19536
-Evaluation itm re-rank:  [ 200/5000]  eta: 0:47:04    time: 0.5903  data: 0.0000  max mem: 19536
-Evaluation itm re-rank:  [ 300/5000]  eta: 0:46:08    time: 0.5898  data: 0.0000  max mem: 19536
-Evaluation itm re-rank:  [ 400/5000]  eta: 0:45:11    time: 0.5906  data: 0.0000  max mem: 19536
-Evaluation itm re-rank:  [ 500/5000]  eta: 0:44:13    time: 0.5905  data: 0.0000  max mem: 19536
-Evaluation itm re-rank:  [ 600/5000]  eta: 0:43:16    time: 0.5954  data: 0.0000  max mem: 19536
-Evaluation itm re-rank:  [ 700/5000]  eta: 0:42:20    time: 0.5951  data: 0.0000  max mem: 19536
-Evaluation itm re-rank:  [ 800/5000]  eta: 0:41:24    time: 0.5959  data: 0.0000  max mem: 19536
-Evaluation itm re-rank:  [ 900/5000]  eta: 0:40:26    time: 0.5954  data: 0.0000  max mem: 19536
-Evaluation itm re-rank:  [1000/5000]  eta: 0:39:29    time: 0.5958  data: 0.0000  max mem: 19536
-Evaluation itm re-rank:  [1100/5000]  eta: 0:38:30    time: 0.5958  data: 0.0000  max mem: 19537
-Evaluation itm re-rank:  [1200/5000]  eta: 0:37:32    time: 0.5949  data: 0.0000  max mem: 19537
-Evaluation itm re-rank:  [1300/5000]  eta: 0:36:33    time: 0.5950  data: 0.0000  max mem: 19537
-2025-05-26 18:57:53,833 [INFO] Evaluation time 0:56:49
-2025-05-26 18:57:56,287 [INFO] Computing features for evaluation...
-2025-05-26 18:57:56,289 [INFO]     text features...
-2025-05-26 18:58:06,078 [INFO]     image features...
-Evaluation itm re-rank:  [1400/5000]  eta: 0:35:35    time: 0.5947  data: 0.0000  max mem: 19537
-Evaluation itm re-rank:  [1500/5000]  eta: 0:34:35    time: 0.5932  data: 0.0000  max mem: 19537
-Evaluation itm re-rank:  [1600/5000]  eta: 0:33:36    time: 0.5929  data: 0.0000  max mem: 19537
-Evaluation itm re-rank:  [1700/5000]  eta: 0:32:37    time: 0.5927  data: 0.0000  max mem: 19537
-Evaluation itm re-rank:  [1800/5000]  eta: 0:31:37    time: 0.5921  data: 0.0000  max mem: 19537
-Evaluation itm re-rank:  [1900/5000]  eta: 0:30:38    time: 0.5923  data: 0.0000  max mem: 19537
-Evaluation itm re-rank:  [2000/5000]  eta: 0:29:38    time: 0.5921  data: 0.0000  max mem: 19537
-Evaluation itm re-rank:  [2100/5000]  eta: 0:28:39    time: 0.5937  data: 0.0000  max mem: 19537
-Evaluation itm re-rank:  [2200/5000]  eta: 0:27:40    time: 0.5935  data: 0.0000  max mem: 19538
-Evaluation itm re-rank:  [2300/5000]  eta: 0:26:40    time: 0.5915  data: 0.0000  max mem: 19538
-Evaluation itm re-rank:  [2400/5000]  eta: 0:25:41    time: 0.5917  data: 0.0000  max mem: 19538
-Evaluation itm re-rank:  [2500/5000]  eta: 0:24:42    time: 0.5922  data: 0.0000  max mem: 19538
-Evaluation itm re-rank:  [2600/5000]  eta: 0:23:42    time: 0.5923  data: 0.0000  max mem: 19538
-Evaluation itm re-rank:  [2700/5000]  eta: 0:22:43    time: 0.5926  data: 0.0000  max mem: 19538
-Evaluation itm re-rank:  [2800/5000]  eta: 0:21:44    time: 0.5925  data: 0.0000  max mem: 19538
-Evaluation itm re-rank:  [2900/5000]  eta: 0:20:44    time: 0.5921  data: 0.0000  max mem: 19538
-Evaluation itm re-rank:  [3000/5000]  eta: 0:19:45    time: 0.5917  data: 0.0000  max mem: 19538
-Evaluation itm re-rank:  [3100/5000]  eta: 0:18:46    time: 0.5925  data: 0.0000  max mem: 19538
-Evaluation itm re-rank:  [3200/5000]  eta: 0:17:46    time: 0.5923  data: 0.0000  max mem: 19539
-Evaluation itm re-rank:  [3300/5000]  eta: 0:16:47    time: 0.5916  data: 0.0000  max mem: 19539
-Evaluation itm re-rank:  [3400/5000]  eta: 0:15:48    time: 0.5916  data: 0.0000  max mem: 19539
-Evaluation itm re-rank:  [3500/5000]  eta: 0:14:48    time: 0.5916  data: 0.0000  max mem: 19539
-Evaluation itm re-rank:  [3600/5000]  eta: 0:13:49    time: 0.5912  data: 0.0000  max mem: 19539
-Evaluation itm re-rank:  [3700/5000]  eta: 0:12:50    time: 0.5913  data: 0.0000  max mem: 19539
-Evaluation itm re-rank:  [3800/5000]  eta: 0:11:51    time: 0.5913  data: 0.0000  max mem: 19539
-Evaluation itm re-rank:  [3900/5000]  eta: 0:10:51    time: 0.5913  data: 0.0000  max mem: 19539
-Evaluation itm re-rank:  [4000/5000]  eta: 0:09:52    time: 0.5932  data: 0.0000  max mem: 19539
-Evaluation itm re-rank:  [4100/5000]  eta: 0:08:53    time: 0.5939  data: 0.0000  max mem: 19539
-Evaluation itm re-rank:  [4200/5000]  eta: 0:07:54    time: 0.5936  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [4300/5000]  eta: 0:06:54    time: 0.5938  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [4400/5000]  eta: 0:05:55    time: 0.5933  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [4500/5000]  eta: 0:04:56    time: 0.5934  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [4600/5000]  eta: 0:03:57    time: 0.5934  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [4700/5000]  eta: 0:02:57    time: 0.5914  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [4800/5000]  eta: 0:01:58    time: 0.5916  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [4900/5000]  eta: 0:00:59    time: 0.5922  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [4999/5000]  eta: 0:00:00    time: 0.5920  data: 0.0000  max mem: 19540
-Evaluation itm re-rank: Total time: 0:49:22 (0.5926 s / it)
- text_batch_i:  0 text_batch_i:  256 text_batch_i:  512 text_batch_i:  768 text_batch_i:  1024 text_batch_i:  1280 text_batch_i:  1536 text_batch_i:  1792 text_batch_i:  2048 text_batch_i:  2304 text_batch_i:  2560 text_batch_i:  2816 text_batch_i:  3072 text_batch_i:  3328 text_batch_i:  3584 text_batch_i:  3840 text_batch_i:  4096 text_batch_i:  4352 text_batch_i:  4608 text_batch_i:  4864 text_batch_i:  5120 text_batch_i:  5376 text_batch_i:  5632 text_batch_i:  5888 text_batch_i:  6144 text_batch_i:  6400 text_batch_i:  6656 text_batch_i:  6912 text_batch_i:  7168 text_batch_i:  7424 text_batch_i:  7680 text_batch_i:  7936 text_batch_i:  8192 text_batch_i:  8448 text_batch_i:  8704 text_batch_i:  8960 text_batch_i:  9216 text_batch_i:  9472 text_batch_i:  9728 text_batch_i:  9984 text_batch_i:  10240 text_batch_i:  10496 text_batch_i:  10752 text_batch_i:  11008 text_batch_i:  11264 text_batch_i:  11520 text_batch_i:  11776 text_batch_i:  12032 text_batch_i:  12288 text_batch_i:  12544 text_batch_i:  12800 text_batch_i:  13056 text_batch_i:  13312 text_batch_i:  13568 text_batch_i:  13824 text_batch_i:  14080 text_batch_i:  14336 text_batch_i:  14592 text_batch_i:  14848 text_batch_i:  15104 text_batch_i:  15360 text_batch_i:  15616 text_batch_i:  15872 text_batch_i:  16128 text_batch_i:  16384 text_batch_i:  16640 text_batch_i:  16896 text_batch_i:  17152 text_batch_i:  17408 text_batch_i:  17664 text_batch_i:  17920 text_batch_i:  18176 text_batch_i:  18432 text_batch_i:  18688 text_batch_i:  18944 text_batch_i:  19200 text_batch_i:  19456 text_batch_i:  19712 text_batch_i:  19968 text_batch_i:  20224 text_batch_i:  20480 text_batch_i:  20736 text_batch_i:  20992 text_batch_i:  21248 text_batch_i:  21504 text_batch_i:  21760 text_batch_i:  22016 text_batch_i:  22272 text_batch_i:  22528 text_batch_i:  22784 text_batch_i:  23040 text_batch_i:  23296 text_batch_i:  23552 text_batch_i:  23808 text_batch_i:  24064 text_batch_i:  24320 text_batch_i:  24576 text_batch_i:  248322025-05-26 19:05:27,826 [INFO]     similarity matrix...
-2025-05-26 19:05:28,417 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:1381: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
-  proba_top1_sim_t2i = F.softmax(topk_sim_t2i)[0]
-
-2025-05-26 19:05:28,702 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:1386: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
-  proba_sim_i2t_top1_idx_t2i = F.softmax(topk_sim_i2t_top1_idx_t2i)[idx_of_i_in_topk_idx_i2t_top1_idx_t2i]
-
-2025-05-26 19:05:28,702 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:1392: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
-  loss_entropy_topk_gallery = -(F.softmax(score) * F.log_softmax(score)).sum()
-
-2025-05-26 19:05:28,703 [WARNING] /home/zhh/ssd/excute/deeplearning/projects/TTA_MM_Retrieval/LAVIS/lavis/models/blip2_models/blip2.py:1392: UserWarning: Implicit dimension choice for log_softmax has been deprecated. Change the call to include dim=X as an argument.
-  loss_entropy_topk_gallery = -(F.softmax(score) * F.log_softmax(score)).sum()
-
- image_batch_i:  0 image_batch_i:  16 image_batch_i:  32 image_batch_i:  48 image_batch_i:  64 image_batch_i:  80 image_batch_i:  96 image_batch_i:  112 image_batch_i:  128 image_batch_i:  144 image_batch_i:  160 image_batch_i:  176 image_batch_i:  192 image_batch_i:  208 image_batch_i:  224 image_batch_i:  240 image_batch_i:  256 image_batch_i:  272 image_batch_i:  288 image_batch_i:  304 image_batch_i:  320 image_batch_i:  336 image_batch_i:  352 image_batch_i:  368 image_batch_i:  384 image_batch_i:  400 image_batch_i:  416 image_batch_i:  432 image_batch_i:  448 image_batch_i:  464 image_batch_i:  480 image_batch_i:  496 image_batch_i:  512 image_batch_i:  528 image_batch_i:  544 image_batch_i:  560 image_batch_i:  576 image_batch_i:  592 image_batch_i:  608 image_batch_i:  624 image_batch_i:  640 image_batch_i:  656 image_batch_i:  672 image_batch_i:  688 image_batch_i:  704 image_batch_i:  720 image_batch_i:  736 image_batch_i:  752 image_batch_i:  768 image_batch_i:  784 image_batch_i:  800 image_batch_i:  816 image_batch_i:  832 image_batch_i:  848 image_batch_i:  864 image_batch_i:  880 image_batch_i:  896 image_batch_i:  912 image_batch_i:  928 image_batch_i:  944 image_batch_i:  960 image_batch_i:  976 image_batch_i:  992 image_batch_i:  1008 image_batch_i:  1024 image_batch_i:  1040 image_batch_i:  1056 image_batch_i:  1072 image_batch_i:  1088 image_batch_i:  1104 image_batch_i:  1120 image_batch_i:  1136 image_batch_i:  1152 image_batch_i:  1168 image_batch_i:  1184 image_batch_i:  1200 image_batch_i:  1216 image_batch_i:  1232 image_batch_i:  1248 image_batch_i:  1264 image_batch_i:  1280 image_batch_i:  1296 image_batch_i:  1312 image_batch_i:  1328 image_batch_i:  1344 image_batch_i:  1360 image_batch_i:  1376 image_batch_i:  1392 image_batch_i:  1408 image_batch_i:  1424 image_batch_i:  1440 image_batch_i:  1456 image_batch_i:  1472 image_batch_i:  1488 image_batch_i:  1504 image_batch_i:  1520 image_batch_i:  1536 image_batch_i:  1552 image_batch_i:  1568 image_batch_i:  1584 image_batch_i:  1600 image_batch_i:  1616 image_batch_i:  1632 image_batch_i:  1648 image_batch_i:  1664 image_batch_i:  1680 image_batch_i:  1696 image_batch_i:  1712 image_batch_i:  1728 image_batch_i:  1744 image_batch_i:  1760 image_batch_i:  1776 image_batch_i:  1792 image_batch_i:  1808 image_batch_i:  1824 image_batch_i:  1840 image_batch_i:  1856 image_batch_i:  1872 image_batch_i:  1888 image_batch_i:  1904 image_batch_i:  1920 image_batch_i:  1936 image_batch_i:  1952 image_batch_i:  1968 image_batch_i:  1984 image_batch_i:  2000 image_batch_i:  2016 image_batch_i:  2032 image_batch_i:  2048 image_batch_i:  2064 image_batch_i:  2080 image_batch_i:  2096 image_batch_i:  2112 image_batch_i:  2128 image_batch_i:  2144 image_batch_i:  2160 image_batch_i:  2176 image_batch_i:  2192 image_batch_i:  2208 image_batch_i:  2224 image_batch_i:  2240 image_batch_i:  2256 image_batch_i:  2272 image_batch_i:  2288 image_batch_i:  2304 image_batch_i:  2320 image_batch_i:  2336 image_batch_i:  2352 image_batch_i:  2368 image_batch_i:  2384 image_batch_i:  2400 image_batch_i:  2416 image_batch_i:  2432 image_batch_i:  2448 image_batch_i:  2464 image_batch_i:  2480 image_batch_i:  2496 image_batch_i:  2512 image_batch_i:  2528 image_batch_i:  2544 image_batch_i:  2560 image_batch_i:  2576 image_batch_i:  2592 image_batch_i:  2608 image_batch_i:  2624 image_batch_i:  2640 image_batch_i:  2656 image_batch_i:  2672 image_batch_i:  2688 image_batch_i:  2704 image_batch_i:  2720 image_batch_i:  2736 image_batch_i:  2752 image_batch_i:  2768 image_batch_i:  2784 image_batch_i:  2800 image_batch_i:  2816 image_batch_i:  2832 image_batch_i:  2848 image_batch_i:  2864 image_batch_i:  2880 image_batch_i:  2896 image_batch_i:  2912 image_batch_i:  2928 image_batch_i:  2944 image_batch_i:  2960 image_batch_i:  2976 image_batch_i:  2992 image_batch_i:  3008 image_batch_i:  3024 image_batch_i:  3040 image_batch_i:  3056 image_batch_i:  3072 image_batch_i:  3088 image_batch_i:  3104 image_batch_i:  3120 image_batch_i:  3136 image_batch_i:  3152 image_batch_i:  3168 image_batch_i:  3184 image_batch_i:  3200 image_batch_i:  3216 image_batch_i:  3232 image_batch_i:  3248 image_batch_i:  3264 image_batch_i:  3280 image_batch_i:  3296 image_batch_i:  3312 image_batch_i:  3328 image_batch_i:  3344 image_batch_i:  3360 image_batch_i:  3376 image_batch_i:  3392 image_batch_i:  3408 image_batch_i:  3424 image_batch_i:  3440 image_batch_i:  3456 image_batch_i:  3472 image_batch_i:  3488 image_batch_i:  3504 image_batch_i:  3520 image_batch_i:  3536 image_batch_i:  3552 image_batch_i:  3568 image_batch_i:  3584 image_batch_i:  3600 image_batch_i:  3616 image_batch_i:  3632 image_batch_i:  3648 image_batch_i:  3664 image_batch_i:  3680 image_batch_i:  3696 image_batch_i:  3712 image_batch_i:  3728 image_batch_i:  3744 image_batch_i:  3760 image_batch_i:  3776 image_batch_i:  3792 image_batch_i:  3808 image_batch_i:  3824 image_batch_i:  3840 image_batch_i:  3856 image_batch_i:  3872 image_batch_i:  3888 image_batch_i:  3904 image_batch_i:  3920 image_batch_i:  3936 image_batch_i:  3952 image_batch_i:  3968 image_batch_i:  3984 image_batch_i:  4000 image_batch_i:  4016 image_batch_i:  4032 image_batch_i:  4048 image_batch_i:  4064 image_batch_i:  4080 image_batch_i:  4096 image_batch_i:  4112 image_batch_i:  4128 image_batch_i:  4144 image_batch_i:  4160 image_batch_i:  4176 image_batch_i:  4192 image_batch_i:  4208 image_batch_i:  4224 image_batch_i:  4240 image_batch_i:  4256 image_batch_i:  4272 image_batch_i:  4288 image_batch_i:  4304 image_batch_i:  4320 image_batch_i:  4336 image_batch_i:  4352 image_batch_i:  4368 image_batch_i:  4384 image_batch_i:  4400 image_batch_i:  4416 image_batch_i:  4432 image_batch_i:  4448 image_batch_i:  4464 image_batch_i:  4480 image_batch_i:  4496 image_batch_i:  4512 image_batch_i:  4528 image_batch_i:  4544 image_batch_i:  4560 image_batch_i:  4576 image_batch_i:  4592 image_batch_i:  4608 image_batch_i:  4624 image_batch_i:  4640 image_batch_i:  4656 image_batch_i:  4672 image_batch_i:  4688 image_batch_i:  4704 image_batch_i:  4720 image_batch_i:  4736 image_batch_i:  4752 image_batch_i:  4768 image_batch_i:  4784 image_batch_i:  4800 image_batch_i:  4816 image_batch_i:  4832 image_batch_i:  4848 image_batch_i:  4864 image_batch_i:  4880 image_batch_i:  4896 image_batch_i:  4912 image_batch_i:  4928 image_batch_i:  4944 image_batch_i:  4960 image_batch_i:  4976 image_batch_i:  2496Evaluation itm re-rank:  [    0/25010]  eta: 3:19:03    time: 0.4775  data: 0.0203  max mem: 19540
-Evaluation itm re-rank:  [  100/25010]  eta: 4:21:19    time: 0.6298  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [  200/25010]  eta: 4:20:20    time: 0.6297  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [  300/25010]  eta: 4:19:13    time: 0.6294  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [  400/25010]  eta: 4:18:10    time: 0.6297  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [  500/25010]  eta: 4:17:06    time: 0.6293  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [  600/25010]  eta: 4:16:03    time: 0.6294  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [  700/25010]  eta: 4:14:58    time: 0.6294  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [  800/25010]  eta: 4:13:55    time: 0.6292  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [  900/25010]  eta: 4:12:53    time: 0.6295  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 1000/25010]  eta: 4:11:49    time: 0.6293  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 1100/25010]  eta: 4:10:46    time: 0.6294  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 1200/25010]  eta: 4:09:43    time: 0.6289  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 1300/25010]  eta: 4:08:40    time: 0.6292  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 1400/25010]  eta: 4:07:37    time: 0.6293  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 1500/25010]  eta: 4:06:34    time: 0.6293  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 1600/25010]  eta: 4:05:30    time: 0.6293  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 1700/25010]  eta: 4:04:27    time: 0.6289  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 1800/25010]  eta: 4:03:24    time: 0.6293  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 1900/25010]  eta: 4:02:21    time: 0.6293  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 2000/25010]  eta: 4:01:18    time: 0.6288  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 2100/25010]  eta: 4:00:15    time: 0.6297  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 2200/25010]  eta: 3:59:12    time: 0.6293  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 2300/25010]  eta: 3:58:10    time: 0.6293  data: 0.0000  max mem: 19540
-Evaluation itm re-rank:  [ 2400/25010]  eta: 3:57:07    time: 0.6296  data: 0.0000  max mem: 19541
-Evaluation itm re-rank:  [ 2500/25010]  eta: 3:56:04    time: 0.6294  data: 0.0000  max mem: 19541
-Evaluation itm re-rank:  [ 2600/25010]  eta: 3:55:01    time: 0.6297  data: 0.0000  max mem: 19541
-Evaluation itm re-rank:  [ 2700/25010]  eta: 3:53:59    time: 0.6297  data: 0.0000  max mem: 19541
-Evaluation itm re-rank:  [ 2800/25010]  eta: 3:52:56    time: 0.6293  data: 0.0000  max mem: 19541
-Evaluation itm re-rank:  [ 2900/25010]  eta: 3:51:53    time: 0.6291  data: 0.0000  max mem: 19541
-Evaluation itm re-rank:  [ 3000/25010]  eta: 3:50:50    time: 0.6296  data: 0.0000  max mem: 19541
-Evaluation itm re-rank:  [ 3100/25010]  eta: 3:49:48    time: 0.6294  data: 0.0000  max mem: 19541
-Evaluation itm re-rank:  [ 3200/25010]  eta: 3:48:45    time: 0.6295  data: 0.0000  max mem: 19541
-Evaluation itm re-rank:  [ 3300/25010]  eta: 3:47:42    time: 0.6293  data: 0.0000  max mem: 19541
-Evaluation itm re-rank:  [ 3400/25010]  eta: 3:46:39    time: 0.6292  data: 0.0000  max mem: 19542
-Evaluation itm re-rank:  [ 3500/25010]  eta: 3:45:36    time: 0.6293  data: 0.0000  max mem: 19542
-Evaluation itm re-rank:  [ 3600/25010]  eta: 3:44:33    time: 0.6295  data: 0.0000  max mem: 19542
-Evaluation itm re-rank:  [ 3700/25010]  eta: 3:43:30    time: 0.6299  data: 0.0000  max mem: 19542
-Evaluation itm re-rank:  [ 3800/25010]  eta: 3:42:28    time: 0.6314  data: 0.0000  max mem: 19542
-Evaluation itm re-rank:  [ 3900/25010]  eta: 3:41:26    time: 0.6308  data: 0.0000  max mem: 19542
-Evaluation itm re-rank:  [ 4000/25010]  eta: 3:40:24    time: 0.6302  data: 0.0000  max mem: 19542
-Evaluation itm re-rank:  [ 4100/25010]  eta: 3:39:22    time: 0.6313  data: 0.0000  max mem: 19542
-Evaluation itm re-rank:  [ 4200/25010]  eta: 3:38:20    time: 0.6313  data: 0.0000  max mem: 19542
-Evaluation itm re-rank:  [ 4300/25010]  eta: 3:37:17    time: 0.6313  data: 0.0000  max mem: 19542
-Evaluation itm re-rank:  [ 4400/25010]  eta: 3:36:15    time: 0.6304  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 4500/25010]  eta: 3:35:12    time: 0.6307  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 4600/25010]  eta: 3:34:10    time: 0.6308  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 4700/25010]  eta: 3:33:08    time: 0.6309  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 4800/25010]  eta: 3:32:05    time: 0.6313  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 4900/25010]  eta: 3:31:03    time: 0.6309  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 5000/25010]  eta: 3:30:00    time: 0.6315  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 5100/25010]  eta: 3:28:58    time: 0.6314  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 5200/25010]  eta: 3:27:56    time: 0.6320  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 5300/25010]  eta: 3:26:54    time: 0.6322  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 5400/25010]  eta: 3:25:52    time: 0.6326  data: 0.0000  max mem: 19543
-Evaluation itm re-rank:  [ 5500/25010]  eta: 3:24:50    time: 0.6320  data: 0.0000  max mem: 19544
-Evaluation itm re-rank:  [ 5600/25010]  eta: 3:23:47    time: 0.6322  data: 0.0000  max mem: 19544
-Evaluation itm re-rank:  [ 5700/25010]  eta: 3:22:45    time: 0.6320  data: 0.0000  max mem: 19544
-Evaluation itm re-rank:  [ 5800/25010]  eta: 3:21:43    time: 0.6331  data: 0.0000  max mem: 19544
-Evaluation itm re-rank:  [ 5900/25010]  eta: 3:20:41    time: 0.6331  data: 0.0000  max mem: 19544
-Evaluation itm re-rank:  [ 6000/25010]  eta: 3:19:39    time: 0.6335  data: 0.0000  max mem: 19544
-Evaluation itm re-rank:  [ 6100/25010]  eta: 3:18:37    time: 0.6333  data: 0.0000  max mem: 19544
-Evaluation itm re-rank:  [ 6200/25010]  eta: 3:17:35    time: 0.6334  data: 0.0000  max mem: 19544
-Evaluation itm re-rank:  [ 6300/25010]  eta: 3:16:33    time: 0.6340  data: 0.0000  max mem: 19544
-Evaluation itm re-rank:  [ 6400/25010]  eta: 3:15:31    time: 0.6347  data: 0.0000  max mem: 19544
-Evaluation itm re-rank:  [ 6500/25010]  eta: 3:14:29    time: 0.6341  data: 0.0000  max mem: 19545
-Evaluation itm re-rank:  [ 6600/25010]  eta: 3:13:27    time: 0.6350  data: 0.0000  max mem: 19545
-Evaluation itm re-rank:  [ 6700/25010]  eta: 3:12:25    time: 0.6338  data: 0.0000  max mem: 19545
-Evaluation itm re-rank:  [ 6800/25010]  eta: 3:11:23    time: 0.6351  data: 0.0000  max mem: 19545
-Evaluation itm re-rank:  [ 6900/25010]  eta: 3:10:21    time: 0.6345  data: 0.0000  max mem: 19545
-Evaluation itm re-rank:  [ 7000/25010]  eta: 3:09:19    time: 0.6341  data: 0.0000  max mem: 19545
-Evaluation itm re-rank:  [ 7100/25010]  eta: 3:08:17    time: 0.6339  data: 0.0000  max mem: 19545
-Evaluation itm re-rank:  [ 7200/25010]  eta: 3:07:14    time: 0.6337  data: 0.0000  max mem: 19545
-Evaluation itm re-rank:  [ 7300/25010]  eta: 3:06:12    time: 0.6341  data: 0.0000  max mem: 19545
-Evaluation itm re-rank:  [ 7400/25010]  eta: 3:05:10    time: 0.6347  data: 0.0000  max mem: 19545
-Evaluation itm re-rank:  [ 7500/25010]  eta: 3:04:08    time: 0.6344  data: 0.0000  max mem: 19546
-Evaluation itm re-rank:  [ 7600/25010]  eta: 3:03:05    time: 0.6345  data: 0.0000  max mem: 19546
-Evaluation itm re-rank:  [ 7700/25010]  eta: 3:02:03    time: 0.6349  data: 0.0000  max mem: 19546
-Evaluation itm re-rank:  [ 7800/25010]  eta: 3:01:01    time: 0.6357  data: 0.0000  max mem: 19546
-Evaluation itm re-rank:  [ 7900/25010]  eta: 2:59:59    time: 0.6348  data: 0.0000  max mem: 19546
-Evaluation itm re-rank:  [ 8000/25010]  eta: 2:58:56    time: 0.6348  data: 0.0000  max mem: 19546
-Evaluation itm re-rank:  [ 8100/25010]  eta: 2:57:54    time: 0.6366  data: 0.0000  max mem: 19546
-Evaluation itm re-rank:  [ 8200/25010]  eta: 2:56:52    time: 0.6354  data: 0.0000  max mem: 19546
-Evaluation itm re-rank:  [ 8300/25010]  eta: 2:55:49    time: 0.6357  data: 0.0000  max mem: 19546
-Evaluation itm re-rank:  [ 8400/25010]  eta: 2:54:47    time: 0.6353  data: 0.0000  max mem: 19546
-Evaluation itm re-rank:  [ 8500/25010]  eta: 2:53:45    time: 0.6357  data: 0.0000  max mem: 19547
-Evaluation itm re-rank:  [ 8600/25010]  eta: 2:52:42    time: 0.6355  data: 0.0000  max mem: 19547
-Evaluation itm re-rank:  [ 8700/25010]  eta: 2:51:40    time: 0.6352  data: 0.0000  max mem: 19547
-Evaluation itm re-rank:  [ 8800/25010]  eta: 2:50:38    time: 0.6354  data: 0.0000  max mem: 19547
-Evaluation itm re-rank:  [ 8900/25010]  eta: 2:49:35    time: 0.6342  data: 0.0000  max mem: 19547
-Evaluation itm re-rank:  [ 9000/25010]  eta: 2:48:32    time: 0.6346  data: 0.0000  max mem: 19547
-Evaluation itm re-rank:  [ 9100/25010]  eta: 2:47:30    time: 0.6347  data: 0.0000  max mem: 19547
-Evaluation itm re-rank:  [ 9200/25010]  eta: 2:46:27    time: 0.6335  data: 0.0000  max mem: 19547
-Evaluation itm re-rank:  [ 9300/25010]  eta: 2:45:24    time: 0.6345  data: 0.0000  max mem: 19547
-Evaluation itm re-rank:  [ 9400/25010]  eta: 2:44:22    time: 0.6348  data: 0.0000  max mem: 19547
