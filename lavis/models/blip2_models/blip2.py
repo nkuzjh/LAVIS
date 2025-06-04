@@ -1806,16 +1806,15 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, **k
             text_atts=text_atts[topk_idx_i2t], #128,35
         ).float() # score.shape=128
 
-        if hasattr(tta_cfg, 'topk_match_coeffi') and tta_cfg.topk_match_coeffi == True:
+        top1_match_coeffi = torch.ones(1).to(model.device)
+        if hasattr(tta_cfg, 'top1_match_coeffi') and tta_cfg.top1_match_coeffi == True:
             proba_top1_sim_i2t = F.softmax(topk_sim_i2t, dim=0)[0]
             proba_sim_t2i_top1_idx_i2t = torch.zeros(1).to(proba_top1_sim_i2t.device)
             topk_sim_t2i_top1_idx_i2t, topk_idx_t2i_top1_idx_i2t = sims_matrix_t2i[topk_idx_i2t[0]].topk(k=k_test, dim=0)
             if i in topk_idx_t2i_top1_idx_i2t:
                 idx_i_in_topk_idx_t2i_top1_idx_i2t = torch.where(topk_idx_t2i_top1_idx_i2t == i)
                 proba_sim_t2i_top1_idx_i2t = F.softmax(topk_sim_t2i_top1_idx_i2t, dim=0)[idx_i_in_topk_idx_t2i_top1_idx_i2t]
-            top1_match_coeffi = torch.exp(1 - (proba_top1_sim_i2t + proba_sim_t2i_top1_idx_i2t)/2 )
-        else:
-            top1_match_coeffi = torch.ones(1).to(model.device)
+            top1_match_coeffi = torch.exp(1 - (proba_top1_sim_i2t + proba_sim_t2i_top1_idx_i2t)/2 )            
 
         # itm entropy adapt
         loss_entropy_topk_gallery = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum()
@@ -1934,7 +1933,8 @@ def compute_t2i_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, **k
             text_atts=text_atts[start + i].repeat(k_test, 1), #128,35
         ).float() # score.shape=128
 
-        if hasattr(tta_cfg, 'topk_match_coeffi') and tta_cfg.topk_match_coeffi == True:
+        top1_match_coeffi = torch.ones(1).to(model.device)
+        if hasattr(tta_cfg, 'top1_match_coeffi') and tta_cfg.top1_match_coeffi == True:
             proba_top1_sim_t2i = F.softmax(topk_sim_t2i, dim=0)[0]
             proba_sim_i2t_top1_idx_t2i = torch.Tensor([0.]).to(proba_top1_sim_t2i.device)
             topk_sim_i2t_top1_idx_t2i, topk_idx_i2t_top1_idx_t2i = sims_matrix_i2t[topk_idx_t2i[0]].topk(k=k_test, dim=0)
@@ -1942,9 +1942,7 @@ def compute_t2i_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, **k
                 idx_of_i_in_topk_idx_i2t_top1_idx_t2i = torch.where(topk_idx_i2t_top1_idx_t2i == i)
                 proba_sim_i2t_top1_idx_t2i = F.softmax(topk_sim_i2t_top1_idx_t2i, dim=0)[idx_of_i_in_topk_idx_i2t_top1_idx_t2i]
             top1_match_coeffi = torch.exp( 1 - (proba_top1_sim_t2i + proba_sim_i2t_top1_idx_t2i)/2 )
-        else:
-            top1_match_coeffi = torch.ones(1).to(model.device)
-
+        
         # itm adapt
         loss_entropy_topk_gallery = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum()
         loss_entropy_uncertainty = loss_entropy_topk_gallery.mean() / top1_match_coeffi
