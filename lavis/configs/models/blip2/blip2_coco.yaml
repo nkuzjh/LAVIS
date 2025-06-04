@@ -9,8 +9,10 @@ model:
 
   # pretrained: "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained.pth"
   # finetuned: "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_finetune_coco.pth"
-  pretrained: "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_pretrained.pth"
-  finetuned: "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth"
+  # pretrained: "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_pretrained.pth"
+  # finetuned: "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_finetune_coco.pth"
+  pretrained: "/home/jiahao/pretrain/blip2_pretrained.pth"
+  finetuned: "/home/jiahao/pretrain/blip2_finetune_coco.pth"
 
   # vit encoder
   image_size: 364

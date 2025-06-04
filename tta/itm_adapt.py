@@ -215,8 +215,8 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
         logging.info("start i2t task for tta")
         if tta_cfg.zero_shot_eval: 
             score_i2t_zeroshot, _, _ = tta_model.model.compute_i2t_sim_matrix(dataloader, task_cfg=task_cfg)
+            logging.info("report i2t metrics, zero-shot: \r\n")
             logging.info(
-                "report i2t metrics, zero-shot: \r\n",
                 report_metrics(
                     scores_i2t=score_i2t_zeroshot,
                     scores_t2i=None,
@@ -243,8 +243,8 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
 
             if tta_cfg.online == False:
                 score_i2t_offline, _, _ = tta_model.model.compute_i2t_sim_matrix(dataloader, task_cfg=task_cfg)
-                logging.info(
-                    "report i2t metrics offline, at epoch %d :\r\n", tta_epoch,
+                logging.info("report i2t metrics offline, at epoch %d :\r\n", tta_epoch)
+                logging.info(                    
                     report_metrics(
                         scores_i2t=score_i2t_offline,
                         scores_t2i=None,
@@ -265,8 +265,8 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
         logging.info("start t2i task for tta")
         if tta_cfg.zero_shot_eval: 
             _, score_t2i_zeroshot, _ = tta_model.model.compute_t2i_sim_matrix(dataloader, task_cfg=task_cfg)
+            logging.info("report t2i metrics, zero-shot :\r\n")
             logging.info(
-                "report t2i metrics, zero-shot :\r\n",
                 report_metrics(
                     scores_i2t=None,
                     scores_t2i=score_t2i_zeroshot,
@@ -293,8 +293,8 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
 
             if tta_cfg.online == False:
                 _, score_t2i_offline, _ = tta_model.model.compute_t2i_sim_matrix(dataloader, task_cfg=task_cfg)
+                logging.info("report t2i metrics offline, at epoch %d :", tta_epoch)
                 logging.info(
-                    "report t2i metrics offline, at epoch %d :\r\n", tta_epoch,
                     report_metrics(
                         scores_i2t=None,
                         scores_t2i=score_t2i_offline,
