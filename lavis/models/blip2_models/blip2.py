@@ -1843,7 +1843,7 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, **k
 
     return score_matrix_i2t.cpu().detach().numpy()
 
-def compute_t2i_sim_matrix_adapt_itm(model, data_loader, optimizer,  **kwargs):
+def compute_t2i_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, **kwargs):
     k_test = kwargs.pop("k_test")
 
     metric_logger = MetricLogger(delimiter="  ")
