@@ -134,14 +134,14 @@ if __name__ == "__main__":
 # tent lr=1e-4 wd=0.0
 # Qformer + Tent without Uncertainty
 # rerank_score = itm_score +　cosine similarity without dividing temperature
-# itm_adapt run at remote 58
+# is same to itm_adapt without top1_match_coeffi but with grad_acc, run at remote 58
 
 
 # cosine similarity结果除以temperature，再作为uncertainty
 # tent lr=5e-6 wd=0.0
 # Qformer + Tent without Uncertainty
 # rerank_score = itm_score +　cosine similarity without dividing temperature
-# itm_adapt run at remote 58
+# is same to itm_adapt without top1_match_coeffi but with grad_acc, run at remote 58
 
 
 
@@ -180,14 +180,12 @@ if __name__ == "__main__":
 # offline, online=False
 # rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature)
 # multi_epochs=5
-#         i2t:
-# report i2t metrics online, at epoch 0 :
-# 2025-06-03 11:18:33,419 [INFO] {'txt_r1': 84.92, 'txt_r5': 96.38, 'txt_r10': 98.3, 'txt_r_mean': 93.2, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
-# report i2t metrics offline, at epoch 0 :
-# 2025-06-03 15:08:39,379 [INFO] {'txt_r1': 84.06, 'txt_r5': 96.42, 'txt_r10': 98.1, 'txt_r_mean': 92.86000000000001, 'img_r1': 67.58096761295482, 'img_r5': 87.40103958416633, 'img_r10': 92.47101159536186, 'img_r_mean': 82.48433959749434, 'r_mean': 87.67216979874718, 'agg_metrics': 92.86000000000001}
-#         i2t:
-# report t2i metrics online, at epoch 0 :
-# 2025-06-03 14:53:23,381 [INFO] {'txt_r1': -999, 'txt_r5': -999, 'txt_r10': -999, 'txt_r_mean': -999, 'img_r1': 67.23310675729708, 'img_r5': 87.53698520591763, 'img_r10': 92.45901639344262, 'img_r_mean': 82.40970278555245, 'r_mean': -999, 'agg_metrics': -999}
+# i2t best:
+    # report i2t metrics online, at epoch 2 :
+    # "txt_r1": 85.08, "txt_r5": 96.62, "txt_r10": 98.32, "txt_r_mean": 93.33999999999999, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+# i2t best:
+    # report t2i metrics online, at epoch 2 :s
+    # {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 67.4970011995202, "img_r5": 87.3890443822471, "img_r10": 92.5389844062375, "img_r_mean": 82.47500999600159, "r_mean": -999, "agg_metrics": -999}
 
 
 
@@ -198,4 +196,4 @@ if __name__ == "__main__":
 # 增加互相recall时的sample selection
 # debug args: --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh_topk_ss.yaml --is_tta True
 # CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh_topk_ss.yaml >ret_coco_eval_zhh_topk_ss.out &
-
+# implemented by itm_adapt_ss
