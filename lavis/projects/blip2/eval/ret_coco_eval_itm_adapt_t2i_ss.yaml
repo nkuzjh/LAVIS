@@ -58,7 +58,7 @@ run:
   evaluate: True
 
 tta:
-  name: "itm_adapt"
+  name: "itm_adapt_ss"
   init_lr: 5e-6
   weight_decay: 0.0
   wo_rerank: False

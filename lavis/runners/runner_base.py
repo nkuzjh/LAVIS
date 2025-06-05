@@ -496,7 +496,7 @@ class RunnerBase:
             params, param_names = zhh.collect_params_blip2(model)
             optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
             tta_model = zhh.Zhh_Blip2(model, optimizer)
-        elif tta_cfg.name == "itm_adapt":
+        elif tta_cfg.name == "itm_adapt" or tta_cfg.name == "itm_adapt_ss":
             model = itm_adapt.configure_model_blip2(model)
             params, param_names = itm_adapt.collect_params_blip2(model)
             optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)

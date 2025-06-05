@@ -39,6 +39,8 @@ class ITM_ADAPT(nn.Module):
         for _ in range(self.steps):
             if tta_cfg.name == 'itm_adapt':
                 outputs = forward_and_itm_adapt(self, self.optimizer, data_loader, task_cfg, tta_cfg)
+            elif tta_cfg.name == 'itm_adapt_ss':
+                outputs = forward_and_itm_adapt_ss(self, self.optimizer, data_loader, task_cfg, tta_cfg)
 
         return outputs
 
