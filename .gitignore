@@ -170,7 +170,7 @@ cache/
 *.npy
 
 # experiment files
-# lavis/output/
+lavis/output/
 *.out
 
 lavis/configs/default.yaml
