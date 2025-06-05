@@ -52,7 +52,7 @@ run:
   # misc
   seed: 42
   # output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_gradacc_offline_multiepochs5/i2t"
-  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_divtopkmatchcoeffi_gradacc_offline_multiepochs5/i2t"
+  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_divtopkmatchcoeffi_gradacc1_offline_multiepochs5/i2t"
 
   evaluate: True
 
