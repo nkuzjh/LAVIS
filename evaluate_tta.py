@@ -134,14 +134,14 @@ if __name__ == "__main__":
 # tent lr=1e-4 wd=0.0
 # Qformer + Tent without Uncertainty
 # rerank_score = itm_score +　cosine similarity without dividing temperature
-
+# itm_adapt run at remote 58
 
 
 # cosine similarity结果除以temperature，再作为uncertainty
 # tent lr=5e-6 wd=0.0
 # Qformer + Tent without Uncertainty
 # rerank_score = itm_score +　cosine similarity without dividing temperature
-
+# itm_adapt run at remote 58
 
 
 

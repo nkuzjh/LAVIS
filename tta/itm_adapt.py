@@ -213,7 +213,7 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
     # it2
     if "tta_task" not in tta_cfg.keys() or tta_cfg.tta_task == "i2t":
         logging.info("start i2t task for tta")
-        if tta_cfg.zero_shot_eval: 
+        if tta_cfg.zero_shot_eval:
             score_i2t_zeroshot, _, _ = tta_model.model.compute_i2t_sim_matrix(dataloader, task_cfg=task_cfg)
             logging.info("report i2t metrics, zero-shot: \r\n")
             logging.info(
@@ -244,7 +244,7 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
             if tta_cfg.online == False:
                 score_i2t_offline, _, _ = tta_model.model.compute_i2t_sim_matrix(dataloader, task_cfg=task_cfg)
                 logging.info("report i2t metrics offline, at epoch %d :\r\n", tta_epoch)
-                logging.info(                    
+                logging.info(
                     report_metrics(
                         scores_i2t=score_i2t_offline,
                         scores_t2i=None,
@@ -263,7 +263,7 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
 
     if "tta_task" not in tta_cfg.keys() or tta_cfg.tta_task == "t2i":
         logging.info("start t2i task for tta")
-        if tta_cfg.zero_shot_eval: 
+        if tta_cfg.zero_shot_eval:
             _, score_t2i_zeroshot, _ = tta_model.model.compute_t2i_sim_matrix(dataloader, task_cfg=task_cfg)
             logging.info("report t2i metrics, zero-shot :\r\n")
             logging.info(
@@ -279,6 +279,122 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
         for tta_epoch in range(offline_multi_epochs):
             logging.info(f"start tta epoch {tta_epoch} for t2i task")
             score_t2i = tta_model.model.compute_t2i_sim_matrix_adapt_itm(dataloader, task_cfg, optimizer, tta_cfg)
+            logging.info("report t2i metrics online, at epoch %d :", tta_epoch)
+            logging.info(
+                report_metrics(
+                    scores_i2t=None,
+                    scores_t2i=score_t2i,
+                    txt2img=dataloader.dataset.txt2img,
+                    img2txt=dataloader.dataset.img2txt,
+                    prefix_info=f"report t2i metrics online, at epoch {tta_epoch} :"
+                )
+            )
+            torch.cuda.empty_cache()
+
+            if tta_cfg.online == False:
+                _, score_t2i_offline, _ = tta_model.model.compute_t2i_sim_matrix(dataloader, task_cfg=task_cfg)
+                logging.info("report t2i metrics offline, at epoch %d :", tta_epoch)
+                logging.info(
+                    report_metrics(
+                        scores_i2t=None,
+                        scores_t2i=score_t2i_offline,
+                        txt2img=dataloader.dataset.txt2img,
+                        img2txt=dataloader.dataset.img2txt,
+                        prefix_info=f"report t2i metrics offline, at epoch {tta_epoch} :"
+                    )
+                )
+
+            torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"t2i_tta_model_model_epoch_{tta_epoch}.pth"))
+            logging.info(f"save t2i tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f't2i_tta_model_model_epoch_{tta_epoch}.pth')}")
+            torch.cuda.empty_cache()
+
+    if tta_cfg.online == False:
+        return score_i2t, score_t2i, score_i2t_offline, score_t2i_offline
+    else:
+        return score_i2t, score_t2i
+
+@torch.enable_grad()
+def forward_and_itm_adapt_ss(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
+    """Forward and adapt model on batch of data.
+
+    Measure entropy of the model prediction, take gradients, and update params.
+    """
+    score_i2t, score_t2i, score_i2t_offline, score_t2i_offline = None, None, None, None
+
+    if hasattr(tta_cfg, "offline_multi_epochs") and tta_cfg.online == False:
+        offline_multi_epochs = tta_cfg.offline_multi_epochs
+    else:
+        offline_multi_epochs = 1
+
+    # it2
+    if "tta_task" not in tta_cfg.keys() or tta_cfg.tta_task == "i2t":
+        logging.info("start i2t task for tta")
+        if tta_cfg.zero_shot_eval:
+            score_i2t_zeroshot, _, _ = tta_model.model.compute_i2t_sim_matrix(dataloader, task_cfg=task_cfg)
+            logging.info("report i2t metrics, zero-shot: \r\n")
+            logging.info(
+                report_metrics(
+                    scores_i2t=score_i2t_zeroshot,
+                    scores_t2i=None,
+                    txt2img=dataloader.dataset.txt2img,
+                    img2txt=dataloader.dataset.img2txt,
+                    prefix_info="report i2t metrics, zero-shot: ",
+                )
+            )
+
+        for tta_epoch in range(offline_multi_epochs):
+            logging.info(f"start tta epoch {tta_epoch} for i2t task")
+            score_i2t = tta_model.model.compute_i2t_sim_matrix_adapt_itm_ss(dataloader, task_cfg, optimizer, tta_cfg)
+            logging.info("report i2t metrics online, at epoch %d :", tta_epoch)
+            logging.info(
+                report_metrics(
+                    scores_i2t=score_i2t,
+                    scores_t2i=None,
+                    txt2img=dataloader.dataset.txt2img,
+                    img2txt=dataloader.dataset.img2txt,
+                    prefix_info=f"report i2t metrics online, at epoch {tta_epoch} :"
+                )
+            )
+            torch.cuda.empty_cache()
+
+            if tta_cfg.online == False:
+                score_i2t_offline, _, _ = tta_model.model.compute_i2t_sim_matrix(dataloader, task_cfg=task_cfg)
+                logging.info("report i2t metrics offline, at epoch %d :\r\n", tta_epoch)
+                logging.info(
+                    report_metrics(
+                        scores_i2t=score_i2t_offline,
+                        scores_t2i=None,
+                        txt2img=dataloader.dataset.txt2img,
+                        img2txt=dataloader.dataset.img2txt,
+                        prefix_info=f"report i2t metrics offline, at epoch {tta_epoch} :"
+                    )
+                )
+
+            torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"i2t_tta_model_model_epoch_{tta_epoch}.pth"))
+            logging.info(f"save i2t tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f'i2t_tta_model_model_epoch_{tta_epoch}.pth')}")
+            torch.cuda.empty_cache()
+
+    # # reset model to original state before t2i task
+    tta_model.reset()
+
+    if "tta_task" not in tta_cfg.keys() or tta_cfg.tta_task == "t2i":
+        logging.info("start t2i task for tta")
+        if tta_cfg.zero_shot_eval:
+            _, score_t2i_zeroshot, _ = tta_model.model.compute_t2i_sim_matrix(dataloader, task_cfg=task_cfg)
+            logging.info("report t2i metrics, zero-shot :\r\n")
+            logging.info(
+                report_metrics(
+                    scores_i2t=None,
+                    scores_t2i=score_t2i_zeroshot,
+                    txt2img=dataloader.dataset.txt2img,
+                    img2txt=dataloader.dataset.img2txt,
+                    prefix_info=f"report t2i metrics, zero-shot :"
+                )
+            )
+        # t2i
+        for tta_epoch in range(offline_multi_epochs):
+            logging.info(f"start tta epoch {tta_epoch} for t2i task")
+            score_t2i = tta_model.model.compute_t2i_sim_matrix_adapt_itm_ss(dataloader, task_cfg, optimizer, tta_cfg)
             logging.info("report t2i metrics online, at epoch %d :", tta_epoch)
             logging.info(
                 report_metrics(
