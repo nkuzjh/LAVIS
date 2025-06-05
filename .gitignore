@@ -170,8 +170,9 @@ cache/
 *.npy
 
 # experiment files
-lavis/output/
+# lavis/output/
 *.out
 
 lavis/configs/default.yaml
 lavis/configs/models/blip2/blip2_coco.yaml
+lavis/configs/models/blip2/blip2_pretrain_vitL.yaml

@@ -8,7 +8,8 @@ model:
   load_finetuned: False
 
   # pretrained: "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_vitL.pth"
-  pretrained: "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_pretrained_vitL.pth"
+  # pretrained: "/home/zhh/ssd/excute/deeplearning/projects/checkpoints/blip2_pretrained_vitL.pth"
+  pretrained: "/home/jiahao/pretrained/blip2_pretrained_vitL.pth"
   finetuned: ""
 
   # vit encoder

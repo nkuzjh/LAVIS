@@ -83,42 +83,55 @@ class RetrievalTask(BaseTask):
     @staticmethod
     @torch.no_grad()
     def _report_metrics(scores_i2t, scores_t2i, txt2img, img2txt):
+        tr1 = -999
+        tr5 = -999
+        tr10 = -999
+        tr_mean = -999
+        ir1 = -999
+        ir5 = -999
+        ir10 = -999
+        ir_mean = -999
+        r_mean = -999
+        agg_metrics = -999
 
-        # Images->Text
-        ranks = np.zeros(scores_i2t.shape[0])
-        for index, score in enumerate(scores_i2t):
-            inds = np.argsort(score)[::-1]
-            # Score
-            rank = 1e20
-            for i in img2txt[index]:
-                tmp = np.where(inds == i)[0][0]
-                if tmp < rank:
-                    rank = tmp
-            ranks[index] = rank
+        if scores_i2t is not None:
+            # Images->Text
+            ranks = np.zeros(scores_i2t.shape[0])
+            for index, score in enumerate(scores_i2t):
+                inds = np.argsort(score)[::-1]
+                # Score
+                rank = 1e20
+                for i in img2txt[index]:
+                    tmp = np.where(inds == i)[0][0]
+                    if tmp < rank:
+                        rank = tmp
+                ranks[index] = rank
 
-        # Compute metrics
-        tr1 = 100.0 * len(np.where(ranks < 1)[0]) / len(ranks)
-        tr5 = 100.0 * len(np.where(ranks < 5)[0]) / len(ranks)
-        tr10 = 100.0 * len(np.where(ranks < 10)[0]) / len(ranks)
+            # Compute metrics
+            tr1 = 100.0 * len(np.where(ranks < 1)[0]) / len(ranks)
+            tr5 = 100.0 * len(np.where(ranks < 5)[0]) / len(ranks)
+            tr10 = 100.0 * len(np.where(ranks < 10)[0]) / len(ranks)
+            tr_mean = (tr1 + tr5 + tr10) / 3
+            agg_metrics = (tr1 + tr5 + tr10) / 3
 
-        # Text->Images
-        ranks = np.zeros(scores_t2i.shape[0])
+        if scores_t2i is not None:
 
-        for index, score in enumerate(scores_t2i):
-            inds = np.argsort(score)[::-1]
-            ranks[index] = np.where(inds == txt2img[index])[0][0]
+            # Text->Images
+            ranks = np.zeros(scores_t2i.shape[0])
 
-        # Compute metrics
-        ir1 = 100.0 * len(np.where(ranks < 1)[0]) / len(ranks)
-        ir5 = 100.0 * len(np.where(ranks < 5)[0]) / len(ranks)
-        ir10 = 100.0 * len(np.where(ranks < 10)[0]) / len(ranks)
+            for index, score in enumerate(scores_t2i):
+                inds = np.argsort(score)[::-1]
+                ranks[index] = np.where(inds == txt2img[index])[0][0]
 
-        tr_mean = (tr1 + tr5 + tr10) / 3
-        ir_mean = (ir1 + ir5 + ir10) / 3
-        r_mean = (tr_mean + ir_mean) / 2
+            # Compute metrics
+            ir1 = 100.0 * len(np.where(ranks < 1)[0]) / len(ranks)
+            ir5 = 100.0 * len(np.where(ranks < 5)[0]) / len(ranks)
+            ir10 = 100.0 * len(np.where(ranks < 10)[0]) / len(ranks)
+            ir_mean = (ir1 + ir5 + ir10) / 3
 
-        agg_metrics = (tr1 + tr5 + tr10) / 3
-
+        if scores_i2t is not None and scores_t2i is not None:
+            r_mean = (tr_mean + ir_mean) / 2
+        
         eval_result = {
             "txt_r1": tr1,
             "txt_r5": tr5,
@@ -134,5 +147,6 @@ class RetrievalTask(BaseTask):
         with open(
             os.path.join(registry.get_path("output_dir"), "evaluate.txt"), "a"
         ) as f:
+            f.write("_report_metrics: \n")
             f.write(json.dumps(eval_result) + "\n")
         return eval_result
