@@ -177,3 +177,5 @@ lavis/output/
 lavis/configs/default.yaml
 lavis/configs/models/blip2/blip2_coco.yaml
 lavis/configs/models/blip2/blip2_pretrain_vitL.yaml
+ret_coco_eval_itm_adapt_i2t.out1
+ret_coco_eval_itm_adapt_t2i.out1

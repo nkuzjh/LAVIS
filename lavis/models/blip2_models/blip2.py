@@ -2219,13 +2219,15 @@ def compute_i2t_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
         image_embeds = torch.cat(image_embeds, dim=0)
 
         logging.info("    similarity matrix...") # 这里F.normaliza()后的矩阵相乘@ 就是cosine_similarity
-        sims_matrix = []
-        for image_embed in image_embeds: # 5000,32,256
-            sim_q2t = image_embed @ text_embeds.t() # image_embed.shape=32,256 text_embeds.shape=25010,256
-            sim_i2t, _ = sim_q2t.max(0) #32,25010 -> 25010
-            # sim_i2t = sim_i2t / model.temp
-            sims_matrix.append(sim_i2t)
-        sims_matrix_i2t = torch.stack(sims_matrix, dim=0) #5000,25010
+        # sims_matrix = []
+        # for image_embed in image_embeds: # 5000,32,256
+        #     sim_q2t = image_embed @ text_embeds.t() # image_embed.shape=32,256 text_embeds.shape=25010,256
+        #     sim_i2t, _ = sim_q2t.max(0) #32,25010 -> 25010
+        #     # sim_i2t = sim_i2t / model.temp
+        #     sims_matrix.append(sim_i2t)
+        # sims_matrix_i2t = torch.stack(sims_matrix, dim=0) #5000,25010
+        sims_matrix_i2t = image_embeds @ text_embeds.t()
+        sims_matrix_i2t = sims_matrix_i2t.max(0)   
         sims_matrix_t2i = sims_matrix_i2t.t()
 
     selected_sample_idx_i2t, selected_sample_idx_t2i = sample_selection_intertop1(sims_matrix_i2t.detach().cpu(), sims_matrix_t2i.detach().cpu())
