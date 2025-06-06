@@ -2350,8 +2350,8 @@ def compute_t2i_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
             text_atts.append(text_input.attention_mask)
 
         text_embeds = torch.cat(text_embeds, dim=0)
-        text_ids = torch.cat(text_ids, dim=0)
-        text_atts = torch.cat(text_atts, dim=0)
+        text_ids = torch.cat(text_ids, dim=0).detach().cpu()
+        text_atts = torch.cat(text_atts, dim=0).detach().cpu()
 
         logging.info("    image features...")
         vit_feats = []
@@ -2378,17 +2378,30 @@ def compute_t2i_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
             sim_i2t, _ = sim_q2t.max(0) #32,25010 -> 25010
             # sim_i2t = sim_i2t / model.temp
             sims_matrix.append(sim_i2t)
-        sims_matrix_i2t = torch.stack(sims_matrix, dim=0) #5000,25010
-        sims_matrix_t2i = sims_matrix_i2t.t()
+        sims_matrix_i2t = torch.stack(sims_matrix, dim=0).detach().cpu() #5000,25010
+        sims_matrix_t2i = sims_matrix_i2t.t().detach().cpu()
+        
+        del sims_matrix
+        torch.cuda.empty_cache()
 
-    selected_sample_idx_i2t, selected_sample_idx_t2i = sample_selection_intertop1(sims_matrix_i2t, sims_matrix_t2i)
-    logging.info(f"after sample selection, number of i2t samples: {len(selected_sample_idx_i2t)}, number of t2i samples: {len(selected_sample_idx_t2i)}")
+        selected_sample_idx_i2t, selected_sample_idx_t2i = sample_selection_intertop1(sims_matrix_i2t, sims_matrix_t2i)
+        logging.info(f"after sample selection, number of i2t samples: {len(selected_sample_idx_i2t)}, number of t2i samples: {len(selected_sample_idx_t2i)}")
+
 
     model.train()
+    model.visual_encoder.to('cpu')
+    model.ln_vision.to('cpu')
+    model.vision_proj.to('cpu')
+    model.text_proj.to('cpu')
+    torch.cuda.empty_cache()
+
+    model.query_tokens.to(model.device)
+    model.Qformer.to(model.device)
+    model.itm_head.to(model.device)
 
     score_matrix_t2i = torch.full(
         (len(texts), len(data_loader.dataset.image)), -100.0
-    ).to(model.device)
+    ).detach().cpu()
 
     num_tasks = dist_utils.get_world_size()
     rank = dist_utils.get_rank()
@@ -2401,11 +2414,12 @@ def compute_t2i_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
         metric_logger.log_every(sims_matrix_t2i[start:end], 50, header)
     ): # 遍历每个image与25010个text的sim_matrix
         topk_sim_t2i, topk_idx_t2i = sims_t2i.topk(k=k_test, dim=0) #sims.shape=1,25010 topk_sim.shape=128 topk_idx=top128_idx
+        topk_sim_t2i = topk_sim_t2i.to(model.device)
         image_inputs = vit_feats[topk_idx_t2i.cpu()].to(model.device) # vit_feats[start + i].shape=677,1408 image_inputs.shape=128,677,1408
         score = model.compute_itm(
             image_inputs=image_inputs, #128,677,1408
-            text_ids=text_ids[start + i].repeat(k_test, 1), #128,35
-            text_atts=text_atts[start + i].repeat(k_test, 1), #128,35
+            text_ids=text_ids[start + i].repeat(k_test, 1).to(model.device), #128,35
+            text_atts=text_atts[start + i].repeat(k_test, 1).to(model.device), #128,35
         ).float() # score.shape=128
 
         if i in selected_sample_idx_t2i:
@@ -2414,6 +2428,7 @@ def compute_t2i_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
                 proba_top1_sim_t2i = F.softmax(topk_sim_t2i, dim=0)[0]
                 proba_sim_i2t_top1_idx_t2i = torch.Tensor([0.]).to(proba_top1_sim_t2i.device)
                 topk_sim_i2t_top1_idx_t2i, topk_idx_i2t_top1_idx_t2i = sims_matrix_i2t[topk_idx_t2i[0]].topk(k=k_test, dim=0)
+                topk_sim_i2t_top1_idx_t2i, topk_idx_i2t_top1_idx_t2i =  topk_sim_i2t_top1_idx_t2i.to(model.device), topk_idx_i2t_top1_idx_t2i.to(model.device)
                 if i in topk_idx_i2t_top1_idx_t2i:
                     idx_of_i_in_topk_idx_i2t_top1_idx_t2i = torch.where(topk_idx_i2t_top1_idx_t2i == i)
                     proba_sim_i2t_top1_idx_t2i = F.softmax(topk_sim_i2t_top1_idx_t2i, dim=0)[idx_of_i_in_topk_idx_i2t_top1_idx_t2i]
@@ -2431,7 +2446,7 @@ def compute_t2i_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
                 grad_accum_num = 0
 
         #score = itm_score + cos_sim
-        score_matrix_t2i[start + i, topk_idx_t2i] = score + topk_sim_t2i
+        score_matrix_t2i[start + i, topk_idx_t2i.detach().cpu()] = score.detach().cpu() + topk_sim_t2i.detach().cpu()
 
     if dist_utils.is_dist_avail_and_initialized():
         dist.barrier()
@@ -2443,5 +2458,10 @@ def compute_t2i_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     logging.info("i2t online Evaluation time {}".format(total_time_str))
 
+    model.visual_encoder.to(model.device)
+    model.ln_vision.to(model.device)
+    model.vision_proj.to(model.device)
+    model.text_proj.to(model.device)
+    # model.to(model.device)
     return score_matrix_t2i.cpu().detach().numpy()
 

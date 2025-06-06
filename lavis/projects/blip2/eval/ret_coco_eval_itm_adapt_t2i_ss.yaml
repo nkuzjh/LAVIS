@@ -65,5 +65,5 @@ tta:
   online: False
   offline_multi_epochs: 10
   tta_task: "t2i" # "i2t" or "t2i"
-  zero_shot_eval: True
+  zero_shot_eval: False
   top1_match_coeffi: True
