@@ -24,7 +24,7 @@
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 67.37704918032787, "img_r5": 87.38104758096762, "img_r10": 92.54698120751699, "img_r_mean": 82.43502598960417, "r_mean": -999, "agg_metrics": -999}
 
 1. exp 0.1
-    - loss = Qformer tent; top1_match_coeffi=False
+    - loss = Qformer tent / exp(1-互相top1-topk的概率均值); top1_match_coeffi=True
     - lr=5e-6 wd=0.0
     - 梯度累积, accumulate batch size = 1
     - offline, online=False
