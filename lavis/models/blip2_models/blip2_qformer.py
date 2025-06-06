@@ -424,7 +424,16 @@ class Blip2Qformer(Blip2Base):
         vl_embeddings = output_itm.last_hidden_state[:, : query_tokens.size(1), :]#128,32,768
         itm_logit = self.itm_head(vl_embeddings)# 128,32,2
         itm_logit = itm_logit[:, :, 1].mean(dim=1) #itm_logit[:, :, 1].shape=128,32 #itm_logit[:, :, 1].mean(dim=1).shape=128
+        
+        # self.visual_encoder.to(image_inputs.device)
+        # self.ln_vision.to(image_inputs.device)
+        # self.vision_proj.to(image_inputs.device)
+        # self.text_proj.to(image_inputs.device)
         # self.to(image_inputs.device)
+        # torch.cuda.empty_cache()
+        # self.query_tokens.to(image_inputs.device)
+        # self.Qformer.to(image_inputs.device)
+        # self.itm_head.to(image_inputs.device)
         return itm_logit
 
     @torch.no_grad()
