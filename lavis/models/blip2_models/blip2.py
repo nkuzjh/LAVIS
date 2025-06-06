@@ -2242,9 +2242,9 @@ def compute_i2t_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
     model.text_proj.to('cpu')
     torch.cuda.empty_cache()
 
-    model.query_tokens.to(image_inputs.device)
-    model.Qformer.to(image_inputs.device)
-    model.itm_head.to(image_inputs.device)
+    model.query_tokens.to(model.device)
+    model.Qformer.to(model.device)
+    model.itm_head.to(model.device)
     
     score_matrix_i2t = torch.full(
         (len(data_loader.dataset.image), len(texts)), -100.0
@@ -2263,7 +2263,7 @@ def compute_i2t_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
         topk_sim_i2t, topk_idx_i2t = sims_i2t.topk(k=k_test, dim=0) #sims.shape=25010 topk_sim.shape=128 topk_idx=top128_idx
         topk_sim_i2t = topk_sim_i2t.to(model.device)
         image_inputs = vit_feats[start + i].repeat(k_test, 1, 1).to(model.device) # vit_feats[i].shape=1,677,1408 image_inputs.shape=128,677,1408
-        print(i)
+        # print(i)
         score = model.compute_itm(
             image_inputs=image_inputs, #128,677,1408
             text_ids=text_ids[topk_idx_i2t].to(model.device), #128,35
@@ -2307,11 +2307,11 @@ def compute_i2t_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     logging.info("i2t online Evaluation time {}".format(total_time_str))
 
-    model.visual_encoder.to(image_inputs.device)
-    model.ln_vision.to(image_inputs.device)
-    model.vision_proj.to(image_inputs.device)
-    model.text_proj.to(image_inputs.device)
-    model.to(image_inputs.device)
+    model.visual_encoder.to(model.device)
+    model.ln_vision.to(model.device)
+    model.vision_proj.to(model.device)
+    model.text_proj.to(model.device)
+    # model.to(model.device)
     return score_matrix_i2t.cpu().detach().numpy()
 
 def compute_t2i_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, **kwargs):

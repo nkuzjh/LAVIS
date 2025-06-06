@@ -1445,3 +1445,995 @@ i2t online Evaluation itm adapt:  [4950/5000]  eta: 0:00:17    time: 0.3557  dat
 i2t online Evaluation itm adapt:  [4999/5000]  eta: 0:00:00    time: 0.3557  data: 0.0000  max mem: 19543
 i2t online Evaluation itm adapt: Total time: 0:29:24 (0.3529 s / it)
 2025-06-06 10:29:37,965 [INFO]     cosine similarity...
+i2t offline Evaluation:  [   0/5000]  eta: 0:12:56    time: 0.1554  data: 0.0062  max mem: 19543
+i2t offline Evaluation:  [  50/5000]  eta: 0:19:28    time: 0.2371  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 100/5000]  eta: 0:19:19    time: 0.2369  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 150/5000]  eta: 0:19:04    time: 0.2307  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 200/5000]  eta: 0:18:45    time: 0.2297  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 250/5000]  eta: 0:18:29    time: 0.2290  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 300/5000]  eta: 0:18:13    time: 0.2286  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 350/5000]  eta: 0:18:00    time: 0.2292  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 400/5000]  eta: 0:17:48    time: 0.2338  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 450/5000]  eta: 0:17:52    time: 0.2844  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 500/5000]  eta: 0:17:53    time: 0.2807  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 550/5000]  eta: 0:17:43    time: 0.2403  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 600/5000]  eta: 0:17:31    time: 0.2379  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 650/5000]  eta: 0:17:19    time: 0.2425  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 700/5000]  eta: 0:17:07    time: 0.2344  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 750/5000]  eta: 0:16:54    time: 0.2378  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 800/5000]  eta: 0:16:42    time: 0.2362  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 850/5000]  eta: 0:16:30    time: 0.2389  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 900/5000]  eta: 0:16:18    time: 0.2407  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 950/5000]  eta: 0:16:05    time: 0.2356  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1000/5000]  eta: 0:15:53    time: 0.2370  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1050/5000]  eta: 0:15:40    time: 0.2354  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1100/5000]  eta: 0:15:28    time: 0.2352  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1150/5000]  eta: 0:15:16    time: 0.2361  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1200/5000]  eta: 0:15:03    time: 0.2343  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1250/5000]  eta: 0:14:51    time: 0.2353  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1300/5000]  eta: 0:14:38    time: 0.2345  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1350/5000]  eta: 0:14:26    time: 0.2348  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1400/5000]  eta: 0:14:13    time: 0.2221  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1450/5000]  eta: 0:13:59    time: 0.2223  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1500/5000]  eta: 0:13:45    time: 0.2216  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1550/5000]  eta: 0:13:32    time: 0.2221  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1600/5000]  eta: 0:13:19    time: 0.2226  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1650/5000]  eta: 0:13:06    time: 0.2210  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1700/5000]  eta: 0:12:57    time: 0.2553  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1750/5000]  eta: 0:12:44    time: 0.2193  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1800/5000]  eta: 0:12:31    time: 0.2199  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1850/5000]  eta: 0:12:17    time: 0.2168  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1900/5000]  eta: 0:12:04    time: 0.2165  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1950/5000]  eta: 0:11:51    time: 0.2167  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2000/5000]  eta: 0:11:39    time: 0.2219  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2050/5000]  eta: 0:11:26    time: 0.2172  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2100/5000]  eta: 0:11:14    time: 0.2163  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2150/5000]  eta: 0:11:01    time: 0.2157  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2200/5000]  eta: 0:10:48    time: 0.2187  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2250/5000]  eta: 0:10:37    time: 0.2305  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2300/5000]  eta: 0:10:25    time: 0.2312  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2350/5000]  eta: 0:10:13    time: 0.2167  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2400/5000]  eta: 0:10:01    time: 0.2229  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2450/5000]  eta: 0:09:49    time: 0.2247  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2500/5000]  eta: 0:09:38    time: 0.2316  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2550/5000]  eta: 0:09:26    time: 0.2326  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2600/5000]  eta: 0:09:14    time: 0.2323  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2650/5000]  eta: 0:09:03    time: 0.2317  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2700/5000]  eta: 0:08:51    time: 0.2325  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2750/5000]  eta: 0:08:40    time: 0.2337  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2800/5000]  eta: 0:08:28    time: 0.2295  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2850/5000]  eta: 0:08:17    time: 0.2265  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2900/5000]  eta: 0:08:05    time: 0.2271  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2950/5000]  eta: 0:07:53    time: 0.2326  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3000/5000]  eta: 0:07:42    time: 0.2251  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3050/5000]  eta: 0:07:30    time: 0.2273  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3100/5000]  eta: 0:07:18    time: 0.2278  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3150/5000]  eta: 0:07:07    time: 0.2285  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3200/5000]  eta: 0:06:55    time: 0.2298  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3250/5000]  eta: 0:06:43    time: 0.2248  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3300/5000]  eta: 0:06:32    time: 0.2254  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3350/5000]  eta: 0:06:20    time: 0.2259  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3400/5000]  eta: 0:06:08    time: 0.2257  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3450/5000]  eta: 0:05:57    time: 0.2257  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3500/5000]  eta: 0:05:45    time: 0.2190  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3550/5000]  eta: 0:05:34    time: 0.2667  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3600/5000]  eta: 0:05:22    time: 0.2209  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3650/5000]  eta: 0:05:10    time: 0.2181  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3700/5000]  eta: 0:04:59    time: 0.2176  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3750/5000]  eta: 0:04:47    time: 0.2199  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3800/5000]  eta: 0:04:35    time: 0.2197  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3850/5000]  eta: 0:04:24    time: 0.2205  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3900/5000]  eta: 0:04:12    time: 0.2198  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3950/5000]  eta: 0:04:00    time: 0.2199  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4000/5000]  eta: 0:03:49    time: 0.2196  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4050/5000]  eta: 0:03:37    time: 0.2209  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4100/5000]  eta: 0:03:26    time: 0.2212  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4150/5000]  eta: 0:03:14    time: 0.2206  data: 0.0000  max mem: 19543
+2025-06-06 10:48:43,357 [INFO] i2t offline Evaluation time 0:23:01
+2025-06-06 10:48:45,132 [INFO] report i2t metrics offline, at epoch 5 :
+
+2025-06-06 10:48:51,999 [INFO] {'txt_r1': 84.52, 'txt_r5': 96.78, 'txt_r10': 98.42, 'txt_r_mean': 93.24000000000001, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+2025-06-06 10:48:59,775 [INFO] save i2t tta model at epoch 5 to /home/jiahao/task/LAVIS/lavis/output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_gradacc_offline_multiepochs5/i2t/20250606033/i2t_tta_model_model_epoch_5.pth
+2025-06-06 10:48:59,898 [INFO] start tta epoch 6 for i2t task
+2025-06-06 10:48:59,929 [INFO] i2t online Computing features for evaluation...
+2025-06-06 10:48:59,935 [INFO]     text features...
+2025-06-06 10:49:05,519 [INFO]     image features...
+i2t offline Evaluation:  [4200/5000]  eta: 0:03:03    time: 0.2202  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4250/5000]  eta: 0:02:51    time: 0.2194  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4300/5000]  eta: 0:02:40    time: 0.2211  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4350/5000]  eta: 0:02:28    time: 0.2296  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4400/5000]  eta: 0:02:17    time: 0.2298  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4450/5000]  eta: 0:02:05    time: 0.2310  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4500/5000]  eta: 0:01:54    time: 0.2348  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4550/5000]  eta: 0:01:42    time: 0.2313  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4600/5000]  eta: 0:01:31    time: 0.2314  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4650/5000]  eta: 0:01:20    time: 0.2312  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4700/5000]  eta: 0:01:08    time: 0.2315  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4750/5000]  eta: 0:00:57    time: 0.2310  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4800/5000]  eta: 0:00:45    time: 0.2319  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4850/5000]  eta: 0:00:34    time: 0.2327  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4900/5000]  eta: 0:00:22    time: 0.2276  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4950/5000]  eta: 0:00:11    time: 0.2278  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4999/5000]  eta: 0:00:00    time: 0.2274  data: 0.0000  max mem: 19543
+i2t offline Evaluation: Total time: 0:19:05 (0.2290 s / it)
+2025-06-06 10:53:12,060 [INFO]     similarity matrix...
+i2t online Evaluation itm adapt:  [   0/5000]  eta: 0:30:47    time: 0.3695  data: 0.0134  max mem: 19543
+i2t online Evaluation itm adapt:  [  50/5000]  eta: 0:28:03    time: 0.3339  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 100/5000]  eta: 0:27:33    time: 0.3343  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 150/5000]  eta: 0:27:42    time: 0.3687  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 200/5000]  eta: 0:28:12    time: 0.3993  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 250/5000]  eta: 0:28:09    time: 0.3633  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 300/5000]  eta: 0:27:57    time: 0.3641  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 350/5000]  eta: 0:27:43    time: 0.3592  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 400/5000]  eta: 0:27:27    time: 0.3638  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 450/5000]  eta: 0:27:04    time: 0.3417  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 500/5000]  eta: 0:26:37    time: 0.3372  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 550/5000]  eta: 0:26:10    time: 0.3274  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 600/5000]  eta: 0:25:42    time: 0.3285  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 650/5000]  eta: 0:25:17    time: 0.3277  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 700/5000]  eta: 0:24:53    time: 0.3273  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 750/5000]  eta: 0:24:31    time: 0.3293  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 800/5000]  eta: 0:24:09    time: 0.3311  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 850/5000]  eta: 0:23:48    time: 0.3302  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 900/5000]  eta: 0:23:41    time: 0.4767  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 950/5000]  eta: 0:23:29    time: 0.3668  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1000/5000]  eta: 0:23:18    time: 0.3810  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1050/5000]  eta: 0:23:06    time: 0.3831  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1100/5000]  eta: 0:22:53    time: 0.3748  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1150/5000]  eta: 0:22:37    time: 0.3695  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1200/5000]  eta: 0:22:23    time: 0.3814  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1250/5000]  eta: 0:22:08    time: 0.3643  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1300/5000]  eta: 0:21:50    time: 0.3409  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1350/5000]  eta: 0:21:30    time: 0.3406  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1400/5000]  eta: 0:21:11    time: 0.3410  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1450/5000]  eta: 0:20:52    time: 0.3533  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1500/5000]  eta: 0:20:36    time: 0.3679  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1550/5000]  eta: 0:20:20    time: 0.3683  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1600/5000]  eta: 0:20:04    time: 0.3715  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1650/5000]  eta: 0:19:48    time: 0.3726  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1700/5000]  eta: 0:19:33    time: 0.3808  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1750/5000]  eta: 0:19:17    time: 0.3793  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1800/5000]  eta: 0:19:01    time: 0.3768  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1850/5000]  eta: 0:18:45    time: 0.3742  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1900/5000]  eta: 0:18:29    time: 0.3843  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1950/5000]  eta: 0:18:13    time: 0.3793  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2000/5000]  eta: 0:17:56    time: 0.3826  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2050/5000]  eta: 0:17:40    time: 0.3788  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2100/5000]  eta: 0:17:23    time: 0.3893  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2150/5000]  eta: 0:17:07    time: 0.3815  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2200/5000]  eta: 0:16:50    time: 0.3757  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2250/5000]  eta: 0:16:33    time: 0.3812  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2300/5000]  eta: 0:16:16    time: 0.3866  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2350/5000]  eta: 0:16:00    time: 0.3872  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2400/5000]  eta: 0:15:43    time: 0.3841  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2450/5000]  eta: 0:15:26    time: 0.3821  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2500/5000]  eta: 0:15:09    time: 0.3903  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2550/5000]  eta: 0:14:51    time: 0.3770  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2600/5000]  eta: 0:14:34    time: 0.3750  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2650/5000]  eta: 0:14:16    time: 0.3686  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2700/5000]  eta: 0:13:59    time: 0.3861  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2750/5000]  eta: 0:13:41    time: 0.3903  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2800/5000]  eta: 0:13:24    time: 0.3870  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2850/5000]  eta: 0:13:06    time: 0.3880  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2900/5000]  eta: 0:12:49    time: 0.3841  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2950/5000]  eta: 0:12:31    time: 0.3796  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3000/5000]  eta: 0:12:13    time: 0.3812  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3050/5000]  eta: 0:11:55    time: 0.3830  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3100/5000]  eta: 0:11:37    time: 0.3870  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3150/5000]  eta: 0:11:20    time: 0.3797  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3200/5000]  eta: 0:11:02    time: 0.3846  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3250/5000]  eta: 0:10:44    time: 0.3852  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3300/5000]  eta: 0:10:26    time: 0.3821  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3350/5000]  eta: 0:10:08    time: 0.3792  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3400/5000]  eta: 0:09:50    time: 0.3915  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3450/5000]  eta: 0:09:32    time: 0.3838  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3500/5000]  eta: 0:09:14    time: 0.3882  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3550/5000]  eta: 0:08:55    time: 0.3785  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3600/5000]  eta: 0:08:37    time: 0.3916  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3650/5000]  eta: 0:08:19    time: 0.3761  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3700/5000]  eta: 0:08:01    time: 0.3825  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3750/5000]  eta: 0:07:42    time: 0.3796  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3800/5000]  eta: 0:07:24    time: 0.3813  data: 0.0000  max mem: 19543
+2025-06-06 11:24:21,901 [INFO] i2t online Evaluation time 0:35:21
+2025-06-06 11:24:26,664 [INFO] report i2t metrics online, at epoch 6 :
+2025-06-06 11:24:34,908 [INFO] {'txt_r1': 84.68, 'txt_r5': 96.54, 'txt_r10': 98.42, 'txt_r_mean': 93.21333333333335, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+2025-06-06 11:24:35,120 [INFO] i2t offline Computing features for evaluation...
+2025-06-06 11:24:35,120 [INFO]     text features...
+2025-06-06 11:24:40,658 [INFO]     image features...
+i2t online Evaluation itm adapt:  [3850/5000]  eta: 0:07:06    time: 0.3889  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3900/5000]  eta: 0:06:47    time: 0.3851  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3950/5000]  eta: 0:06:29    time: 0.3906  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4000/5000]  eta: 0:06:11    time: 0.3805  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4050/5000]  eta: 0:05:52    time: 0.3860  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4100/5000]  eta: 0:05:34    time: 0.3861  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4150/5000]  eta: 0:05:15    time: 0.3902  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4200/5000]  eta: 0:04:57    time: 0.3813  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4250/5000]  eta: 0:04:39    time: 0.3880  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4300/5000]  eta: 0:04:20    time: 0.3863  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4350/5000]  eta: 0:04:02    time: 0.3857  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4400/5000]  eta: 0:03:43    time: 0.3871  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4450/5000]  eta: 0:03:24    time: 0.3778  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4500/5000]  eta: 0:03:06    time: 0.3840  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4550/5000]  eta: 0:02:47    time: 0.3866  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4600/5000]  eta: 0:02:29    time: 0.3799  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4650/5000]  eta: 0:02:10    time: 0.3815  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4700/5000]  eta: 0:01:51    time: 0.3869  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4750/5000]  eta: 0:01:33    time: 0.3809  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4800/5000]  eta: 0:01:14    time: 0.3817  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4850/5000]  eta: 0:00:56    time: 0.3902  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4900/5000]  eta: 0:00:37    time: 0.3842  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4950/5000]  eta: 0:00:18    time: 0.3818  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4999/5000]  eta: 0:00:00    time: 0.3870  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt: Total time: 0:31:09 (0.3739 s / it)
+2025-06-06 11:28:37,030 [INFO]     cosine similarity...
+i2t offline Evaluation:  [   0/5000]  eta: 0:24:38    time: 0.2957  data: 0.0126  max mem: 19543
+i2t offline Evaluation:  [  50/5000]  eta: 0:24:29    time: 0.2750  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 100/5000]  eta: 0:23:24    time: 0.2793  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 150/5000]  eta: 0:22:55    time: 0.2793  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 200/5000]  eta: 0:22:30    time: 0.2752  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 250/5000]  eta: 0:22:07    time: 0.2726  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 300/5000]  eta: 0:21:50    time: 0.2743  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 350/5000]  eta: 0:21:32    time: 0.2730  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 400/5000]  eta: 0:21:20    time: 0.2903  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 450/5000]  eta: 0:21:07    time: 0.2796  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 500/5000]  eta: 0:20:54    time: 0.2783  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 550/5000]  eta: 0:20:41    time: 0.2788  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 600/5000]  eta: 0:20:31    time: 0.2841  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 650/5000]  eta: 0:20:21    time: 0.2998  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 700/5000]  eta: 0:20:11    time: 0.2906  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 750/5000]  eta: 0:19:59    time: 0.2878  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 800/5000]  eta: 0:19:45    time: 0.2874  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 850/5000]  eta: 0:19:31    time: 0.2821  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 900/5000]  eta: 0:19:17    time: 0.2753  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 950/5000]  eta: 0:19:04    time: 0.2873  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1000/5000]  eta: 0:18:51    time: 0.2854  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1050/5000]  eta: 0:18:37    time: 0.2847  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1100/5000]  eta: 0:18:24    time: 0.2848  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1150/5000]  eta: 0:18:10    time: 0.2876  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1200/5000]  eta: 0:17:56    time: 0.2973  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1250/5000]  eta: 0:17:43    time: 0.2844  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1300/5000]  eta: 0:17:30    time: 0.2872  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1350/5000]  eta: 0:17:16    time: 0.2907  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1400/5000]  eta: 0:17:02    time: 0.2869  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1450/5000]  eta: 0:16:49    time: 0.2897  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1500/5000]  eta: 0:16:34    time: 0.2749  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1550/5000]  eta: 0:16:20    time: 0.2884  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1600/5000]  eta: 0:16:06    time: 0.2797  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1650/5000]  eta: 0:15:52    time: 0.2953  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1700/5000]  eta: 0:15:38    time: 0.2829  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1750/5000]  eta: 0:15:24    time: 0.2870  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1800/5000]  eta: 0:15:10    time: 0.2837  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1850/5000]  eta: 0:14:55    time: 0.2853  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1900/5000]  eta: 0:14:42    time: 0.2991  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1950/5000]  eta: 0:14:27    time: 0.2789  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2000/5000]  eta: 0:14:13    time: 0.2796  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2050/5000]  eta: 0:13:58    time: 0.2800  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2100/5000]  eta: 0:13:44    time: 0.2880  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2150/5000]  eta: 0:13:31    time: 0.3076  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2200/5000]  eta: 0:13:17    time: 0.2783  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2250/5000]  eta: 0:13:03    time: 0.2763  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2300/5000]  eta: 0:12:48    time: 0.2825  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2350/5000]  eta: 0:12:34    time: 0.2870  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2400/5000]  eta: 0:12:20    time: 0.2846  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2450/5000]  eta: 0:12:06    time: 0.2800  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2500/5000]  eta: 0:11:51    time: 0.2856  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2550/5000]  eta: 0:11:37    time: 0.2778  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2600/5000]  eta: 0:11:23    time: 0.2954  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2650/5000]  eta: 0:11:09    time: 0.2810  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2700/5000]  eta: 0:10:54    time: 0.2779  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2750/5000]  eta: 0:10:40    time: 0.2880  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2800/5000]  eta: 0:10:26    time: 0.2882  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2850/5000]  eta: 0:10:11    time: 0.2803  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2900/5000]  eta: 0:09:57    time: 0.2895  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2950/5000]  eta: 0:09:43    time: 0.2786  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3000/5000]  eta: 0:09:29    time: 0.2779  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3050/5000]  eta: 0:09:14    time: 0.2805  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3100/5000]  eta: 0:09:00    time: 0.2951  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3150/5000]  eta: 0:08:46    time: 0.2731  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3200/5000]  eta: 0:08:32    time: 0.2773  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3250/5000]  eta: 0:08:18    time: 0.2930  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3300/5000]  eta: 0:08:03    time: 0.2728  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3350/5000]  eta: 0:07:49    time: 0.2674  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3400/5000]  eta: 0:07:34    time: 0.2686  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3450/5000]  eta: 0:07:20    time: 0.2900  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3500/5000]  eta: 0:07:06    time: 0.2667  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3550/5000]  eta: 0:06:51    time: 0.2672  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3600/5000]  eta: 0:06:37    time: 0.2627  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3650/5000]  eta: 0:06:22    time: 0.2636  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3700/5000]  eta: 0:06:07    time: 0.2646  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3750/5000]  eta: 0:05:53    time: 0.2633  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3800/5000]  eta: 0:05:39    time: 0.2790  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3850/5000]  eta: 0:05:24    time: 0.2630  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3900/5000]  eta: 0:05:10    time: 0.2632  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3950/5000]  eta: 0:04:55    time: 0.2650  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4000/5000]  eta: 0:04:41    time: 0.2661  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4050/5000]  eta: 0:04:27    time: 0.2663  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4100/5000]  eta: 0:04:13    time: 0.2579  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4150/5000]  eta: 0:03:58    time: 0.2552  data: 0.0000  max mem: 19543
+2025-06-06 11:52:17,276 [INFO] i2t offline Evaluation time 0:27:42
+2025-06-06 11:52:19,738 [INFO] report i2t metrics offline, at epoch 6 :
+
+2025-06-06 11:52:27,387 [INFO] {'txt_r1': 84.42, 'txt_r5': 96.64, 'txt_r10': 98.3, 'txt_r_mean': 93.12, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+2025-06-06 11:52:34,717 [INFO] save i2t tta model at epoch 6 to /home/jiahao/task/LAVIS/lavis/output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_gradacc_offline_multiepochs5/i2t/20250606033/i2t_tta_model_model_epoch_6.pth
+2025-06-06 11:52:34,815 [INFO] start tta epoch 7 for i2t task
+2025-06-06 11:52:34,817 [INFO] i2t online Computing features for evaluation...
+2025-06-06 11:52:34,821 [INFO]     text features...
+2025-06-06 11:52:40,353 [INFO]     image features...
+i2t offline Evaluation:  [4200/5000]  eta: 0:03:44    time: 0.2417  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4250/5000]  eta: 0:03:30    time: 0.2488  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4300/5000]  eta: 0:03:16    time: 0.3401  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4350/5000]  eta: 0:03:02    time: 0.3116  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4400/5000]  eta: 0:02:48    time: 0.3101  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4450/5000]  eta: 0:02:34    time: 0.3096  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4500/5000]  eta: 0:02:20    time: 0.2962  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4550/5000]  eta: 0:02:06    time: 0.2957  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4600/5000]  eta: 0:01:52    time: 0.2969  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4650/5000]  eta: 0:01:38    time: 0.3158  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4700/5000]  eta: 0:01:24    time: 0.3267  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4750/5000]  eta: 0:01:10    time: 0.3010  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4800/5000]  eta: 0:00:56    time: 0.2865  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4850/5000]  eta: 0:00:42    time: 0.2896  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4900/5000]  eta: 0:00:28    time: 0.2886  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4950/5000]  eta: 0:00:14    time: 0.3203  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4999/5000]  eta: 0:00:00    time: 0.3236  data: 0.0000  max mem: 19543
+i2t offline Evaluation: Total time: 0:23:39 (0.2839 s / it)
+2025-06-06 11:56:50,581 [INFO]     similarity matrix...
+i2t online Evaluation itm adapt:  [   0/5000]  eta: 0:32:26    time: 0.3894  data: 0.0091  max mem: 19543
+i2t online Evaluation itm adapt:  [  50/5000]  eta: 0:32:15    time: 0.3674  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 100/5000]  eta: 0:30:36    time: 0.3499  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 150/5000]  eta: 0:30:19    time: 0.3994  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 200/5000]  eta: 0:30:23    time: 0.3920  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 250/5000]  eta: 0:30:22    time: 0.3928  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 300/5000]  eta: 0:30:12    time: 0.3936  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 350/5000]  eta: 0:29:58    time: 0.3952  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 400/5000]  eta: 0:29:44    time: 0.3957  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 450/5000]  eta: 0:29:29    time: 0.3902  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 500/5000]  eta: 0:29:12    time: 0.3905  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 550/5000]  eta: 0:28:55    time: 0.3951  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 600/5000]  eta: 0:28:36    time: 0.3918  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 650/5000]  eta: 0:28:18    time: 0.3939  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 700/5000]  eta: 0:28:03    time: 0.4148  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 750/5000]  eta: 0:27:47    time: 0.3932  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 800/5000]  eta: 0:27:27    time: 0.3911  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 850/5000]  eta: 0:27:07    time: 0.3921  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 900/5000]  eta: 0:26:48    time: 0.3904  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 950/5000]  eta: 0:26:28    time: 0.3943  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1000/5000]  eta: 0:26:08    time: 0.3931  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1050/5000]  eta: 0:25:51    time: 0.4018  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1100/5000]  eta: 0:25:33    time: 0.4028  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1150/5000]  eta: 0:25:15    time: 0.4091  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1200/5000]  eta: 0:24:57    time: 0.4037  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1250/5000]  eta: 0:24:38    time: 0.4053  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1300/5000]  eta: 0:24:19    time: 0.4058  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1350/5000]  eta: 0:24:01    time: 0.4050  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1400/5000]  eta: 0:23:42    time: 0.4051  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1450/5000]  eta: 0:23:24    time: 0.4084  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1500/5000]  eta: 0:23:07    time: 0.4125  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1550/5000]  eta: 0:22:49    time: 0.4135  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1600/5000]  eta: 0:22:30    time: 0.4040  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1650/5000]  eta: 0:22:11    time: 0.4029  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1700/5000]  eta: 0:21:51    time: 0.4007  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1750/5000]  eta: 0:21:32    time: 0.4025  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1800/5000]  eta: 0:21:13    time: 0.4131  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1850/5000]  eta: 0:20:54    time: 0.4112  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1900/5000]  eta: 0:20:35    time: 0.4036  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1950/5000]  eta: 0:20:15    time: 0.4018  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2000/5000]  eta: 0:19:55    time: 0.3930  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2050/5000]  eta: 0:19:35    time: 0.3951  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2100/5000]  eta: 0:19:16    time: 0.3991  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2150/5000]  eta: 0:18:56    time: 0.3991  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2200/5000]  eta: 0:18:35    time: 0.3935  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2250/5000]  eta: 0:18:16    time: 0.3992  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2300/5000]  eta: 0:17:56    time: 0.3943  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2350/5000]  eta: 0:17:36    time: 0.3965  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2400/5000]  eta: 0:17:16    time: 0.4010  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2450/5000]  eta: 0:16:56    time: 0.4021  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2500/5000]  eta: 0:16:35    time: 0.3711  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2550/5000]  eta: 0:16:13    time: 0.3530  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2600/5000]  eta: 0:15:51    time: 0.3530  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2650/5000]  eta: 0:15:30    time: 0.3515  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2700/5000]  eta: 0:15:08    time: 0.3503  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2750/5000]  eta: 0:14:46    time: 0.3464  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2800/5000]  eta: 0:14:25    time: 0.3475  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2850/5000]  eta: 0:14:03    time: 0.3560  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2900/5000]  eta: 0:13:42    time: 0.3568  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2950/5000]  eta: 0:13:21    time: 0.3530  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3000/5000]  eta: 0:13:01    time: 0.3491  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3050/5000]  eta: 0:12:40    time: 0.3475  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3100/5000]  eta: 0:12:19    time: 0.3495  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3150/5000]  eta: 0:11:58    time: 0.3498  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3200/5000]  eta: 0:11:40    time: 0.3726  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3250/5000]  eta: 0:11:20    time: 0.3676  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3300/5000]  eta: 0:11:00    time: 0.3730  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3350/5000]  eta: 0:10:40    time: 0.3856  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3400/5000]  eta: 0:10:21    time: 0.3784  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3450/5000]  eta: 0:10:01    time: 0.3798  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3500/5000]  eta: 0:09:42    time: 0.3859  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3550/5000]  eta: 0:09:22    time: 0.3826  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3600/5000]  eta: 0:09:02    time: 0.3787  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3650/5000]  eta: 0:08:43    time: 0.3817  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3700/5000]  eta: 0:08:23    time: 0.3827  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3750/5000]  eta: 0:08:04    time: 0.3634  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3800/5000]  eta: 0:07:44    time: 0.3654  data: 0.0000  max mem: 19543
+2025-06-06 12:28:56,140 [INFO] i2t online Evaluation time 0:36:21
+2025-06-06 12:29:02,671 [INFO] report i2t metrics online, at epoch 7 :
+2025-06-06 12:29:10,890 [INFO] {'txt_r1': 84.52, 'txt_r5': 96.64, 'txt_r10': 98.36, 'txt_r_mean': 93.17333333333333, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+2025-06-06 12:29:11,103 [INFO] i2t offline Computing features for evaluation...
+2025-06-06 12:29:11,104 [INFO]     text features...
+2025-06-06 12:29:16,680 [INFO]     image features...
+i2t online Evaluation itm adapt:  [3850/5000]  eta: 0:07:24    time: 0.3773  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3900/5000]  eta: 0:07:05    time: 0.3811  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3950/5000]  eta: 0:06:45    time: 0.3819  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4000/5000]  eta: 0:06:26    time: 0.3798  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4050/5000]  eta: 0:06:06    time: 0.3666  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4100/5000]  eta: 0:05:47    time: 0.3734  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4150/5000]  eta: 0:05:28    time: 0.3777  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4200/5000]  eta: 0:05:08    time: 0.3758  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4250/5000]  eta: 0:04:49    time: 0.3881  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4300/5000]  eta: 0:04:30    time: 0.3822  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4350/5000]  eta: 0:04:10    time: 0.3832  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4400/5000]  eta: 0:03:51    time: 0.3814  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4450/5000]  eta: 0:03:32    time: 0.3815  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4500/5000]  eta: 0:03:12    time: 0.3754  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4550/5000]  eta: 0:02:53    time: 0.3723  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4600/5000]  eta: 0:02:34    time: 0.3862  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4650/5000]  eta: 0:02:14    time: 0.3766  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4700/5000]  eta: 0:01:55    time: 0.3762  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4750/5000]  eta: 0:01:36    time: 0.3836  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4800/5000]  eta: 0:01:17    time: 0.3789  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4850/5000]  eta: 0:00:57    time: 0.3741  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4900/5000]  eta: 0:00:38    time: 0.3753  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4950/5000]  eta: 0:00:19    time: 0.3758  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4999/5000]  eta: 0:00:00    time: 0.3886  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt: Total time: 0:32:05 (0.3850 s / it)
+2025-06-06 12:33:13,117 [INFO]     cosine similarity...
+i2t offline Evaluation:  [   0/5000]  eta: 0:27:28    time: 0.3297  data: 0.0177  max mem: 19543
+i2t offline Evaluation:  [  50/5000]  eta: 0:24:22    time: 0.2783  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 100/5000]  eta: 0:22:39    time: 0.2519  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 150/5000]  eta: 0:21:52    time: 0.2561  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 200/5000]  eta: 0:21:18    time: 0.2561  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 250/5000]  eta: 0:20:52    time: 0.2539  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 300/5000]  eta: 0:20:30    time: 0.2495  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 350/5000]  eta: 0:20:11    time: 0.2552  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 400/5000]  eta: 0:19:54    time: 0.2553  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 450/5000]  eta: 0:19:38    time: 0.2467  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 500/5000]  eta: 0:19:17    time: 0.2390  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 550/5000]  eta: 0:18:59    time: 0.2466  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 600/5000]  eta: 0:18:41    time: 0.2392  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 650/5000]  eta: 0:18:24    time: 0.2403  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 700/5000]  eta: 0:18:07    time: 0.2424  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 750/5000]  eta: 0:17:49    time: 0.2288  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 800/5000]  eta: 0:17:30    time: 0.2246  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 850/5000]  eta: 0:17:12    time: 0.2288  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 900/5000]  eta: 0:16:56    time: 0.2289  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 950/5000]  eta: 0:16:39    time: 0.2295  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1000/5000]  eta: 0:16:23    time: 0.2251  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1050/5000]  eta: 0:16:06    time: 0.2280  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1100/5000]  eta: 0:15:51    time: 0.2307  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1150/5000]  eta: 0:15:36    time: 0.2296  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1200/5000]  eta: 0:15:21    time: 0.2228  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1250/5000]  eta: 0:15:06    time: 0.2200  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1300/5000]  eta: 0:14:52    time: 0.2254  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1350/5000]  eta: 0:14:37    time: 0.2228  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1400/5000]  eta: 0:14:23    time: 0.2214  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1450/5000]  eta: 0:14:08    time: 0.2207  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1500/5000]  eta: 0:13:54    time: 0.2199  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1550/5000]  eta: 0:13:40    time: 0.2217  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1600/5000]  eta: 0:13:27    time: 0.2231  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1650/5000]  eta: 0:13:14    time: 0.2233  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1700/5000]  eta: 0:13:00    time: 0.2235  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1750/5000]  eta: 0:12:47    time: 0.2237  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1800/5000]  eta: 0:12:34    time: 0.2207  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1850/5000]  eta: 0:12:21    time: 0.2224  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1900/5000]  eta: 0:12:09    time: 0.2285  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1950/5000]  eta: 0:11:56    time: 0.2241  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2000/5000]  eta: 0:11:44    time: 0.2223  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2050/5000]  eta: 0:11:31    time: 0.2235  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2100/5000]  eta: 0:11:19    time: 0.2223  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2150/5000]  eta: 0:11:06    time: 0.2203  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2200/5000]  eta: 0:10:54    time: 0.2290  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2250/5000]  eta: 0:10:42    time: 0.2194  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2300/5000]  eta: 0:10:29    time: 0.2188  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2350/5000]  eta: 0:10:17    time: 0.2179  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2400/5000]  eta: 0:10:04    time: 0.2232  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2450/5000]  eta: 0:09:52    time: 0.2199  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2500/5000]  eta: 0:09:40    time: 0.2189  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2550/5000]  eta: 0:09:28    time: 0.2211  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2600/5000]  eta: 0:09:16    time: 0.2306  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2650/5000]  eta: 0:09:04    time: 0.2328  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2700/5000]  eta: 0:08:53    time: 0.2299  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2750/5000]  eta: 0:08:41    time: 0.2332  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2800/5000]  eta: 0:08:30    time: 0.2350  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2850/5000]  eta: 0:08:18    time: 0.2362  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2900/5000]  eta: 0:08:07    time: 0.2370  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2950/5000]  eta: 0:07:55    time: 0.2372  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3000/5000]  eta: 0:07:44    time: 0.2356  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3050/5000]  eta: 0:07:32    time: 0.2315  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3100/5000]  eta: 0:07:20    time: 0.2304  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3150/5000]  eta: 0:07:09    time: 0.2307  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3200/5000]  eta: 0:06:57    time: 0.2284  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3250/5000]  eta: 0:06:45    time: 0.2329  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3300/5000]  eta: 0:06:34    time: 0.2334  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3350/5000]  eta: 0:06:22    time: 0.2319  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3400/5000]  eta: 0:06:11    time: 0.2322  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3450/5000]  eta: 0:05:59    time: 0.2310  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3500/5000]  eta: 0:05:48    time: 0.2373  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3550/5000]  eta: 0:05:36    time: 0.2238  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3600/5000]  eta: 0:05:24    time: 0.2231  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3650/5000]  eta: 0:05:12    time: 0.2238  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3700/5000]  eta: 0:05:01    time: 0.2221  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3750/5000]  eta: 0:04:49    time: 0.2253  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3800/5000]  eta: 0:04:37    time: 0.2258  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3850/5000]  eta: 0:04:26    time: 0.2247  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3900/5000]  eta: 0:04:14    time: 0.2238  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3950/5000]  eta: 0:04:02    time: 0.2330  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4000/5000]  eta: 0:03:51    time: 0.2372  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4050/5000]  eta: 0:03:39    time: 0.2329  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4100/5000]  eta: 0:03:28    time: 0.2335  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4150/5000]  eta: 0:03:16    time: 0.2327  data: 0.0000  max mem: 19543
+2025-06-06 12:52:27,668 [INFO] i2t offline Evaluation time 0:23:16
+2025-06-06 12:52:29,428 [INFO] report i2t metrics offline, at epoch 7 :
+
+2025-06-06 12:52:37,045 [INFO] {'txt_r1': 85.02, 'txt_r5': 96.34, 'txt_r10': 98.1, 'txt_r_mean': 93.15333333333335, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+2025-06-06 12:52:43,117 [INFO] save i2t tta model at epoch 7 to /home/jiahao/task/LAVIS/lavis/output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_gradacc_offline_multiepochs5/i2t/20250606033/i2t_tta_model_model_epoch_7.pth
+2025-06-06 12:52:43,214 [INFO] start tta epoch 8 for i2t task
+2025-06-06 12:52:43,215 [INFO] i2t online Computing features for evaluation...
+2025-06-06 12:52:43,219 [INFO]     text features...
+2025-06-06 12:52:54,533 [INFO]     image features...
+i2t offline Evaluation:  [4200/5000]  eta: 0:03:05    time: 0.2311  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4250/5000]  eta: 0:02:53    time: 0.2308  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4300/5000]  eta: 0:02:41    time: 0.2308  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4350/5000]  eta: 0:02:30    time: 0.2310  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4400/5000]  eta: 0:02:18    time: 0.2305  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4450/5000]  eta: 0:02:07    time: 0.2304  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4500/5000]  eta: 0:01:55    time: 0.2279  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4550/5000]  eta: 0:01:44    time: 0.2281  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4600/5000]  eta: 0:01:32    time: 0.2351  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4650/5000]  eta: 0:01:20    time: 0.2231  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4700/5000]  eta: 0:01:09    time: 0.2222  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4750/5000]  eta: 0:00:57    time: 0.2249  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4800/5000]  eta: 0:00:46    time: 0.2243  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4850/5000]  eta: 0:00:34    time: 0.2274  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4900/5000]  eta: 0:00:23    time: 0.2273  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4950/5000]  eta: 0:00:11    time: 0.2356  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4999/5000]  eta: 0:00:00    time: 0.2257  data: 0.0000  max mem: 19543
+i2t offline Evaluation: Total time: 0:19:14 (0.2308 s / it)
+2025-06-06 12:56:48,493 [INFO]     similarity matrix...
+i2t online Evaluation itm adapt:  [   0/5000]  eta: 0:35:18    time: 0.4236  data: 0.0086  max mem: 19543
+i2t online Evaluation itm adapt:  [  50/5000]  eta: 0:26:44    time: 0.3083  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 100/5000]  eta: 0:26:10    time: 0.3245  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 150/5000]  eta: 0:26:01    time: 0.3266  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 200/5000]  eta: 0:25:49    time: 0.3269  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 250/5000]  eta: 0:25:37    time: 0.3239  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 300/5000]  eta: 0:25:24    time: 0.3270  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 350/5000]  eta: 0:25:10    time: 0.3286  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 400/5000]  eta: 0:24:54    time: 0.3230  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 450/5000]  eta: 0:24:38    time: 0.3251  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 500/5000]  eta: 0:24:22    time: 0.3276  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 550/5000]  eta: 0:24:07    time: 0.3265  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 600/5000]  eta: 0:23:50    time: 0.3189  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 650/5000]  eta: 0:23:31    time: 0.3180  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 700/5000]  eta: 0:23:12    time: 0.3166  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 750/5000]  eta: 0:22:54    time: 0.3159  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 800/5000]  eta: 0:22:35    time: 0.3112  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 850/5000]  eta: 0:22:16    time: 0.3164  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 900/5000]  eta: 0:21:59    time: 0.3142  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 950/5000]  eta: 0:21:41    time: 0.3189  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1000/5000]  eta: 0:21:25    time: 0.3205  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1050/5000]  eta: 0:21:09    time: 0.3186  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1100/5000]  eta: 0:20:53    time: 0.3179  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1150/5000]  eta: 0:20:37    time: 0.3248  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1200/5000]  eta: 0:20:22    time: 0.3242  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1250/5000]  eta: 0:20:06    time: 0.3273  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1300/5000]  eta: 0:19:51    time: 0.3207  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1350/5000]  eta: 0:19:35    time: 0.3263  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1400/5000]  eta: 0:19:19    time: 0.3196  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1450/5000]  eta: 0:19:02    time: 0.3154  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1500/5000]  eta: 0:18:46    time: 0.3234  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1550/5000]  eta: 0:18:29    time: 0.3165  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1600/5000]  eta: 0:18:13    time: 0.3172  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1650/5000]  eta: 0:17:56    time: 0.3164  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1700/5000]  eta: 0:17:40    time: 0.3126  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1750/5000]  eta: 0:17:23    time: 0.3127  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1800/5000]  eta: 0:17:06    time: 0.3140  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1850/5000]  eta: 0:16:49    time: 0.3140  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1900/5000]  eta: 0:16:33    time: 0.3135  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1950/5000]  eta: 0:16:16    time: 0.3081  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2000/5000]  eta: 0:15:59    time: 0.3083  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2050/5000]  eta: 0:15:42    time: 0.3085  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2100/5000]  eta: 0:15:26    time: 0.3147  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2150/5000]  eta: 0:15:09    time: 0.3162  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2200/5000]  eta: 0:14:55    time: 0.3842  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2250/5000]  eta: 0:14:41    time: 0.3590  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2300/5000]  eta: 0:14:27    time: 0.3429  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2350/5000]  eta: 0:14:12    time: 0.3403  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2400/5000]  eta: 0:13:57    time: 0.3378  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2450/5000]  eta: 0:13:41    time: 0.3413  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2500/5000]  eta: 0:13:26    time: 0.3389  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2550/5000]  eta: 0:13:11    time: 0.3436  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2600/5000]  eta: 0:12:56    time: 0.3463  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2650/5000]  eta: 0:12:41    time: 0.3510  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2700/5000]  eta: 0:12:26    time: 0.3497  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2750/5000]  eta: 0:12:10    time: 0.3417  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2800/5000]  eta: 0:11:55    time: 0.3422  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2850/5000]  eta: 0:11:39    time: 0.3420  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2900/5000]  eta: 0:11:23    time: 0.3451  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2950/5000]  eta: 0:11:08    time: 0.3409  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3000/5000]  eta: 0:10:52    time: 0.3393  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3050/5000]  eta: 0:10:36    time: 0.3395  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3100/5000]  eta: 0:10:20    time: 0.3393  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3150/5000]  eta: 0:10:04    time: 0.3262  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3200/5000]  eta: 0:09:48    time: 0.3265  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3250/5000]  eta: 0:09:31    time: 0.3289  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3300/5000]  eta: 0:09:15    time: 0.3224  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3350/5000]  eta: 0:08:59    time: 0.3254  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3400/5000]  eta: 0:08:42    time: 0.3302  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3450/5000]  eta: 0:08:26    time: 0.3358  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3500/5000]  eta: 0:08:10    time: 0.3326  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3550/5000]  eta: 0:07:54    time: 0.3366  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3600/5000]  eta: 0:07:38    time: 0.3468  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3650/5000]  eta: 0:07:22    time: 0.3482  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3700/5000]  eta: 0:07:06    time: 0.3449  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3750/5000]  eta: 0:06:50    time: 0.3456  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3800/5000]  eta: 0:06:33    time: 0.3447  data: 0.0000  max mem: 19543
+2025-06-06 13:25:11,225 [INFO] i2t online Evaluation time 0:32:28
+2025-06-06 13:25:16,777 [INFO] report i2t metrics online, at epoch 8 :
+2025-06-06 13:25:25,582 [INFO] {'txt_r1': 84.14, 'txt_r5': 96.5, 'txt_r10': 98.42, 'txt_r_mean': 93.02, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+2025-06-06 13:25:25,796 [INFO] i2t offline Computing features for evaluation...
+2025-06-06 13:25:25,796 [INFO]     text features...
+2025-06-06 13:25:31,358 [INFO]     image features...
+i2t online Evaluation itm adapt:  [3850/5000]  eta: 0:06:17    time: 0.3419  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3900/5000]  eta: 0:06:01    time: 0.3440  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3950/5000]  eta: 0:05:45    time: 0.3446  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4000/5000]  eta: 0:05:29    time: 0.3500  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4050/5000]  eta: 0:05:12    time: 0.3461  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4100/5000]  eta: 0:04:56    time: 0.3510  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4150/5000]  eta: 0:04:40    time: 0.3469  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4200/5000]  eta: 0:04:24    time: 0.3500  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4250/5000]  eta: 0:04:08    time: 0.3968  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4300/5000]  eta: 0:03:52    time: 0.3905  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4350/5000]  eta: 0:03:36    time: 0.3924  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4400/5000]  eta: 0:03:19    time: 0.3969  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4450/5000]  eta: 0:03:03    time: 0.3938  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4500/5000]  eta: 0:02:47    time: 0.3922  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4550/5000]  eta: 0:02:30    time: 0.3992  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4600/5000]  eta: 0:02:14    time: 0.4006  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4650/5000]  eta: 0:01:57    time: 0.3954  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4700/5000]  eta: 0:01:41    time: 0.3954  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4750/5000]  eta: 0:01:24    time: 0.3930  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4800/5000]  eta: 0:01:07    time: 0.3989  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4850/5000]  eta: 0:00:50    time: 0.3930  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4900/5000]  eta: 0:00:33    time: 0.3899  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4950/5000]  eta: 0:00:16    time: 0.3929  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4999/5000]  eta: 0:00:00    time: 0.3893  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt: Total time: 0:28:22 (0.3404 s / it)
+2025-06-06 13:29:25,360 [INFO]     cosine similarity...
+i2t offline Evaluation:  [   0/5000]  eta: 0:14:56    time: 0.1793  data: 0.0072  max mem: 19543
+i2t offline Evaluation:  [  50/5000]  eta: 0:21:34    time: 0.2520  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 100/5000]  eta: 0:21:31    time: 0.2684  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 150/5000]  eta: 0:21:14    time: 0.2617  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 200/5000]  eta: 0:20:58    time: 0.2612  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 250/5000]  eta: 0:20:44    time: 0.2595  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 300/5000]  eta: 0:20:34    time: 0.2678  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 350/5000]  eta: 0:20:24    time: 0.2677  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 400/5000]  eta: 0:20:15    time: 0.2721  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 450/5000]  eta: 0:20:05    time: 0.2684  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 500/5000]  eta: 0:19:53    time: 0.2676  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 550/5000]  eta: 0:19:42    time: 0.2724  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 600/5000]  eta: 0:19:29    time: 0.2664  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 650/5000]  eta: 0:19:17    time: 0.2734  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 700/5000]  eta: 0:19:06    time: 0.2641  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 750/5000]  eta: 0:18:52    time: 0.2702  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 800/5000]  eta: 0:18:38    time: 0.2661  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 850/5000]  eta: 0:18:23    time: 0.2599  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 900/5000]  eta: 0:18:07    time: 0.2563  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 950/5000]  eta: 0:17:52    time: 0.2536  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1000/5000]  eta: 0:17:36    time: 0.2463  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1050/5000]  eta: 0:17:19    time: 0.2404  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1100/5000]  eta: 0:17:02    time: 0.2409  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1150/5000]  eta: 0:16:46    time: 0.2486  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1200/5000]  eta: 0:16:30    time: 0.2436  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1250/5000]  eta: 0:16:13    time: 0.2340  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1300/5000]  eta: 0:15:58    time: 0.2460  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1350/5000]  eta: 0:15:42    time: 0.2291  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1400/5000]  eta: 0:15:25    time: 0.2338  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1450/5000]  eta: 0:15:09    time: 0.2296  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1500/5000]  eta: 0:14:54    time: 0.2322  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1550/5000]  eta: 0:14:38    time: 0.2283  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1600/5000]  eta: 0:14:23    time: 0.2323  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1650/5000]  eta: 0:14:08    time: 0.2357  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1700/5000]  eta: 0:13:54    time: 0.2369  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1750/5000]  eta: 0:13:39    time: 0.2362  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1800/5000]  eta: 0:13:25    time: 0.2222  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1850/5000]  eta: 0:13:10    time: 0.2262  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1900/5000]  eta: 0:12:55    time: 0.2268  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1950/5000]  eta: 0:12:41    time: 0.2260  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2000/5000]  eta: 0:12:26    time: 0.2183  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2050/5000]  eta: 0:12:12    time: 0.2219  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2100/5000]  eta: 0:11:58    time: 0.2203  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2150/5000]  eta: 0:11:43    time: 0.2202  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2200/5000]  eta: 0:11:29    time: 0.2200  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2250/5000]  eta: 0:11:15    time: 0.2212  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2300/5000]  eta: 0:11:02    time: 0.2193  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2350/5000]  eta: 0:10:49    time: 0.2655  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2400/5000]  eta: 0:10:39    time: 0.2374  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2450/5000]  eta: 0:10:26    time: 0.2492  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2500/5000]  eta: 0:10:15    time: 0.2564  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2550/5000]  eta: 0:10:03    time: 0.2577  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2600/5000]  eta: 0:09:51    time: 0.2483  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2650/5000]  eta: 0:09:39    time: 0.2522  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2700/5000]  eta: 0:09:27    time: 0.2488  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2750/5000]  eta: 0:09:15    time: 0.2628  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2800/5000]  eta: 0:09:03    time: 0.2536  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2850/5000]  eta: 0:08:51    time: 0.2514  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2900/5000]  eta: 0:08:39    time: 0.2514  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2950/5000]  eta: 0:08:27    time: 0.2665  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3000/5000]  eta: 0:08:15    time: 0.2663  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3050/5000]  eta: 0:08:03    time: 0.2641  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3100/5000]  eta: 0:07:51    time: 0.2603  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3150/5000]  eta: 0:07:39    time: 0.2678  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3200/5000]  eta: 0:07:27    time: 0.2587  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3250/5000]  eta: 0:07:15    time: 0.2543  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3300/5000]  eta: 0:07:02    time: 0.2628  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3350/5000]  eta: 0:06:50    time: 0.2608  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3400/5000]  eta: 0:06:38    time: 0.2629  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3450/5000]  eta: 0:06:26    time: 0.2643  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3500/5000]  eta: 0:06:14    time: 0.2571  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3550/5000]  eta: 0:06:01    time: 0.2621  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3600/5000]  eta: 0:05:49    time: 0.2588  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3650/5000]  eta: 0:05:37    time: 0.2700  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3700/5000]  eta: 0:05:25    time: 0.2690  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3750/5000]  eta: 0:05:13    time: 0.2675  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3800/5000]  eta: 0:05:00    time: 0.2679  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3850/5000]  eta: 0:04:48    time: 0.2589  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3900/5000]  eta: 0:04:36    time: 0.2656  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3950/5000]  eta: 0:04:23    time: 0.2747  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4000/5000]  eta: 0:04:11    time: 0.2523  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4050/5000]  eta: 0:03:58    time: 0.2606  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4100/5000]  eta: 0:03:46    time: 0.2688  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4150/5000]  eta: 0:03:34    time: 0.2507  data: 0.0000  max mem: 19543
+2025-06-06 13:50:35,427 [INFO] i2t offline Evaluation time 0:25:09
+2025-06-06 13:50:37,814 [INFO] report i2t metrics offline, at epoch 8 :
+
+2025-06-06 13:50:44,939 [INFO] {'txt_r1': 84.58, 'txt_r5': 96.54, 'txt_r10': 98.44, 'txt_r_mean': 93.18666666666667, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+2025-06-06 13:50:51,690 [INFO] save i2t tta model at epoch 8 to /home/jiahao/task/LAVIS/lavis/output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_gradacc_offline_multiepochs5/i2t/20250606033/i2t_tta_model_model_epoch_8.pth
+2025-06-06 13:50:51,788 [INFO] start tta epoch 9 for i2t task
+2025-06-06 13:50:51,791 [INFO] i2t online Computing features for evaluation...
+2025-06-06 13:50:51,795 [INFO]     text features...
+2025-06-06 13:50:57,261 [INFO]     image features...
+i2t offline Evaluation:  [4200/5000]  eta: 0:03:21    time: 0.2602  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4250/5000]  eta: 0:03:09    time: 0.2731  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4300/5000]  eta: 0:02:56    time: 0.2722  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4350/5000]  eta: 0:02:44    time: 0.2728  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4400/5000]  eta: 0:02:31    time: 0.2677  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4450/5000]  eta: 0:02:19    time: 0.2646  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4500/5000]  eta: 0:02:06    time: 0.2634  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4550/5000]  eta: 0:01:53    time: 0.2571  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4600/5000]  eta: 0:01:41    time: 0.2682  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4650/5000]  eta: 0:01:28    time: 0.2662  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4700/5000]  eta: 0:01:16    time: 0.2647  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4750/5000]  eta: 0:01:03    time: 0.2607  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4800/5000]  eta: 0:00:50    time: 0.2578  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4850/5000]  eta: 0:00:38    time: 0.2658  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4900/5000]  eta: 0:00:25    time: 0.2619  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4950/5000]  eta: 0:00:12    time: 0.2562  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4999/5000]  eta: 0:00:00    time: 0.2610  data: 0.0000  max mem: 19543
+i2t offline Evaluation: Total time: 0:21:09 (0.2539 s / it)
+2025-06-06 13:55:03,822 [INFO]     similarity matrix...
+i2t online Evaluation itm adapt:  [   0/5000]  eta: 0:35:19    time: 0.4239  data: 0.0082  max mem: 19543
+i2t online Evaluation itm adapt:  [  50/5000]  eta: 0:31:34    time: 0.3751  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 100/5000]  eta: 0:30:59    time: 0.3721  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 150/5000]  eta: 0:30:36    time: 0.3772  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 200/5000]  eta: 0:30:17    time: 0.3842  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 250/5000]  eta: 0:29:55    time: 0.3753  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 300/5000]  eta: 0:29:38    time: 0.3753  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 350/5000]  eta: 0:29:14    time: 0.3706  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 400/5000]  eta: 0:28:49    time: 0.3740  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 450/5000]  eta: 0:28:22    time: 0.3581  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 500/5000]  eta: 0:27:57    time: 0.3634  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 550/5000]  eta: 0:27:35    time: 0.3634  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 600/5000]  eta: 0:27:10    time: 0.3549  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 650/5000]  eta: 0:26:45    time: 0.3483  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 700/5000]  eta: 0:26:19    time: 0.3457  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 750/5000]  eta: 0:25:55    time: 0.3447  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 800/5000]  eta: 0:25:33    time: 0.3531  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 850/5000]  eta: 0:25:14    time: 0.3653  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 900/5000]  eta: 0:24:54    time: 0.3613  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [ 950/5000]  eta: 0:24:35    time: 0.3600  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1000/5000]  eta: 0:24:15    time: 0.3546  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1050/5000]  eta: 0:23:56    time: 0.3575  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1100/5000]  eta: 0:23:36    time: 0.3526  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1150/5000]  eta: 0:23:18    time: 0.3626  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1200/5000]  eta: 0:22:59    time: 0.3613  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1250/5000]  eta: 0:22:40    time: 0.3641  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1300/5000]  eta: 0:22:24    time: 0.3776  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1350/5000]  eta: 0:22:08    time: 0.3824  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1400/5000]  eta: 0:21:53    time: 0.3814  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1450/5000]  eta: 0:21:37    time: 0.3881  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1500/5000]  eta: 0:21:21    time: 0.3870  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1550/5000]  eta: 0:21:05    time: 0.3843  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1600/5000]  eta: 0:20:49    time: 0.3870  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1650/5000]  eta: 0:20:32    time: 0.3828  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1700/5000]  eta: 0:20:15    time: 0.3864  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1750/5000]  eta: 0:19:59    time: 0.3854  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1800/5000]  eta: 0:19:42    time: 0.3830  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1850/5000]  eta: 0:19:25    time: 0.3839  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1900/5000]  eta: 0:19:07    time: 0.3840  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [1950/5000]  eta: 0:18:50    time: 0.3849  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2000/5000]  eta: 0:18:32    time: 0.3886  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2050/5000]  eta: 0:18:15    time: 0.3920  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2100/5000]  eta: 0:17:57    time: 0.3827  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2150/5000]  eta: 0:17:39    time: 0.3788  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2200/5000]  eta: 0:17:21    time: 0.3801  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2250/5000]  eta: 0:17:03    time: 0.3798  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2300/5000]  eta: 0:16:45    time: 0.3830  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2350/5000]  eta: 0:16:27    time: 0.3865  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2400/5000]  eta: 0:16:09    time: 0.3890  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2450/5000]  eta: 0:15:51    time: 0.3891  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2500/5000]  eta: 0:15:33    time: 0.3852  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2550/5000]  eta: 0:15:15    time: 0.3874  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2600/5000]  eta: 0:14:57    time: 0.3931  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2650/5000]  eta: 0:14:39    time: 0.3868  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2700/5000]  eta: 0:14:21    time: 0.3884  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2750/5000]  eta: 0:14:03    time: 0.3834  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2800/5000]  eta: 0:13:45    time: 0.3865  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2850/5000]  eta: 0:13:26    time: 0.3799  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2900/5000]  eta: 0:13:08    time: 0.3831  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [2950/5000]  eta: 0:12:49    time: 0.3783  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3000/5000]  eta: 0:12:31    time: 0.3869  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3050/5000]  eta: 0:12:12    time: 0.3831  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3100/5000]  eta: 0:11:54    time: 0.3821  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3150/5000]  eta: 0:11:35    time: 0.3817  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3200/5000]  eta: 0:11:16    time: 0.3810  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3250/5000]  eta: 0:10:58    time: 0.3772  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3300/5000]  eta: 0:10:39    time: 0.3740  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3350/5000]  eta: 0:10:20    time: 0.3908  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3400/5000]  eta: 0:10:02    time: 0.3861  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3450/5000]  eta: 0:09:43    time: 0.3846  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3500/5000]  eta: 0:09:24    time: 0.3821  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3550/5000]  eta: 0:09:06    time: 0.3869  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3600/5000]  eta: 0:08:47    time: 0.3845  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3650/5000]  eta: 0:08:28    time: 0.3864  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3700/5000]  eta: 0:08:10    time: 0.3838  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3750/5000]  eta: 0:07:51    time: 0.3825  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3800/5000]  eta: 0:07:32    time: 0.3864  data: 0.0000  max mem: 19543
+2025-06-06 14:26:30,958 [INFO] i2t online Evaluation time 0:35:39
+2025-06-06 14:26:35,353 [INFO] report i2t metrics online, at epoch 9 :
+2025-06-06 14:26:43,362 [INFO] {'txt_r1': 84.7, 'txt_r5': 96.48, 'txt_r10': 98.16, 'txt_r_mean': 93.11333333333334, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+2025-06-06 14:26:43,581 [INFO] i2t offline Computing features for evaluation...
+2025-06-06 14:26:43,581 [INFO]     text features...
+2025-06-06 14:26:48,975 [INFO]     image features...
+i2t online Evaluation itm adapt:  [3850/5000]  eta: 0:07:14    time: 0.3741  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3900/5000]  eta: 0:06:55    time: 0.3828  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [3950/5000]  eta: 0:06:36    time: 0.3858  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4000/5000]  eta: 0:06:17    time: 0.3812  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4050/5000]  eta: 0:05:58    time: 0.3821  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4100/5000]  eta: 0:05:40    time: 0.3799  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4150/5000]  eta: 0:05:21    time: 0.3851  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4200/5000]  eta: 0:05:02    time: 0.3956  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4250/5000]  eta: 0:04:43    time: 0.3925  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4300/5000]  eta: 0:04:24    time: 0.3873  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4350/5000]  eta: 0:04:05    time: 0.3927  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4400/5000]  eta: 0:03:47    time: 0.3836  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4450/5000]  eta: 0:03:28    time: 0.3604  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4500/5000]  eta: 0:03:09    time: 0.3734  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4550/5000]  eta: 0:02:50    time: 0.3774  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4600/5000]  eta: 0:02:31    time: 0.3780  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4650/5000]  eta: 0:02:12    time: 0.3745  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4700/5000]  eta: 0:01:53    time: 0.3778  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4750/5000]  eta: 0:01:34    time: 0.3675  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4800/5000]  eta: 0:01:15    time: 0.3865  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4850/5000]  eta: 0:00:56    time: 0.3687  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4900/5000]  eta: 0:00:37    time: 0.3574  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4950/5000]  eta: 0:00:18    time: 0.3534  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt:  [4999/5000]  eta: 0:00:00    time: 0.3587  data: 0.0000  max mem: 19543
+i2t online Evaluation itm adapt: Total time: 0:31:26 (0.3773 s / it)
+2025-06-06 14:30:43,983 [INFO]     cosine similarity...
+i2t offline Evaluation:  [   0/5000]  eta: 0:15:31    time: 0.1863  data: 0.0082  max mem: 19543
+i2t offline Evaluation:  [  50/5000]  eta: 0:18:36    time: 0.2339  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 100/5000]  eta: 0:18:53    time: 0.2350  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 150/5000]  eta: 0:18:46    time: 0.2373  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 200/5000]  eta: 0:18:46    time: 0.2469  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 250/5000]  eta: 0:18:50    time: 0.2603  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 300/5000]  eta: 0:18:57    time: 0.2622  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 350/5000]  eta: 0:18:58    time: 0.2597  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 400/5000]  eta: 0:18:53    time: 0.2525  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 450/5000]  eta: 0:18:45    time: 0.2539  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 500/5000]  eta: 0:18:36    time: 0.2546  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 550/5000]  eta: 0:18:25    time: 0.2494  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 600/5000]  eta: 0:18:12    time: 0.2455  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 650/5000]  eta: 0:17:58    time: 0.2433  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 700/5000]  eta: 0:17:44    time: 0.2397  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 750/5000]  eta: 0:17:26    time: 0.2230  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 800/5000]  eta: 0:17:08    time: 0.2233  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 850/5000]  eta: 0:16:51    time: 0.2265  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 900/5000]  eta: 0:16:34    time: 0.2271  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [ 950/5000]  eta: 0:16:20    time: 0.2322  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1000/5000]  eta: 0:16:06    time: 0.2334  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1050/5000]  eta: 0:15:52    time: 0.2329  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1100/5000]  eta: 0:15:39    time: 0.2366  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1150/5000]  eta: 0:15:25    time: 0.2338  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1200/5000]  eta: 0:15:13    time: 0.2372  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1250/5000]  eta: 0:15:00    time: 0.2346  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1300/5000]  eta: 0:14:47    time: 0.2373  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1350/5000]  eta: 0:14:35    time: 0.2426  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1400/5000]  eta: 0:14:23    time: 0.2376  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1450/5000]  eta: 0:14:11    time: 0.2374  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1500/5000]  eta: 0:13:59    time: 0.2376  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1550/5000]  eta: 0:13:46    time: 0.2363  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1600/5000]  eta: 0:13:33    time: 0.2263  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1650/5000]  eta: 0:13:21    time: 0.2292  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1700/5000]  eta: 0:13:08    time: 0.2335  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1750/5000]  eta: 0:12:56    time: 0.2400  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1800/5000]  eta: 0:12:44    time: 0.2374  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1850/5000]  eta: 0:12:32    time: 0.2438  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1900/5000]  eta: 0:12:20    time: 0.2377  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [1950/5000]  eta: 0:12:08    time: 0.2413  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2000/5000]  eta: 0:11:56    time: 0.2416  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2050/5000]  eta: 0:11:44    time: 0.2445  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2100/5000]  eta: 0:11:33    time: 0.2500  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2150/5000]  eta: 0:11:21    time: 0.2407  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2200/5000]  eta: 0:11:09    time: 0.2402  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2250/5000]  eta: 0:10:57    time: 0.2383  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2300/5000]  eta: 0:10:45    time: 0.2417  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2350/5000]  eta: 0:10:33    time: 0.2413  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2400/5000]  eta: 0:10:21    time: 0.2311  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2450/5000]  eta: 0:10:09    time: 0.2390  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2500/5000]  eta: 0:09:57    time: 0.2400  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2550/5000]  eta: 0:09:45    time: 0.2420  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2600/5000]  eta: 0:09:33    time: 0.2338  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2650/5000]  eta: 0:09:21    time: 0.2423  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2700/5000]  eta: 0:09:09    time: 0.2321  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2750/5000]  eta: 0:08:57    time: 0.2424  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2800/5000]  eta: 0:08:45    time: 0.2400  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2850/5000]  eta: 0:08:33    time: 0.2406  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2900/5000]  eta: 0:08:22    time: 0.2465  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [2950/5000]  eta: 0:08:10    time: 0.2401  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3000/5000]  eta: 0:07:57    time: 0.2324  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3050/5000]  eta: 0:07:46    time: 0.2434  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3100/5000]  eta: 0:07:34    time: 0.2455  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3150/5000]  eta: 0:07:22    time: 0.2485  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3200/5000]  eta: 0:07:10    time: 0.2488  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3250/5000]  eta: 0:06:59    time: 0.2496  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3300/5000]  eta: 0:06:47    time: 0.2415  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3350/5000]  eta: 0:06:35    time: 0.2456  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3400/5000]  eta: 0:06:23    time: 0.2447  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3450/5000]  eta: 0:06:11    time: 0.2489  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3500/5000]  eta: 0:05:59    time: 0.2508  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3550/5000]  eta: 0:05:48    time: 0.2544  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3600/5000]  eta: 0:05:36    time: 0.2503  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3650/5000]  eta: 0:05:24    time: 0.2582  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3700/5000]  eta: 0:05:12    time: 0.2335  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3750/5000]  eta: 0:05:00    time: 0.2358  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3800/5000]  eta: 0:04:48    time: 0.2324  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3850/5000]  eta: 0:04:36    time: 0.2454  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3900/5000]  eta: 0:04:24    time: 0.2440  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [3950/5000]  eta: 0:04:12    time: 0.2443  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4000/5000]  eta: 0:04:00    time: 0.2484  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4050/5000]  eta: 0:03:48    time: 0.2478  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4100/5000]  eta: 0:03:36    time: 0.2440  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4150/5000]  eta: 0:03:24    time: 0.2436  data: 0.0000  max mem: 19543
+2025-06-06 14:50:54,504 [INFO] i2t offline Evaluation time 0:24:10
+2025-06-06 14:50:56,125 [INFO] report i2t metrics offline, at epoch 9 :
+
+2025-06-06 14:51:03,685 [INFO] {'txt_r1': 84.68, 'txt_r5': 96.56, 'txt_r10': 98.4, 'txt_r_mean': 93.21333333333332, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': -999}
+2025-06-06 14:51:10,998 [INFO] save i2t tta model at epoch 9 to /home/jiahao/task/LAVIS/lavis/output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_gradacc_offline_multiepochs5/i2t/20250606033/i2t_tta_model_model_epoch_9.pth
+2025-06-06 14:51:18,683 [INFO] {'txt_r1': 84.68, 'txt_r5': 96.56, 'txt_r10': 98.4, 'txt_r_mean': 93.21333333333332, 'img_r1': -999, 'img_r5': -999, 'img_r10': -999, 'img_r_mean': -999, 'r_mean': -999, 'agg_metrics': 93.21333333333332}
+i2t offline Evaluation:  [4200/5000]  eta: 0:03:12    time: 0.2415  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4250/5000]  eta: 0:03:00    time: 0.2428  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4300/5000]  eta: 0:02:48    time: 0.2409  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4350/5000]  eta: 0:02:36    time: 0.2446  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4400/5000]  eta: 0:02:24    time: 0.2519  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4450/5000]  eta: 0:02:12    time: 0.2523  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4500/5000]  eta: 0:02:00    time: 0.2544  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4550/5000]  eta: 0:01:48    time: 0.2539  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4600/5000]  eta: 0:01:36    time: 0.2510  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4650/5000]  eta: 0:01:24    time: 0.2517  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4700/5000]  eta: 0:01:12    time: 0.2536  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4750/5000]  eta: 0:01:00    time: 0.2561  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4800/5000]  eta: 0:00:48    time: 0.2502  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4850/5000]  eta: 0:00:36    time: 0.2461  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4900/5000]  eta: 0:00:24    time: 0.2476  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4950/5000]  eta: 0:00:12    time: 0.2533  data: 0.0000  max mem: 19543
+i2t offline Evaluation:  [4999/5000]  eta: 0:00:00    time: 0.2355  data: 0.0000  max mem: 19543
+i2t offline Evaluation: Total time: 0:20:10 (0.2420 s / it)
