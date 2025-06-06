@@ -1473,6 +1473,8 @@ def sample_selection_intertop1(sims_matrix_i2t, sims_matrix_t2i):
         if idx in top5_idx_matrix_i2t[top1_idx, ...]:
             selected_sample_idx_t2i.append(idx)
 
+    del top5_idx_matrix_i2t, top1_idx_matrix_t2i
+    torch.cuda.empty_cache()
     return selected_sample_idx_i2t, selected_sample_idx_t2i
 
 # 计算i2t和t2的sim matrix
@@ -2226,8 +2228,8 @@ def compute_i2t_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
         sims_matrix_i2t = torch.stack(sims_matrix, dim=0) #5000,25010
         sims_matrix_t2i = sims_matrix_i2t.t()
 
-    selected_sample_idx_i2t, selected_sample_idx_t2i = sample_selection_intertop1(sims_matrix_i2t, sims_matrix_t2i)
-    logging.info(f"after sample selection, number of i2t samples: {len(selected_sample_idx_i2t)}, number of t2i samples: {len(selected_sample_idx_t2i)}")
+    selected_sample_idx_i2t, selected_sample_idx_t2i = sample_selection_intertop1(sims_matrix_i2t.detach().cpu(), sims_matrix_t2i.detach().cpu())
+    logging.info(f"     after sample selection, number of i2t samples: {len(selected_sample_idx_i2t)}, number of t2i samples: {len(selected_sample_idx_t2i)}")
 
     model.train()
 
