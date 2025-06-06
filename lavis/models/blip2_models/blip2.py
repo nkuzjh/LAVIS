@@ -2465,3 +2465,260 @@ def compute_t2i_sim_matrix_adapt_itm_ss(model, data_loader, optimizer, tta_cfg, 
     # model.to(model.device)
     return score_matrix_t2i.cpu().detach().numpy()
 
+
+def compute_i2t_sim_matrix_adapt_itm_sigmoid(model, data_loader, optimizer, tta_cfg, **kwargs):
+    k_test = kwargs.pop("k_test")
+
+    metric_logger = MetricLogger(delimiter="  ")
+    header = "i2t online Evaluation itm adapt:"
+
+    logging.info("i2t online Computing features for evaluation...")
+    start_time = time.time()
+
+    model.eval()
+
+    with torch.no_grad():
+        logging.info("    text features...")
+        texts = data_loader.dataset.text
+        num_text = len(texts)
+        text_bs = 256
+        text_ids = []
+        text_embeds = []
+        text_atts = []
+        for i in range(0, num_text, text_bs):
+            # print("\r text_batch_i: ", i, end="")
+            text = texts[i : min(num_text, i + text_bs)]
+            text_input = model.tokenizer(
+                text,
+                padding="max_length",
+                truncation=True,
+                max_length=35,
+                return_tensors="pt",
+            ).to(model.device)
+            text_feat = model.forward_text(text_input)
+            text_embed = F.normalize(model.text_proj(text_feat))
+            text_embeds.append(text_embed)
+            text_ids.append(text_input.input_ids)
+            text_atts.append(text_input.attention_mask)
+
+        text_embeds = torch.cat(text_embeds, dim=0)
+        text_ids = torch.cat(text_ids, dim=0)
+        text_atts = torch.cat(text_atts, dim=0)
+
+        logging.info("    image features...")
+        vit_feats = []
+        image_embeds = []
+        for i, samples in enumerate(data_loader):
+            # print("\r image_batch_i: ", i*len(samples["image"]), end="")
+            image = samples["image"]
+
+            image = image.to(model.device)
+            image_feat, vit_feat = model.forward_image(image)
+            image_embed = model.vision_proj(image_feat)
+            image_embed = F.normalize(image_embed, dim=-1)
+
+            vit_feats.append(vit_feat.cpu())
+            image_embeds.append(image_embed)
+
+        vit_feats = torch.cat(vit_feats, dim=0)
+        image_embeds = torch.cat(image_embeds, dim=0)
+
+        logging.info("    similarity matrix...") # 这里F.normaliza()后的矩阵相乘@ 就是cosine_similarity
+        sims_matrix = []
+        for image_embed in image_embeds: # 5000,32,256
+            sim_q2t = image_embed @ text_embeds.t() # image_embed.shape=32,256 text_embeds.shape=25010,256
+            sim_i2t, _ = sim_q2t.max(0) #32,25010 -> 25010
+            # sim_i2t = sim_i2t / model.temp
+            sims_matrix.append(sim_i2t)
+        sims_matrix_i2t = torch.stack(sims_matrix, dim=0) #5000,25010
+        # sims_matrix_t2i = sims_matrix_i2t.t()
+
+    model.train()
+
+    score_matrix_i2t = torch.full(
+        (len(data_loader.dataset.image), len(texts)), -100.0
+    ).to(model.device)
+
+    num_tasks = dist_utils.get_world_size()
+    rank = dist_utils.get_rank()
+    step = sims_matrix_i2t.size(0) // num_tasks + 1
+    start = rank * step
+    end = min(sims_matrix_i2t.size(0), start + step)
+    itm_loss_backward_accum_bs = tta_cfg.grad_accum_bs #1 #64
+    grad_accum_num = 0
+    for i, sims_i2t in enumerate(
+        metric_logger.log_every(sims_matrix_i2t[start:end], 50, header)
+    ): # 遍历每个image与25010个text的sim_matrix
+        topk_sim_i2t, topk_idx_i2t = sims_i2t.topk(k=k_test, dim=0) #sims.shape=25010 topk_sim.shape=128 topk_idx=top128_idx
+        image_inputs = vit_feats[start + i].repeat(k_test, 1, 1).to(model.device) # vit_feats[i].shape=1,677,1408 image_inputs.shape=128,677,1408
+        score = model.compute_itm(
+            image_inputs=image_inputs, #128,677,1408
+            text_ids=text_ids[topk_idx_i2t], #128,35
+            text_atts=text_atts[topk_idx_i2t], #128,35
+        ).float() # score.shape=128
+
+        top1_match_coeffi = torch.ones(1).to(model.device)
+        # if hasattr(tta_cfg, 'top1_match_coeffi') and tta_cfg.top1_match_coeffi == True:
+        #     proba_top1_sim_i2t = F.softmax(topk_sim_i2t, dim=0)[0]
+        #     proba_sim_t2i_top1_idx_i2t = torch.zeros(1).to(proba_top1_sim_i2t.device)
+        #     topk_sim_t2i_top1_idx_i2t, topk_idx_t2i_top1_idx_i2t = sims_matrix_t2i[topk_idx_i2t[0]].topk(k=k_test, dim=0)
+        #     if i in topk_idx_t2i_top1_idx_i2t:
+        #         idx_i_in_topk_idx_t2i_top1_idx_i2t = torch.where(topk_idx_t2i_top1_idx_i2t == i)
+        #         proba_sim_t2i_top1_idx_i2t = F.softmax(topk_sim_t2i_top1_idx_i2t, dim=0)[idx_i_in_topk_idx_t2i_top1_idx_i2t]
+        #     top1_match_coeffi = torch.exp(1 - (proba_top1_sim_i2t + proba_sim_t2i_top1_idx_i2t)/2 )
+
+        # itm entropy adapt
+        # loss_entropy_topk_gallery = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum()
+        loss_entropy_topk_gallery = -(F.sigmoid(score) * torch.log(F.sigmoid(score))).sum()
+        loss_entropy_uncertainty = loss_entropy_topk_gallery.mean() / top1_match_coeffi
+        loss_entropy_uncertainty = loss_entropy_uncertainty / itm_loss_backward_accum_bs
+        loss_entropy_uncertainty.backward()
+        grad_accum_num += 1
+        if grad_accum_num >= itm_loss_backward_accum_bs or i>=end-1:
+            optimizer.step()
+            optimizer.zero_grad()
+            grad_accum_num = 0
+
+        #score = itm_score + cos_sim
+        score_matrix_i2t[start+i, topk_idx_i2t] = score + topk_sim_i2t
+
+    if dist_utils.is_dist_avail_and_initialized():
+        dist.barrier()
+        torch.distributed.all_reduce(
+            score_matrix_i2t, op=torch.distributed.ReduceOp.SUM
+        )
+
+    total_time = time.time() - start_time
+    total_time_str = str(datetime.timedelta(seconds=int(total_time)))
+    logging.info("i2t online Evaluation time {}".format(total_time_str))
+
+    return score_matrix_i2t.cpu().detach().numpy()
+
+def compute_t2i_sim_matrix_adapt_itm_sigmoid(model, data_loader, optimizer, tta_cfg, **kwargs):
+    k_test = kwargs.pop("k_test")
+
+    metric_logger = MetricLogger(delimiter="  ")
+    header = "i2t online Evaluation itm adapt:"
+
+    logging.info("i2t online Computing features for evaluation...")
+    start_time = time.time()
+
+    model.eval()
+
+    with torch.no_grad():
+        logging.info("    text features...")
+        texts = data_loader.dataset.text
+        num_text = len(texts)
+        text_bs = 256
+        text_ids = []
+        text_embeds = []
+        text_atts = []
+        for i in range(0, num_text, text_bs):
+            # print("\r text_batch_i: ", i, end="")
+            text = texts[i : min(num_text, i + text_bs)]
+            text_input = model.tokenizer(
+                text,
+                padding="max_length",
+                truncation=True,
+                max_length=35,
+                return_tensors="pt",
+            ).to(model.device)
+            text_feat = model.forward_text(text_input)
+            text_embed = F.normalize(model.text_proj(text_feat))
+            text_embeds.append(text_embed)
+            text_ids.append(text_input.input_ids)
+            text_atts.append(text_input.attention_mask)
+
+        text_embeds = torch.cat(text_embeds, dim=0)
+        text_ids = torch.cat(text_ids, dim=0)
+        text_atts = torch.cat(text_atts, dim=0)
+
+        logging.info("    image features...")
+        vit_feats = []
+        image_embeds = []
+        for i, samples in enumerate(data_loader):
+            # print("\r image_batch_i: ", i*len(samples["image"]), end="")
+            image = samples["image"]
+
+            image = image.to(model.device)
+            image_feat, vit_feat = model.forward_image(image)
+            image_embed = model.vision_proj(image_feat)
+            image_embed = F.normalize(image_embed, dim=-1)
+
+            vit_feats.append(vit_feat.cpu())
+            image_embeds.append(image_embed)
+
+        vit_feats = torch.cat(vit_feats, dim=0)
+        image_embeds = torch.cat(image_embeds, dim=0)
+
+        logging.info("    similarity matrix...") # 这里F.normaliza()后的矩阵相乘@ 就是cosine_similarity
+        sims_matrix = []
+        for image_embed in image_embeds: # 5000,32,256
+            sim_q2t = image_embed @ text_embeds.t() # image_embed.shape=32,256 text_embeds.shape=25010,256
+            sim_i2t, _ = sim_q2t.max(0) #32,25010 -> 25010
+            # sim_i2t = sim_i2t / model.temp
+            sims_matrix.append(sim_i2t)
+        sims_matrix_i2t = torch.stack(sims_matrix, dim=0) #5000,25010
+        # sims_matrix_t2i = sims_matrix_i2t.t()
+
+    model.train()
+
+    score_matrix_t2i = torch.full(
+        (len(texts), len(data_loader.dataset.image)), -100.0
+    ).to(model.device)
+
+    num_tasks = dist_utils.get_world_size()
+    rank = dist_utils.get_rank()
+    step = sims_matrix_t2i.size(0) // num_tasks + 1
+    start = rank * step
+    end = min(sims_matrix_t2i.size(0), start + step)
+    itm_loss_backward_accum_bs = tta_cfg.grad_accum_bs #64
+    grad_accum_num = 0
+    for i, sims_t2i in enumerate(
+        metric_logger.log_every(sims_matrix_t2i[start:end], 50, header)
+    ): # 遍历每个image与25010个text的sim_matrix
+        topk_sim_t2i, topk_idx_t2i = sims_t2i.topk(k=k_test, dim=0) #sims.shape=1,25010 topk_sim.shape=128 topk_idx=top128_idx
+        image_inputs = vit_feats[topk_idx_t2i.cpu()].to(model.device) # vit_feats[start + i].shape=677,1408 image_inputs.shape=128,677,1408
+        score = model.compute_itm(
+            image_inputs=image_inputs, #128,677,1408
+            text_ids=text_ids[start + i].repeat(k_test, 1), #128,35
+            text_atts=text_atts[start + i].repeat(k_test, 1), #128,35
+        ).float() # score.shape=128
+
+        top1_match_coeffi = torch.ones(1).to(model.device)
+        # if hasattr(tta_cfg, 'top1_match_coeffi') and tta_cfg.top1_match_coeffi == True:
+        #     proba_top1_sim_t2i = F.softmax(topk_sim_t2i, dim=0)[0]
+        #     proba_sim_i2t_top1_idx_t2i = torch.Tensor([0.]).to(proba_top1_sim_t2i.device)
+        #     topk_sim_i2t_top1_idx_t2i, topk_idx_i2t_top1_idx_t2i = sims_matrix_i2t[topk_idx_t2i[0]].topk(k=k_test, dim=0)
+        #     if i in topk_idx_i2t_top1_idx_t2i:
+        #         idx_of_i_in_topk_idx_i2t_top1_idx_t2i = torch.where(topk_idx_i2t_top1_idx_t2i == i)
+        #         proba_sim_i2t_top1_idx_t2i = F.softmax(topk_sim_i2t_top1_idx_t2i, dim=0)[idx_of_i_in_topk_idx_i2t_top1_idx_t2i]
+        #     top1_match_coeffi = torch.exp( 1 - (proba_top1_sim_t2i + proba_sim_i2t_top1_idx_t2i)/2 )
+
+        # itm adapt
+        # loss_entropy_topk_gallery = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum()
+        loss_entropy_topk_gallery = -(F.sigmoid(score) * torch.log(F.sigmoid(score))).sum()
+        loss_entropy_uncertainty = loss_entropy_topk_gallery.mean() / top1_match_coeffi
+        loss_entropy_uncertainty = loss_entropy_uncertainty / itm_loss_backward_accum_bs
+        loss_entropy_uncertainty.backward()
+        grad_accum_num += 1
+        if grad_accum_num >= itm_loss_backward_accum_bs or i>=end-1:
+            optimizer.step()
+            optimizer.zero_grad()
+            grad_accum_num = 0
+
+        #score = itm_score + cos_sim
+        score_matrix_t2i[start + i, topk_idx_t2i] = score + topk_sim_t2i
+
+    if dist_utils.is_dist_avail_and_initialized():
+        dist.barrier()
+        torch.distributed.all_reduce(
+            score_matrix_t2i, op=torch.distributed.ReduceOp.SUM
+        )
+
+    total_time = time.time() - start_time
+    total_time_str = str(datetime.timedelta(seconds=int(total_time)))
+    logging.info("i2t online Evaluation time {}".format(total_time_str))
+
+    return score_matrix_t2i.cpu().detach().numpy()
+

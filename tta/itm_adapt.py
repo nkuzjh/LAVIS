@@ -441,17 +441,6 @@ def forward_and_itm_adapt_sigmoid(tta_model, optimizer, dataloader, task_cfg, tt
     """
     score_i2t, score_t2i, score_i2t_offline, score_t2i_offline = None, None, None, None
     if tta_cfg.zero_shot_eval:
-        score_i2t_zeroshot, score_t2i_zeroshot, _ = tta_model.model.compute_i2t_sim_matrix(dataloader, task_cfg=task_cfg)
-        logging.info("report zero-shot metrics : \r\n")
-        logging.info(
-            report_metrics(
-                scores_i2t=score_i2t_zeroshot,
-                scores_t2i=score_t2i_zeroshot,
-                txt2img=dataloader.dataset.txt2img,
-                img2txt=dataloader.dataset.img2txt,
-                prefix_info="report zero-shot metrics : ",
-            )
-        )
         score_i2t_zeroshot, score_t2i_zeroshot, _ = tta_model.model.compute_sim_matrix(dataloader, task_cfg=task_cfg, wo_rerank=tta_cfg.wo_rerank)
         logging.info("report zero-shot metrics with origin function : \r\n")
         logging.info(
@@ -461,6 +450,28 @@ def forward_and_itm_adapt_sigmoid(tta_model, optimizer, dataloader, task_cfg, tt
                 txt2img=dataloader.dataset.txt2img,
                 img2txt=dataloader.dataset.img2txt,
                 prefix_info="report zero-shot metrics with origin function : ",
+            )
+        )
+        score_i2t_zeroshot, _, _ = tta_model.model.compute_i2t_sim_matrix(dataloader, task_cfg=task_cfg)
+        logging.info("report i2t zero-shot metrics : \r\n")
+        logging.info(
+            report_metrics(
+                scores_i2t=score_i2t_zeroshot,
+                scores_t2i=None,
+                txt2img=dataloader.dataset.txt2img,
+                img2txt=dataloader.dataset.img2txt,
+                prefix_info="report i2t zero-shot metrics : ",
+            )
+        )
+        _, score_t2i_zeroshot, _ = tta_model.model.compute_t2i_sim_matrix(dataloader, task_cfg=task_cfg)
+        logging.info("report t2i zero-shot metrics : \r\n")
+        logging.info(
+            report_metrics(
+                scores_i2t=None,
+                scores_t2i=score_t2i_zeroshot,
+                txt2img=dataloader.dataset.txt2img,
+                img2txt=dataloader.dataset.img2txt,
+                prefix_info="report t2i zero-shot metrics : ",
             )
         )
 

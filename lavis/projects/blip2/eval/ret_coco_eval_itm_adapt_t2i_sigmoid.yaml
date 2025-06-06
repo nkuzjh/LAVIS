@@ -67,3 +67,4 @@ tta:
   tta_task: "t2i" # "i2t" or "t2i"
   zero_shot_eval: False
   top1_match_coeffi: False
+  grad_accum_bs: 1

@@ -37,6 +37,8 @@ from lavis.models.blip2_models.blip2 import (
     compute_t2i_sim_matrix,
     compute_i2t_sim_matrix_adapt_itm_ss,
     compute_t2i_sim_matrix_adapt_itm_ss,
+    compute_i2t_sim_matrix_adapt_itm_sigmoid,
+    compute_t2i_sim_matrix_adapt_itm_sigmoid,
 )
 from lavis.models.blip_models.blip_outputs import BlipOutput, BlipOutputFeatures
 
@@ -725,4 +727,22 @@ class Blip2Qformer(Blip2Base):
         k_test = task_cfg.k_test
 
         score_t2i = compute_t2i_sim_matrix_adapt_itm_ss(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
+        return score_t2i
+    
+    def compute_i2t_sim_matrix_adapt_itm_sigmoid(self, data_loader, task_cfg, optimizer, tta_cfg):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        score_i2t = compute_i2t_sim_matrix_adapt_itm_sigmoid(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
+        return score_i2t
+
+    def compute_t2i_sim_matrix_adapt_itm_sigmoid(self, data_loader, task_cfg, optimizer, tta_cfg):
+        """
+        Compute similarity i2t, t2i matrix for the given data loader.
+        """
+        k_test = task_cfg.k_test
+
+        score_t2i = compute_t2i_sim_matrix_adapt_itm_sigmoid(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
         return score_t2i
