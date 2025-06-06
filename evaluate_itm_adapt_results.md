@@ -14,7 +14,7 @@
     - rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature)
     - multi_epochs=10
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t.yaml > ret_coco_eval_itm_adapt_i2t.out 2>&1 &    58 finish
-    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i.out 2>&1 &    58 running pid=1019782  
+    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i.out 2>&1 &    58 stop at epoch=4 without reason 
     - **results :**
         - i2t best:
             report i2t metrics offline, at epoch 2 / 9:
@@ -22,6 +22,11 @@
         - t2i best:
             report t2i metrics online, at epoch 2 / 4:
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 67.37704918032787, "img_r5": 87.38104758096762, "img_r10": 92.54698120751699, "img_r_mean": 82.43502598960417, "r_mean": -999, "agg_metrics": -999}
+
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t.yaml > ret_coco_eval_itm_adapt_i2t.out1 2>&1 &    58 running pid=2787273
+    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i.out1 2>&1 &    58 running pid=2787432
+
+
 
 1. exp 0.1
     - loss = Qformer tent / exp(1-互相top1-topk的概率均值); top1_match_coeffi=True
@@ -32,10 +37,11 @@
     - multi_epochs=10
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t.yaml > ret_coco_eval_itm_adapt_i2t_exp01.out 2>&1 &    58 finish
         **验证i2t top1_match_coeffi为何不生效**
+        **当gradacc很大时，由于一个iter的loss变小，导致每次梯度更新结果相同**
     - **results :**
         - i2t best:
-            report i2t metrics offline, at epoch 2 / 9:
-            {"txt_r1": 85.02, "txt_r5": 96.64, "txt_r10": 98.24, "txt_r_mean": 93.3, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+            report i2t metrics online, at epoch 0 / 9 :
+            {"txt_r1": 84.44, "txt_r5": 96.28, "txt_r10": 98.3, "txt_r_mean": 93.00666666666666, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
 
 
 
@@ -56,6 +62,7 @@
         - t2i best: 
             report t2i metrics offline, at epoch 1 / 1:
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 67.44502199120352, "img_r5": 87.52099160335865, "img_r10": 92.5749700119952, "img_r_mean": 82.5136612021858, "r_mean": -999, "agg_metrics": -999}
+
 
 
 1. exp 2

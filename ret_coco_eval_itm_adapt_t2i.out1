@@ -1,0 +1,122 @@
+nohup: ignoring input
+/home/jiahao/miniconda3/envs/blip2/lib/python3.11/site-packages/timm/models/hub.py:4: FutureWarning: Importing from timm.models.hub is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+2025-06-06 03:39:35,439 [INFO] 
+=====  Running Parameters    =====
+2025-06-06 03:39:35,440 [INFO] {
+    "batch_size_eval": 16,
+    "batch_size_train": 16,
+    "device": "cuda",
+    "dist_url": "env://",
+    "distributed": false,
+    "evaluate": true,
+    "k_test": 128,
+    "num_workers": 4,
+    "output_dir": "output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_gradacc_offline_multiepochs5/t2i",
+    "seed": 42,
+    "task": "retrieval",
+    "test_splits": [
+        "test"
+    ],
+    "train_splits": [
+        "train"
+    ],
+    "use_dist_eval_sampler": false,
+    "valid_splits": [
+        "val"
+    ],
+    "world_size": 1
+}
+2025-06-06 03:39:35,440 [INFO] 
+======  Dataset Attributes  ======
+2025-06-06 03:39:35,440 [INFO] 
+======== coco_retrieval =======
+2025-06-06 03:39:35,440 [INFO] {
+    "build_info": {
+        "annotations": {
+            "test": {
+                "md5": "3ff34b0ef2db02d01c37399f6a2a6cd1",
+                "storage": "coco/annotations/coco_karpathy_test.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_test.json"
+            },
+            "train": {
+                "md5": "aa31ac474cf6250ebb81d18348a07ed8",
+                "storage": "coco/annotations/coco_karpathy_train.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_train.json"
+            },
+            "val": {
+                "md5": "b273847456ef5580e33713b1f7de52a0",
+                "storage": "coco/annotations/coco_karpathy_val.json",
+                "url": "https://storage.googleapis.com/sfr-vision-language-research/datasets/coco_karpathy_val.json"
+            }
+        },
+        "images": {
+            "storage": "coco/images/"
+        }
+    },
+    "data_type": "images",
+    "text_processor": {
+        "eval": {
+            "name": "blip_caption"
+        },
+        "train": {
+            "name": "blip_caption"
+        }
+    },
+    "vis_processor": {
+        "eval": {
+            "image_size": 364,
+            "name": "blip_image_eval"
+        },
+        "train": {
+            "image_size": 364,
+            "name": "blip_image_train"
+        }
+    }
+}
+2025-06-06 03:39:35,440 [INFO] 
+======  Model Attributes  ======
+2025-06-06 03:39:35,440 [INFO] {
+    "arch": "blip2",
+    "drop_path_rate": 0,
+    "finetuned": "/home/jiahao/pretrain/blip2_finetune_coco.pth",
+    "freeze_vit": false,
+    "image_size": 364,
+    "load_finetuned": true,
+    "model_type": "coco",
+    "num_query_token": 32,
+    "pretrained": "/home/jiahao/pretrain/blip2_pretrained.pth",
+    "use_grad_checkpoint": false,
+    "vit_precision": "fp32"
+}
+2025-06-06 03:39:35,440 [INFO] 
+======  TTA Attributes  ======
+2025-06-06 03:39:35,440 [INFO] {
+    "init_lr": 5e-06,
+    "name": "itm_adapt",
+    "offline_multi_epochs": 10,
+    "online": false,
+    "top1_match_coeffi": false,
+    "tta_task": "t2i",
+    "weight_decay": 0.0,
+    "wo_rerank": false,
+    "zero_shot_eval": true
+}
+2025-06-06 03:39:35,441 [INFO] Building datasets...
+2025-06-06 03:39:36,587 [WARNING] /home/jiahao/miniconda3/envs/blip2/lib/python3.11/site-packages/huggingface_hub/file_download.py:1142: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+
+2025-06-06 03:40:01,881 [INFO] Missing keys []
+2025-06-06 03:40:01,882 [INFO] load checkpoint from /home/jiahao/pretrain/blip2_finetune_coco.pth
+2025-06-06 03:40:02,079 [INFO] dataset_ratios not specified, datasets will be concatenated (map-style datasets) or chained (webdataset.DataPipeline).
+2025-06-06 03:40:02,079 [INFO] Loaded 566747 records for train split from the dataset.
+2025-06-06 03:40:02,080 [INFO] Loaded 5000 records for val split from the dataset.
+2025-06-06 03:40:02,080 [INFO] Loaded 5000 records for test split from the dataset.
+2025-06-06 03:40:03,700 [INFO] tta_cfg.name: itm_adapt
+2025-06-06 03:40:03,720 [INFO] start t2i task for tta
+2025-06-06 03:40:03,720 [INFO] t2i offline Computing features for evaluation...
+2025-06-06 03:40:03,720 [INFO]     text features...
+2025-06-06 03:40:09,517 [INFO]     image features...
+Not using distributed mode
+Position interpolate from 16x16 to 26x26
+2025-06-06 03:44:00,055 [INFO]     cosine similarity...
