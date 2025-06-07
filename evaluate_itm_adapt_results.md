@@ -78,7 +78,7 @@
             report t2i metrics offline, at epoch 2 / 3:
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 67.48500599760096, "img_r5": 87.28108756497402, "img_r10": 92.34306277489004, "img_r_mean": 82.36971877915501, "r_mean": -999, "agg_metrics": -999}
 
-    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i_exp1.out1 2>&1 &    59 running pid = 3690453;
+    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i_exp1.out1 2>&1 &    59 running pid = 791547;
         **remote 59的CUDA_VISIBLE_DEVICES=2是不是没挂载上？**
         **59 CUDA_VISIBLE_DEVICES=2 实际是 CUDA_VISIBLE_DEVICES=1的3090;**
         - **results :**
@@ -112,11 +112,25 @@
     - rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature)
     - multi_epochs=10
     
-    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.out 2>&1 &    59 running pid=4042538
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.out 2>&1 &    59 running pid=4042538; finish
         **59 CUDA_VISIBLE_DEVICES=1 实际是 CUDA_VISIBLE_DEVICES=2 的4090**
         - **results :**
         - i2t best: 
+            不收敛
+    - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_sigmoid.yaml > ret_coco_eval_itm_adapt_t2i_exp3.out 2>&1 &    59 running pid=4044806; stop due to bug;
 
-    - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_sigmoid.yaml > ret_coco_eval_itm_adapt_t2i_exp3.out 2>&1 &    59 running pid=4044806
+1. exp 3.1
+    - loss = Qformer sigmoid entropy; top1_match_coeffi=False
+    - lr=5e-6 wd=0.0
+    - 梯度累积, accumulate batch size = 64
+    - offline, online=False
+    - rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature)
+    - multi_epochs=10
+
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.out 2>&1 &    59 running pid=
+        - **results :**
+        - t2i best: 
+        
+    - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_sigmoid.yaml > ret_coco_eval_itm_adapt_t2i_exp3.out 2>&1 &    59 running pid=
         - **results :**
         - t2i best: 
