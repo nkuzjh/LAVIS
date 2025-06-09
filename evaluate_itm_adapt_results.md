@@ -161,6 +161,26 @@
 ### exp 3.1
 1. parameters:
     - loss = Qformer sigmoid entropy; top1_match_coeffi=False
+    - tta_cfg.temper = 0.01
+    - lr=5e-6 wd=0.0
+    - 梯度累积, accumulate batch size = 64
+    - offline, online=False
+    - rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature)
+    - multi_epochs=10
+
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.out 2>&1 &   
+        59 running pid=
+
+
+3. results t2i best:   
+    - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_sigmoid.yaml > ret_coco_eval_itm_adapt_t2i_exp3.out 2>&1 &    
+        59 running pid=
+
+### exp 3.2
+1. parameters:
+    - loss = Qformer sigmoid entropy / tta_cfg.temper; top1_match_coeffi=False
+    - tta_cfg.temper = 0.01
     - lr=5e-6 wd=0.0
     - 梯度累积, accumulate batch size = 64
     - offline, online=False
