@@ -6,11 +6,24 @@
 - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i.out 2>&1 &
 
 ## baseline score
-official inference code:
+1. official inference code:
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval.yaml >ret_coco_eval.out 2>&1 & 
+        58 finish
+        _report_metrics: 
+            {"txt_r1": 85.42, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.64, "img_r1": 68.25269892043183, "img_r5": 87.72890843662535, "img_r10": 92.62694922031187, "img_r_mean": 82.869518859123, "r_mean": 88.2547594295615, "agg_metrics": 93.64}
 
-my implemention:
 
-
+2. my implemention:
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.out 2>&1 & 
+        report zero-shot metrics with origin function : 
+            {"txt_r1": 84.82, "txt_r5": 96.62, "txt_r10": 98.22, "txt_r_mean": 93.21999999999998, "img_r1": 67.37305077968813, "img_r5": 87.20511795281887, "img_r10": 92.41903238704518, "img_r_mean": 82.33240037318406, "r_mean": 87.77620018659202, "agg_metrics": 93.21999999999998}
+        report i2t zero-shot metrics : 
+            {"txt_r1": 84.82, "txt_r5": 96.56, "txt_r10": 98.3, "txt_r_mean": 93.22666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+        report t2i zero-shot metrics : 
+            {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 67.36505397840864, "img_r5": 87.21311475409836, "img_r10": 92.42702918832467, "img_r_mean": 82.33506597361055, "r_mean": -999, "agg_metrics": -999}
+    
+    - --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_my_implementation_debug.yaml
+        58 debugging
 
 ## experiments
 ### exp 0

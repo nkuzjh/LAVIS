@@ -452,6 +452,8 @@ def forward_and_itm_adapt_sigmoid(tta_model, optimizer, dataloader, task_cfg, tt
                 prefix_info="report zero-shot metrics with origin function : ",
             )
         )
+        np.save("score_i2t_zeroshot.npy",score_i2t_zeroshot)
+        np.save("score_t2i_zeroshot.npy",score_t2i_zeroshot)
         score_i2t_zeroshot, _, _ = tta_model.model.compute_i2t_sim_matrix(dataloader, task_cfg=task_cfg)
         logging.info("report i2t zero-shot metrics : \r\n")
         logging.info(
@@ -474,7 +476,8 @@ def forward_and_itm_adapt_sigmoid(tta_model, optimizer, dataloader, task_cfg, tt
                 prefix_info="report t2i zero-shot metrics : ",
             )
         )
-
+        np.save("score_i2t_zeroshot_1.npy",score_i2t_zeroshot)
+        np.save("score_t2i_zeroshot_1.npy",score_t2i_zeroshot)
     if hasattr(tta_cfg, "offline_multi_epochs") and tta_cfg.online == False:
         offline_multi_epochs = tta_cfg.offline_multi_epochs
     else:
