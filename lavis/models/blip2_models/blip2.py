@@ -2545,6 +2545,10 @@ def compute_i2t_sim_matrix_adapt_itm_sigmoid(model, data_loader, optimizer, tta_
     start = rank * step
     end = min(sims_matrix_i2t.size(0), start + step)
     itm_loss_backward_accum_bs = tta_cfg.grad_accum_bs #1 #64
+    if hasattr(tta_cfg, 'temper'):
+        sigmoid_temper = tta_cfg.temper
+    else:
+        sigmoid_temper = 1.
     grad_accum_num = 0
     for i, sims_i2t in enumerate(
         metric_logger.log_every(sims_matrix_i2t[start:end], 50, header)
@@ -2569,7 +2573,7 @@ def compute_i2t_sim_matrix_adapt_itm_sigmoid(model, data_loader, optimizer, tta_
 
         # itm entropy adapt
         # loss_entropy_topk_gallery = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum()
-        loss_entropy_topk_gallery = -(F.sigmoid(score) * torch.log(F.sigmoid(score))).sum()
+        loss_entropy_topk_gallery = -(F.sigmoid(score) * torch.log(F.sigmoid(score))).sum() / sigmoid_temper
         loss_entropy_uncertainty = loss_entropy_topk_gallery.mean() / top1_match_coeffi
         loss_entropy_uncertainty = loss_entropy_uncertainty / itm_loss_backward_accum_bs
         loss_entropy_uncertainty.backward()
@@ -2659,7 +2663,7 @@ def compute_t2i_sim_matrix_adapt_itm_sigmoid(model, data_loader, optimizer, tta_
             # sim_i2t = sim_i2t / model.temp
             sims_matrix.append(sim_i2t)
         sims_matrix_i2t = torch.stack(sims_matrix, dim=0) #5000,25010
-        # sims_matrix_t2i = sims_matrix_i2t.t()
+        sims_matrix_t2i = sims_matrix_i2t.t()
 
     model.train()
 
@@ -2673,6 +2677,10 @@ def compute_t2i_sim_matrix_adapt_itm_sigmoid(model, data_loader, optimizer, tta_
     start = rank * step
     end = min(sims_matrix_t2i.size(0), start + step)
     itm_loss_backward_accum_bs = tta_cfg.grad_accum_bs #64
+    if hasattr(tta_cfg, 'temper'):
+        sigmoid_temper = tta_cfg.temper
+    else:
+        sigmoid_temper = 1.
     grad_accum_num = 0
     for i, sims_t2i in enumerate(
         metric_logger.log_every(sims_matrix_t2i[start:end], 50, header)
@@ -2697,7 +2705,7 @@ def compute_t2i_sim_matrix_adapt_itm_sigmoid(model, data_loader, optimizer, tta_
 
         # itm adapt
         # loss_entropy_topk_gallery = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum()
-        loss_entropy_topk_gallery = -(F.sigmoid(score) * torch.log(F.sigmoid(score))).sum()
+        loss_entropy_topk_gallery = -(F.sigmoid(score) * torch.log(F.sigmoid(score))).sum() / sigmoid_temper
         loss_entropy_uncertainty = loss_entropy_topk_gallery.mean() / top1_match_coeffi
         loss_entropy_uncertainty = loss_entropy_uncertainty / itm_loss_backward_accum_bs
         loss_entropy_uncertainty.backward()
