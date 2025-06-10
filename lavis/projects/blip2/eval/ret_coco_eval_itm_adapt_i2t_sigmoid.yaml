@@ -53,13 +53,13 @@ run:
   seed: 42
   # output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_gradacc_offline_multiepochs5/i2t"
   # output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_divtopkmatchcoeffi_gradacc_offline_multiepochs5/i2t"
-  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp3.1/i2t"
+  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp3.1.1/i2t"
  
   evaluate: True
 
 tta:
   name: "itm_adapt_sigmoid"
-  init_lr: 5e-6
+  init_lr: 1e-4
   weight_decay: 0.0
   wo_rerank: False
   online: False
