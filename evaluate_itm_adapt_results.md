@@ -45,6 +45,9 @@
         58 finish
         report i2t metrics offline, at epoch 7 / 9:
         {"txt_r1": 85.02, "txt_r5": 96.34, "txt_r10": 98.1, "txt_r_mean": 93.15333333333335, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t.yaml > ret_coco_eval_itm_adapt_i2t.out2 2>&1 &  
+        **update model.eval() in eval funtion to fix diff of bsl**
+        58 running pid=2637986
 
 3. t2i best results:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i.out 2>&1 &    
@@ -95,6 +98,9 @@
         59 finish, also same to the exp0 i2t. But the bug has already been excluded, and it can be see that in the running t2i exp0&1 the results are different.
         report i2t metrics offline, at epoch 2 / 9 :
         {"txt_r1": 85.02, "txt_r5": 96.64, "txt_r10": 98.24, "txt_r_mean": 93.3, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t.yaml > ret_coco_eval_itm_adapt_i2t_exp1.out1 2>&1 & 
+        **update model.eval() in eval funtion to fix diff of bsl**
+        58 running pid=26379179
 
 3. results t2i best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i_exp1.out 2>&1 &    
@@ -121,15 +127,18 @@
 
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_ss.yaml > ret_coco_eval_itm_adapt_i2t_exp2.out 2>&1 &    
-        58 stop at epoch 5
+        58 stop at epoch 5, oom
         report i2t metrics offline, at epoch 2 / 5:
         {"txt_r1": 85.02, "txt_r5": 96.62, "txt_r10": 98.28, "txt_r_mean": 93.30666666666666, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_ss.yaml > ret_coco_eval_itm_adapt_i2t_exp2.out 2>&1 &    
-        58 stop at epoch 5
+        58 stop at epoch 5, oom
         report i2t metrics offline, at epoch 2 / 5:
         {"txt_r1": 85.02, "txt_r5": 96.62, "txt_r10": 98.28, "txt_r_mean": 93.30666666666666, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_ss.yaml > ret_coco_eval_itm_adapt_i2t_exp2.out 2>&1 &  
-        58 running pid=1699199
+        58 stop at epoch 5, oom
+        report i2t metrics offline, at epoch 2 / 5:
+        {"txt_r1": 85.02, "txt_r5": 96.62, "txt_r10": 98.28, "txt_r_mean": 93.30666666666666, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+
 
 3. results t2i best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_ss.yaml > ret_coco_eval_itm_adapt_t2i_exp2.out 2>&1 &    
