@@ -216,6 +216,8 @@ def compute_sim_matrix(model, data_loader, **kwargs):
     logging.info("Computing features for evaluation...")
     start_time = time.time()
 
+    model.eval()
+
     texts = data_loader.dataset.text
     num_text = len(texts)
     text_bs = 256
@@ -330,6 +332,8 @@ def compute_sim_matrix_worerank(model, data_loader, **kwargs):
 
     logging.info("Computing features for evaluation...")
     start_time = time.time()
+
+    model.eval()
 
     texts = data_loader.dataset.text
     num_text = len(texts)
@@ -1981,6 +1985,8 @@ def compute_i2t_sim_matrix(model, data_loader, **kwargs):
     logging.info("i2t offline Computing features for evaluation...")
     start_time = time.time()
 
+    model.eval()
+
     texts = data_loader.dataset.text
     num_text = len(texts)
     text_bs = 256
@@ -2075,6 +2081,8 @@ def compute_t2i_sim_matrix(model, data_loader, **kwargs):
 
     logging.info("t2i offline Computing features for evaluation...")
     start_time = time.time()
+
+    model.eval()
 
     texts = data_loader.dataset.text
     num_text = len(texts)

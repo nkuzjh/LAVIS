@@ -24,6 +24,8 @@
     - --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_my_implementation_debug.yaml
         58 debugging
 
+3. diff of baseline and my imple, due to lack of model.eval() in compute_sim_matrix function;
+
 ## experiments
 ### exp 0
 1. parameters:
