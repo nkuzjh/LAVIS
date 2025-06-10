@@ -258,8 +258,8 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
                     )
                 )
 
-            torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"i2t_tta_model_model_epoch_{tta_epoch}.pth"))
-            logging.info(f"save i2t tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f'i2t_tta_model_model_epoch_{tta_epoch}.pth')}")
+            # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"i2t_tta_model_model_epoch_{tta_epoch}.pth"))
+            # logging.info(f"save i2t tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f'i2t_tta_model_model_epoch_{tta_epoch}.pth')}")
             torch.cuda.empty_cache()
 
     # # reset model to original state before t2i task
@@ -308,8 +308,8 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
                     )
                 )
 
-            torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"t2i_tta_model_model_epoch_{tta_epoch}.pth"))
-            logging.info(f"save t2i tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f't2i_tta_model_model_epoch_{tta_epoch}.pth')}")
+            # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"t2i_tta_model_model_epoch_{tta_epoch}.pth"))
+            # logging.info(f"save t2i tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f't2i_tta_model_model_epoch_{tta_epoch}.pth')}")
             torch.cuda.empty_cache()
 
     if tta_cfg.online == False:
@@ -374,8 +374,8 @@ def forward_and_itm_adapt_ss(tta_model, optimizer, dataloader, task_cfg, tta_cfg
                     )
                 )
 
-            torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"i2t_tta_model_model_epoch_{tta_epoch}.pth"))
-            logging.info(f"save i2t tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f'i2t_tta_model_model_epoch_{tta_epoch}.pth')}")
+            # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"i2t_tta_model_model_epoch_{tta_epoch}.pth"))
+            # logging.info(f"save i2t tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f'i2t_tta_model_model_epoch_{tta_epoch}.pth')}")
             torch.cuda.empty_cache()
 
     # # reset model to original state before t2i task
@@ -424,8 +424,8 @@ def forward_and_itm_adapt_ss(tta_model, optimizer, dataloader, task_cfg, tta_cfg
                     )
                 )
 
-            torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"t2i_tta_model_model_epoch_{tta_epoch}.pth"))
-            logging.info(f"save t2i tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f't2i_tta_model_model_epoch_{tta_epoch}.pth')}")
+            # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"t2i_tta_model_model_epoch_{tta_epoch}.pth"))
+            # logging.info(f"save t2i tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f't2i_tta_model_model_epoch_{tta_epoch}.pth')}")
             torch.cuda.empty_cache()
 
     if tta_cfg.online == False:
@@ -514,8 +514,8 @@ def forward_and_itm_adapt_sigmoid(tta_model, optimizer, dataloader, task_cfg, tt
                     )
                 )
 
-            torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"i2t_tta_model_model_epoch_{tta_epoch}.pth"))
-            logging.info(f"save i2t tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f'i2t_tta_model_model_epoch_{tta_epoch}.pth')}")
+            # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"i2t_tta_model_model_epoch_{tta_epoch}.pth"))
+            # logging.info(f"save i2t tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f'i2t_tta_model_model_epoch_{tta_epoch}.pth')}")
             torch.cuda.empty_cache()
 
     # # reset model to original state before t2i task
@@ -551,8 +551,8 @@ def forward_and_itm_adapt_sigmoid(tta_model, optimizer, dataloader, task_cfg, tt
                     )
                 )
 
-            torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"t2i_tta_model_model_epoch_{tta_epoch}.pth"))
-            logging.info(f"save t2i tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f't2i_tta_model_model_epoch_{tta_epoch}.pth')}")
+            # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"t2i_tta_model_model_epoch_{tta_epoch}.pth"))
+            # logging.info(f"save t2i tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f't2i_tta_model_model_epoch_{tta_epoch}.pth')}")
             torch.cuda.empty_cache()
 
     if tta_cfg.online == False:
