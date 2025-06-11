@@ -232,7 +232,10 @@ def forward_and_itm_adapt(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
 
         for tta_epoch in range(offline_multi_epochs):
             logging.info(f"start tta epoch {tta_epoch} for i2t task")
-            score_i2t = tta_model.model.compute_i2t_sim_matrix_adapt_itm(dataloader, task_cfg, optimizer, tta_cfg)
+            if tta_cfg.debug_visual:
+                score_i2t = tta_model.model.compute_i2t_sim_matrix_adapt_itm(dataloader, task_cfg, optimizer, tta_cfg, tta_epoch)
+            else:
+                score_i2t = tta_model.model.compute_i2t_sim_matrix_adapt_itm(dataloader, task_cfg, optimizer, tta_cfg)
             logging.info("report i2t metrics online, at epoch %d :", tta_epoch)
             logging.info(
                 report_metrics(
