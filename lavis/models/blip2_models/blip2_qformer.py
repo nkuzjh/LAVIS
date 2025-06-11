@@ -681,7 +681,7 @@ class Blip2Qformer(Blip2Base):
         """
         k_test = task_cfg.k_test
 
-        if tta_cfg.debug_visual == True:
+        if hasattr(tta_cfg, "debug_visual") and tta_cfg.debug_visual == True:
             score_i2t = compute_i2t_sim_matrix_adapt_itm_vislog(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg, epoch=epoch)
         else:
             score_i2t = compute_i2t_sim_matrix_adapt_itm(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
