@@ -19,6 +19,7 @@ from lavis.models.eva_vit import create_eva_vit_g
 from lavis.models.clip_vit import create_clip_vit_L
 from transformers import BertTokenizer
 from tta.tent import softmax_entropy
+from lavis.common.registry import registry
 
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -259,12 +260,18 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
 
         top1_match_coeffi = torch.ones(1).to(model.device)
         if hasattr(tta_cfg, 'top1_match_coeffi') and tta_cfg.top1_match_coeffi == True:
-            proba_top1_sim_i2t = F.softmax(topk_sim_i2t, dim=0)[0]
+            if hasattr(tta_cfg, 'top1_match_coeffi_src') and tta_cfg.top1_match_coeffi_src == "sigmoid":
+                proba_top1_sim_i2t = F.sigmoid(topk_sim_i2t)[0]
+            else:
+                proba_top1_sim_i2t = F.softmax(topk_sim_i2t, dim=0)[0]
             proba_sim_t2i_top1_idx_i2t = torch.zeros(1).to(proba_top1_sim_i2t.device)
             topk_sim_t2i_top1_idx_i2t, topk_idx_t2i_top1_idx_i2t = sims_matrix_t2i[topk_idx_i2t[0]].topk(k=k_test, dim=0)
             if i in topk_idx_t2i_top1_idx_i2t:
                 idx_i_in_topk_idx_t2i_top1_idx_i2t = torch.where(topk_idx_t2i_top1_idx_i2t == i)
-                proba_sim_t2i_top1_idx_i2t = F.softmax(topk_sim_t2i_top1_idx_i2t, dim=0)[idx_i_in_topk_idx_t2i_top1_idx_i2t]
+                if hasattr(tta_cfg, 'top1_match_coeffi_src') and tta_cfg.top1_match_coeffi_src == "sigmoid":
+                    proba_sim_t2i_top1_idx_i2t = F.sigmoid(topk_sim_t2i_top1_idx_i2t)[idx_i_in_topk_idx_t2i_top1_idx_i2t]
+                else:
+                    proba_sim_t2i_top1_idx_i2t = F.softmax(topk_sim_t2i_top1_idx_i2t, dim=0)[idx_i_in_topk_idx_t2i_top1_idx_i2t]
             top1_match_coeffi = torch.exp(1 - (proba_top1_sim_i2t + proba_sim_t2i_top1_idx_i2t)/2 )
 
         # itm entropy adapt
@@ -289,7 +296,9 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
         epoch_loss_list.append(loss_entropy_uncertainty.detach().cpu().numpy() * itm_loss_backward_accum_bs)
         
         if i % tta_cfg.log_iters == 0 or i>= end:
-            logging.info(f"[i2t online Evaluation itm adapt] Moving Average Entropy: {iters_entropy / (i+1)} Moving Average Loss: {iters_loss / (i+1)} ")
+            logging.info(f"[ i2t online Evaluation itm adapt ] Iteration: {i} Moving Average Entropy: {iters_entropy / tta_cfg.log_iters} Moving Average Loss: {iters_loss / tta_cfg.log_iters} ")
+            iters_entropy = 0.0
+            iters_loss = 0.0
 
         if tta_cfg.debug_visual == True:
             logging.info(f"    label : {labels[i]}")
@@ -314,8 +323,8 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
     plt.figure(2)
     plt.plot(epoch_loss_list) 
     plt.savefig(os.path.join(registry.get_path("output_dir"), f"epoch{epoch}_loss.png"))
-    if tta_cfg.debug_visual == True:
-        plt.show()
+    # if tta_cfg.debug_visual == True:
+    #     plt.show()
 
     if dist_utils.is_dist_avail_and_initialized():
         dist.barrier()

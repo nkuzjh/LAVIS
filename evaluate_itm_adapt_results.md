@@ -130,12 +130,25 @@
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": **68.26069572171131**, "img_r5": 87.76489404238305, "img_r10": 92.63094762095162, "img_r_mean": 82.885512461682, "r_mean": -999, "agg_metrics": -999}
 
 
-### exp 1 visual log debug
+### exp 1.1.1 visual log debug
 1. paramenters:
     - 增加日志： 训练loss
     - 增加日志： indicator exp(1 - inter_topk_match_proba) 与 正负样本 的关系
 2. i2t debugging:
     - --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_visual_log_debug.yaml
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_visual_log_debug.yaml > ret_coco_eval_itm_adapt_i2t_visual_log_debug.out 2>&1 & 
+        **update model.eval() in eval funtion to fix diff of bsl**
+        59 running pid=1966256
+### exp 1.1.2 visual log debug
+1. paramenters:
+    - 增加日志： 训练loss
+    - 增加日志： indicator exp(1 - inter_topk_match_proba) 与 正负样本 的关系
+    - exp改为中的inter_topk_match_proba改为由sigmoid计算产生
+2. i2t debugging:
+    - --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-1-2.yaml
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-1-2.yaml > ret_coco_eval_itm_adapt_i2t_1.1.2.out 2>&1 & 
+        **update model.eval() in eval funtion to fix diff of bsl**
+        59 running pid=
 
 
 ### exp 1.0.1
