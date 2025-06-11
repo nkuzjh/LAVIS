@@ -53,18 +53,18 @@ run:
   seed: 42
   # output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_gradacc_offline_multiepochs5/i2t"
   # output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_divtopkmatchcoeffi_gradacc_offline_multiepochs5/i2t"
-  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp3.1.3/i2t"
- 
+  # output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp0/i2t"
+  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp1.0.2/i2t"
+
   evaluate: True
 
 tta:
-  name: "itm_adapt_sigmoid"
-  init_lr: 8e-4 #3.5e-4 #1e-4 #5e-6
+  name: "itm_adapt"
+  init_lr: 3.5e-4
   weight_decay: 0.0
   wo_rerank: False
   online: False
   offline_multi_epochs: 10
   tta_task: "i2t" # "i2t" or "t2i"
   zero_shot_eval: False
-  top1_match_coeffi: False
-  grad_accum_bs: 64
+  top1_match_coeffi: True

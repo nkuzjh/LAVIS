@@ -40,6 +40,7 @@ from lavis.models.blip2_models.blip2 import (
     compute_i2t_sim_matrix_adapt_itm_sigmoid,
     compute_t2i_sim_matrix_adapt_itm_sigmoid,
 )
+from lavis.models.blip2_models.blip2_speed_up import compute_i2t_sim_matrix_adapt_itm as compute_i2t_sim_matrix_adapt_itm_vislog
 from lavis.models.blip_models.blip_outputs import BlipOutput, BlipOutputFeatures
 
 
@@ -680,7 +681,10 @@ class Blip2Qformer(Blip2Base):
         """
         k_test = task_cfg.k_test
 
-        score_i2t = compute_i2t_sim_matrix_adapt_itm(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
+        if tta_cfg.debug_visual == True:
+            score_i2t = compute_i2t_sim_matrix_adapt_itm_vislog(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
+        else:
+            score_i2t = compute_i2t_sim_matrix_adapt_itm(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
         return score_i2t
 
     def compute_t2i_sim_matrix_adapt_itm(self, data_loader, task_cfg, optimizer, tta_cfg):
