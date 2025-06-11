@@ -1,9 +1,11 @@
 # evaluate_itm_adapt.py Results
 
+
 ## command
 - debug args: --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t.yaml --is_tta True
 - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t.yaml > ret_coco_eval_itm_adapt_i2t.out 2>&1 &
 - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i.out 2>&1 &
+
 
 ## baseline score
 1. official inference code:
@@ -20,7 +22,6 @@
             {"txt_r1": 84.82, "txt_r5": 96.56, "txt_r10": 98.3, "txt_r_mean": 93.22666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
         report t2i zero-shot metrics : 
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 67.36505397840864, "img_r5": 87.21311475409836, "img_r10": 92.42702918832467, "img_r_mean": 82.33506597361055, "r_mean": -999, "agg_metrics": -999}
-    
     - --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_my_implementation_debug.yaml
         58 finish debugging
         **update model.eval() in eval funtion to fix diff of bsl**
@@ -32,6 +33,7 @@
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 68.25269892043183, "img_r5": 87.72890843662535, "img_r10": 92.62694922031187, "img_r_mean": 82.869518859123, "r_mean": -999, "agg_metrics": -999}
 
 3. diff of baseline and my imple, due to lack of model.eval() in compute_sim_matrix function;
+
 
 ## experiments
 ### exp 0
@@ -114,7 +116,6 @@
         59 stop at epoch=3 without reason
         report t2i metrics offline, at epoch 2 / 3:
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 67.48500599760096, "img_r5": 87.28108756497402, "img_r10": 92.34306277489004, "img_r_mean": 82.36971877915501, "r_mean": -999, "agg_metrics": -999}
-
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i_exp1.out1 2>&1 &    
         **59 CUDA_VISIBLE_DEVICES=2 实际是 CUDA_VISIBLE_DEVICES=1的3090;**
         **59 CUDA_VISIBLE_DEVICES=1 实际是 CUDA_VISIBLE_DEVICES=2 的4090**
@@ -122,6 +123,7 @@
         **update model.eval() in eval funtion to fix diff of bsl**
         report t2i metrics offline, at epoch 0 / 1:
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": **68.26069572171131**, "img_r5": 87.76489404238305, "img_r10": 92.63094762095162, "img_r_mean": 82.885512461682, "r_mean": -999, "agg_metrics": -999}
+
 
 ### exp 2
 1. parameters:
@@ -146,7 +148,6 @@
         58 stop at epoch 5, oom
         report i2t metrics offline, at epoch 2 / 5:
             {"txt_r1": 85.02, "txt_r5": 96.62, "txt_r10": 98.28, "txt_r_mean": 93.30666666666666, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
-
 
 3. results t2i best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_ss.yaml > ret_coco_eval_itm_adapt_t2i_exp2.out 2>&1 &    
@@ -226,7 +227,6 @@
         59 kill for JUHAO pid=4140412; 
         **update model.eval() in eval funtion to fix diff of bsl**
         59 running pid=1144924;
-
 
 3. results t2i best:   
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_sigmoid.yaml > ret_coco_eval_itm_adapt_t2i_exp3.out 2>&1 &    
