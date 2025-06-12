@@ -258,6 +258,11 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
             text_atts=text_atts[topk_idx_i2t], #128,35
         ).float() # score.shape=128
 
+
+        recall_type = find_recall_type(labels[i], topk_idx_i2t)
+        if recall_type=="negative sample": #i==112
+            a=999
+
         top1_match_coeffi = torch.ones(1).to(model.device)
         if hasattr(tta_cfg, 'top1_match_coeffi') and tta_cfg.top1_match_coeffi == True:
             if hasattr(tta_cfg, 'top1_match_coeffi_src') and tta_cfg.top1_match_coeffi_src == "sigmoid":
@@ -288,7 +293,7 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
         #score = itm_score + cos_sim
         score_matrix_i2t[start+i, topk_idx_i2t] = score + topk_sim_i2t
 
-        recall_type = find_recall_type(labels[i], topk_idx_i2t)
+        
         iters_entropy += loss_entropy_topk_gallery.mean().detach().cpu().numpy()
         epoch_entropy_list.append(loss_entropy_topk_gallery.mean().detach().cpu().numpy())
         coeffi_list.append(top1_match_coeffi.detach().cpu().numpy())
@@ -304,7 +309,7 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
             logging.info(f"    label : {labels[i]}")
             logging.info(f"    score[:10] : {score[:10]}")
             logging.info(f"    recall_type : {recall_type}")
-            logging.info(f"    sigmoid_entropy : {loss_entropy_topk_gallery}")
+            logging.info(f"    entropy : {loss_entropy_topk_gallery}")
 
             logging.info(f"    topk_sim_i2t[:10] : {topk_sim_i2t[:10]}")
             logging.info(f"    topk_idx_i2t[:10] : {topk_idx_i2t[:10]}")

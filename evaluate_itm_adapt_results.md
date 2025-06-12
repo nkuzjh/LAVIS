@@ -126,7 +126,7 @@
         **59 CUDA_VISIBLE_DEVICES=1 实际是 CUDA_VISIBLE_DEVICES=2 的4090**
         59 running pid = 4139351;
         **update model.eval() in eval funtion to fix diff of bsl**
-        report t2i metrics offline, at epoch 0 / 3:
+        report t2i metrics offline, at epoch 0 / 6:
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": **68.26069572171131**, "img_r5": 87.76489404238305, "img_r10": 92.63094762095162, "img_r_mean": 82.885512461682, "r_mean": -999, "agg_metrics": -999}
 
 
@@ -138,7 +138,10 @@
     - --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_visual_log_debug.yaml
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_visual_log_debug.yaml > ret_coco_eval_itm_adapt_i2t_visual_log_debug.out 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
-        59 running pid=1966256
+        59 finish;
+        report i2t metrics offline, at epoch 3 / 9:
+            {"txt_r1": 85.5, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+        **entropy和loss曲线没有下降，只是抖动**
 ### exp 1.1.2 visual log debug
 1. paramenters:
     - 增加日志： 训练loss
@@ -159,6 +162,10 @@
         **update model.eval() in eval funtion to fix diff of bsl**
         58 finish;
         效果不好, epoch0=84.+
+3. results t2i best:
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp1-0-1.yaml > ret_coco_eval_itm_adapt_t2i_exp1.0.1.out 2>&1 & 
+        **update model.eval() in eval funtion to fix diff of bsl**
+        59 running pid=3198159
 ### exp 1.0.2
 1. parameters:
     - lr=3.5e-4 wd=0.0
