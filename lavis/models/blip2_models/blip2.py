@@ -1799,7 +1799,10 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, **k
     step = sims_matrix_i2t.size(0) // num_tasks + 1
     start = rank * step
     end = min(sims_matrix_i2t.size(0), start + step)
-    itm_loss_backward_accum_bs = 64 #1 #64
+    if hasattr(tta_cfg, 'grad_accum_num'):
+        itm_loss_backward_accum_bs = tta_cfg.grad_accum_num
+    else:
+        itm_loss_backward_accum_bs = 64
     grad_accum_num = 0
     for i, sims_i2t in enumerate(
         metric_logger.log_every(sims_matrix_i2t[start:end], 50, header)

@@ -215,7 +215,14 @@
         58 finish;
         report i2t metrics offline, at epoch 1 :
             {"txt_r1": 85.46, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.65333333333332, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
-
+### exp 1.0.7
+1. parameters:
+    - lr=5e-6 wd=0.0
+    - grad_accum_num: = 128
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-0-7.yaml > ret_coco_eval_itm_adapt_i2t_exp1.0.7.out 2>&1 & 
+        **update model.eval() in eval funtion to fix diff of bsl**
+        59 runnning pid=1091726
 
 
 ### exp 2
