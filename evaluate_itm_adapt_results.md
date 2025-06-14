@@ -124,9 +124,9 @@
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i_exp1.out1 2>&1 &    
         **59 CUDA_VISIBLE_DEVICES=2 实际是 CUDA_VISIBLE_DEVICES=1的3090;**
         **59 CUDA_VISIBLE_DEVICES=1 实际是 CUDA_VISIBLE_DEVICES=2 的4090**
-        59 running pid = 4139351;
+        59 finish;
         **update model.eval() in eval funtion to fix diff of bsl**
-        report t2i metrics offline, at epoch 0 / 6:
+        report t2i metrics offline, at epoch 0 / 9:
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": **68.26069572171131**, "img_r5": 87.76489404238305, "img_r10": 92.63094762095162, "img_r_mean": 82.885512461682, "r_mean": -999, "agg_metrics": -999}
 
 
@@ -151,7 +151,11 @@
     - --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-1-2.yaml
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-1-2.yaml > ret_coco_eval_itm_adapt_i2t_1.1.2.out 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
-        58 running pid=156981
+        58 finish
+        report i2t metrics offline, at epoch 3 / 9:
+            {"txt_r1": 85.5, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+        **entropy和loss曲线没有下降，只是抖动**
+        **且改变了inter_topk_match_proba也对结果无影响**
 
 
 ### exp 1.0.1
@@ -166,6 +170,9 @@
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp1-0-1.yaml > ret_coco_eval_itm_adapt_t2i_exp1.0.1.out 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
         59 running pid=3198159
+        report t2i metrics offline, at epoch 0 / 5:
+            {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 67.32906837265094, "img_r5": 87.29708116753298, "img_r10": 92.47101159536186, "img_r_mean": 82.36572037851526, "r_mean": -999, "agg_metrics": -999}
+        效果不好, epoch0=67.+
 ### exp 1.0.2
 1. parameters:
     - lr=3.5e-4 wd=0.0
@@ -180,15 +187,35 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-0-3.yaml > ret_coco_eval_itm_adapt_i2t_exp1.0.3.out 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
-        58 running pid=100782
-        
+        58 finish;
+        效果不好, epoch0=82.+
 ### exp 1.0.4
 1. parameters:
     - lr=5e-5 wd=0.0
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-0-4.yaml > ret_coco_eval_itm_adapt_i2t_exp1.0.4.out 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
-        58 running pid=100861
+        58 finish;
+        效果不好, epoch0=85.3
+### exp 1.0.5
+1. parameters:
+    - lr=1e-5 wd=0.0
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-0-5.yaml > ret_coco_eval_itm_adapt_i2t_exp1.0.5.out 2>&1 & 
+        **update model.eval() in eval funtion to fix diff of bsl**
+        58 finish;
+        report i2t metrics offline, at epoch 1 :
+            {"txt_r1": 85.44, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.58666666666666, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+### exp 1.0.6
+1. parameters:
+    - lr=1e-6 wd=0.0
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-0-6.yaml > ret_coco_eval_itm_adapt_i2t_exp1.0.6.out 2>&1 & 
+        **update model.eval() in eval funtion to fix diff of bsl**
+        58 finish;
+        report i2t metrics offline, at epoch 1 :
+            {"txt_r1": 85.46, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.65333333333332, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+
 
 
 ### exp 2
