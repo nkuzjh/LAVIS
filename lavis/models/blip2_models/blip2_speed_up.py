@@ -23,6 +23,7 @@ from lavis.common.registry import registry
 
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import json
 
 
 @torch.no_grad()
@@ -258,7 +259,6 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
             text_atts=text_atts[topk_idx_i2t], #128,35
         ).float() # score.shape=128
 
-
         recall_type = find_recall_type(labels[i], topk_idx_i2t)
         if recall_type=="negative sample": #i==112
             a=999
@@ -293,19 +293,32 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
         #score = itm_score + cos_sim
         score_matrix_i2t[start+i, topk_idx_i2t] = score + topk_sim_i2t
 
-        
+        ## logging
         iters_entropy += loss_entropy_topk_gallery.mean().detach().cpu().numpy()
-        epoch_entropy_list.append(loss_entropy_topk_gallery.mean().detach().cpu().numpy())
-        coeffi_list.append(top1_match_coeffi.detach().cpu().numpy())
         iters_loss += loss_entropy_uncertainty.detach().cpu().numpy() * itm_loss_backward_accum_bs
-        epoch_loss_list.append(loss_entropy_uncertainty.detach().cpu().numpy() * itm_loss_backward_accum_bs)
+        coeffi_list.append({
+            "label" : labels[i],
+            "score[:10]" : score[:10].detach().cpu().numpy().tolist(),
+            "recall_type" : recall_type,
+            "entropy" : loss_entropy_topk_gallery.detach().cpu().numpy().tolist(),
+            "topk_sim_i2t[:10]" : topk_sim_i2t[:10].detach().cpu().numpy().tolist(),
+            "topk_idx_i2t[:10]" : topk_idx_i2t[:10].detach().cpu().numpy().tolist(),
+            "proba_top1_sim_i2t" : proba_top1_sim_i2t.detach().cpu().numpy().tolist(),
+            "topk_sim_t2i_top1_idx_i2t[:10]" : topk_sim_t2i_top1_idx_i2t[:10].detach().cpu().numpy().tolist(),
+            "topk_idx_t2i_top1_idx_i2t[:10]" : topk_idx_t2i_top1_idx_i2t[:10].detach().cpu().numpy().tolist(),
+            "proba_sim_t2i_top1_idx_i2t" : proba_sim_t2i_top1_idx_i2t.detach().cpu().numpy().tolist(),
+            "top1_match_coeffi": top1_match_coeffi.detach().cpu().numpy().tolist(),
+            "loss_entropy_uncertainty" : [ loss * itm_loss_backward_accum_bs for loss in loss_entropy_uncertainty.detach().cpu().numpy().tolist()],
+        })
         
         if i % tta_cfg.log_iters == 0 or i>= end:
-            logging.info(f"[ i2t online Evaluation itm adapt ] Iteration: {i} Moving Average Entropy: {iters_entropy / tta_cfg.log_iters} Moving Average Loss: {iters_loss / tta_cfg.log_iters} ")
+            logging.info(f"[i2t online Evaluation itm adapt] Iteration: {i}, Iters Average Entropy: {iters_entropy / tta_cfg.log_iters}, Iters Average Loss: {iters_loss / tta_cfg.log_iters} ")
             iters_entropy = 0.0
             iters_loss = 0.0
+            epoch_entropy_list.append(loss_entropy_topk_gallery.mean().detach().cpu().numpy())
+            epoch_loss_list.append(loss_entropy_uncertainty.detach().cpu().numpy() * itm_loss_backward_accum_bs)
 
-        if tta_cfg.debug_visual == True:
+        if 0: #tta_cfg.debug_visual == True:
             logging.info(f"    label : {labels[i]}")
             logging.info(f"    score[:10] : {score[:10]}")
             logging.info(f"    recall_type : {recall_type}")
@@ -322,12 +335,17 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
             logging.info(f"    top1_match_coeffi : {top1_match_coeffi}")
             logging.info(f"    loss_entropy_uncertainty : {loss_entropy_uncertainty * itm_loss_backward_accum_bs}")
 
-    plt.figure(1)
+    coeffi_list_json = json.dumps(coeffi_list)
+    json_path = os.path.join(registry.get_path("output_dir"), f"epoch{epoch}_coeffi_list.json")
+    with open(json_path, "w") as f:
+        json.dump(coeffi_list_json, f)
+
+    plt.figure()
     plt.plot(epoch_entropy_list) 
-    plt.savefig(os.path.join(registry.get_path("output_dir"), f"epoch{epoch}_entropy.png"))
-    plt.figure(2)
+    plt.savefig(os.path.join(registry.get_path("output_dir"), f"epoch{epoch}_entropy.jpg"))
+    plt.figure()
     plt.plot(epoch_loss_list) 
-    plt.savefig(os.path.join(registry.get_path("output_dir"), f"epoch{epoch}_loss.png"))
+    plt.savefig(os.path.join(registry.get_path("output_dir"), f"epoch{epoch}_loss.jpg"))
     # if tta_cfg.debug_visual == True:
     #     plt.show()
 

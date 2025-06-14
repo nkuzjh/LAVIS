@@ -142,6 +142,11 @@
         report i2t metrics offline, at epoch 3 / 9:
             {"txt_r1": 85.5, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
         **entropy和loss曲线没有下降，只是抖动**
+     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-1-1.yaml > ret_coco_eval_itm_adapt_i2t_exp1.1.1.out1 2>&1 & 
+        **update model.eval() in eval funtion to fix diff of bsl**
+        修改了记录log和曲线图的方法
+        58 running pid=3010646
+
 ### exp 1.1.2 visual log debug
 1. paramenters:
     - 增加日志： 训练loss
@@ -155,8 +160,11 @@
         report i2t metrics offline, at epoch 3 / 9:
             {"txt_r1": 85.5, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
         **entropy和loss曲线没有下降，只是抖动**
-        **且改变了inter_topk_match_proba也对结果无影响**
-
+        **且改变inter_topk_match_proba为sigmoid也对结果无影响**
+    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-1-2.yaml > ret_coco_eval_itm_adapt_i2t_1.1.2.out1 2>&1 & 
+        **update model.eval() in eval funtion to fix diff of bsl**
+        修改了记录log和曲线图的方法
+        58 running pid=3010713
 
 ### exp 1.0.1
 1. parameters:
