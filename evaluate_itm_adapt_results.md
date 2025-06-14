@@ -230,15 +230,15 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-0-7.yaml > ret_coco_eval_itm_adapt_i2t_exp1.0.7.out 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
-        59 runnning pid=1091726
+        59 running pid=1091726
 ### exp 1.0.8
 1. parameters:
     - lr=5e-6 wd=1e-4
     - grad_accum_num: = 64
 2. results i2t best:
-    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-0-8.yaml > ret_coco_eval_itm_adapt_i2t_exp1.0.8.out 2>&1 & 
+    - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-0-8.yaml > ret_coco_eval_itm_adapt_i2t_exp1.0.8.out 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
-        59 runnning pid=
+        59 running pid=1199210
 
 ### exp 2
 1. parameters:
