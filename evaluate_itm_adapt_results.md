@@ -231,7 +231,14 @@
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-0-7.yaml > ret_coco_eval_itm_adapt_i2t_exp1.0.7.out 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
         59 runnning pid=1091726
-
+### exp 1.0.8
+1. parameters:
+    - lr=5e-6 wd=1e-4
+    - grad_accum_num: = 64
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-0-8.yaml > ret_coco_eval_itm_adapt_i2t_exp1.0.8.out 2>&1 & 
+        **update model.eval() in eval funtion to fix diff of bsl**
+        59 runnning pid=
 
 ### exp 2
 1. parameters:
@@ -272,17 +279,14 @@
     - offline, online=False
     - rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature)
     - multi_epochs=10
-    
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.out 2>&1 &    
-        59 finish
-
+        59 finish;
+        epoch=0, 0.81+; 
+        不收敛, 继续迭代exp 3.1,修改loss和其他参数;
 3. results t2i best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_sigmoid.yaml > ret_coco_eval_itm_adapt_t2i_exp3.out 2>&1 &    
         59 stop due to bug;
-
-4. 不收敛, 继续迭代exp 3.1,修改loss和其他参数;
-
 
 ### exp 3.1
 1. parameters:
@@ -292,15 +296,12 @@
     - offline, online=False
     - rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature)
     - multi_epochs=10
-
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.1.out 2>&1 &   
         59 finish
         **update model.eval() in eval funtion to fix diff of bsl**
         report i2t metrics offline, at epoch 0 / 9 :
             {"txt_r1": 85.42, "txt_r5": 97.0, "txt_r10": 98.48, "txt_r_mean": 93.63333333333334, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
-
-
 3. results t2i best:   
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_sigmoid.yaml > ret_coco_eval_itm_adapt_t2i_exp3.out 2>&1 &    
         59 debug
@@ -308,7 +309,6 @@
 ### exp 3.1.1
 1. parameters:
     - lr=1e-4 wd=0.0
-
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.1.1.out 2>&1 &   
         59 stop 
@@ -318,24 +318,20 @@
 ### exp 3.1.2
 1. parameters:
     - lr=3.5e-4 wd=0.0
-
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.1.2.out 2>&1 &   
         58 stop
         **update model.eval() in eval funtion to fix diff of bsl**
         不收敛
 
-
 ### exp 3.1.3
 1. parameters:
     - lr=8e-4 wd=0.0
-
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.1.3.out 2>&1 &   
         58 finish;
         **update model.eval() in eval funtion to fix diff of bsl**
         不收敛
-
 
 ### exp 3.2
 1. parameters:
@@ -346,16 +342,26 @@
     - offline, online=False
     - rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature)
     - multi_epochs=10
-
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid_exp3-2.yaml > ret_coco_eval_itm_adapt_i2t_exp3.2.out 2>&1 &   
         59 kill for JUHAO pid=4140412; 
         **update model.eval() in eval funtion to fix diff of bsl**
         59 finish;
-        report i2t metrics offline, at epoch 0 :
+        report i2t metrics offline, at epoch 0 / 9:
             {"txt_r1": 85.42, "txt_r5": 97.0, "txt_r10": 98.48, "txt_r_mean": 93.63333333333334, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
-
-
 3. results t2i best:   
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_sigmoid.yaml > ret_coco_eval_itm_adapt_t2i_exp3.out 2>&1 &    
         59 debug
+
+### exp 3.3
+1. parameters:
+    - loss = Qformer sigmoid entropy .mean() ; top1_match_coeffi=False; temper=1
+    - lr=5e-6 wd=0.0
+    - 梯度累积, accumulate batch size = 1
+    - offline, online=False
+    - rerank_score = itm_score +　cosine similarity without dividing temperature(cos_sim in rerank tta without dividing temperature)
+    - multi_epochs=10
+    - log_iters=50
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp3-3.yaml > ret_coco_eval_itm_adapt_i2t_exp3.3.out 2>&1 &    
+        **update model.eval() in eval funtion to fix diff of bsl**
