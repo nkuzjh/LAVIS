@@ -37,7 +37,7 @@ class ITM_ADAPT(nn.Module):
             self.reset()
 
         for _ in range(self.steps):
-            if tta_cfg.name == 'itm_adapt':
+            if tta_cfg.name == 'itm_adapt' or tta_cfg.name == 'visenc_itm_adapt' or tta_cfg.name == 'all_itm_adapt':
                 outputs = forward_and_itm_adapt(self, self.optimizer, data_loader, task_cfg, tta_cfg)
             elif tta_cfg.name == 'itm_adapt_ss':
                 outputs = forward_and_itm_adapt_ss(self, self.optimizer, data_loader, task_cfg, tta_cfg)
@@ -56,6 +56,30 @@ class ITM_ADAPT(nn.Module):
 def zhh_softmax_entropy(x: torch.Tensor) -> torch.Tensor:
     """Entropy of softmax distribution from logits."""
     return (-(F.softmax(x) * F.log_softmax(x))).sum()
+
+def configure_model_blip2(model):
+    """Configure model for use with tent."""
+    # train mode, because tent optimizes the model to minimize entropy
+    model.train()
+    # disable grad, to (re-)enable only what tent updates
+    model.requires_grad_(False)
+    # configure norm for tent updates: enable grad + force batch statisics
+    for m in model.Qformer.modules(): # 针对blip2模型结构，仅tta更新Qformer参数；freeze visual_encoder/query_tokens/temp(erature)/image_proj/text_proj/itm_head的参数；
+        if isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.LayerNorm):
+            m.requires_grad_(True)
+            # force use of batch stats in train and eval modes
+            m.track_running_stats = False
+            m.running_mean = None
+            m.running_var = None
+
+    for m in model.itm_head.modules(): # tta更新itm_head参数；freeze others: visual_encoder/query_tokens/temp(erature)/image_proj/text_proj
+        if isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.LayerNorm):
+            m.requires_grad_(True)
+            # force use of batch stats in train and eval modes
+            m.track_running_stats = False
+            m.running_mean = None
+            m.running_var = None
+    return model
 
 def collect_params_blip2(model):
     """Collect the affine scale + shift parameters from batch norms.
@@ -82,18 +106,7 @@ def collect_params_blip2(model):
                     names.append(f"{nm}.{np}")
     return params, names
 
-def copy_model_and_optimizer(model, optimizer):
-    """Copy the model and optimizer states for resetting after adaptation."""
-    model_state = deepcopy(model.state_dict())
-    optimizer_state = deepcopy(optimizer.state_dict())
-    return model_state, optimizer_state
-
-def load_model_and_optimizer(model, optimizer, model_state, optimizer_state):
-    """Restore the model and optimizer states from copies."""
-    model.load_state_dict(model_state, strict=True)
-    optimizer.load_state_dict(optimizer_state)
-
-def configure_model_blip2(model):
+def configure_visenc_model_blip2(model):
     """Configure model for use with tent."""
     # train mode, because tent optimizes the model to minimize entropy
     model.train()
@@ -107,7 +120,6 @@ def configure_model_blip2(model):
             m.track_running_stats = False
             m.running_mean = None
             m.running_var = None
-
     for m in model.itm_head.modules(): # tta更新itm_head参数；freeze others: visual_encoder/query_tokens/temp(erature)/image_proj/text_proj
         if isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.LayerNorm):
             m.requires_grad_(True)
@@ -115,7 +127,89 @@ def configure_model_blip2(model):
             m.track_running_stats = False
             m.running_mean = None
             m.running_var = None
+    for m in model.visual_encoder.modules(): # tta更新 visual_encoder 参数；freeze others: query_tokens/temp(erature)/image_proj/text_proj
+        if isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.LayerNorm):
+            m.requires_grad_(True)
+            # force use of batch stats in train and eval modes
+            m.track_running_stats = False
+            m.running_mean = None
+            m.running_var = None
     return model
+
+def collect_visenc_params_blip2(model):
+    """Collect the affine scale + shift parameters from batch norms.
+
+    Walk the model's modules and collect all batch normalization parameters.
+    Return the parameters and their names.
+
+    Note: other choices of parameterization are possible!
+    """
+    params = []
+    names = []
+    for nm, m in model.Qformer.named_modules():
+        if isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.LayerNorm):
+            for np, p in m.named_parameters():
+                if np in ['weight', 'bias']:  # weight is scale, bias is shift
+                    params.append(p)
+                    names.append(f"{nm}.{np}")
+    for nm, m in model.itm_head.named_modules():
+        if isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.LayerNorm):
+            for np, p in m.named_parameters():
+                if np in ['weight', 'bias']:  # weight is scale, bias is shift
+                    params.append(p)
+                    names.append(f"{nm}.{np}")
+    for nm, m in model.visual_encoder.named_modules():
+        if isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.LayerNorm):
+            for np, p in m.named_parameters():
+                if np in ['weight', 'bias']:  # weight is scale, bias is shift
+                    params.append(p)
+                    names.append(f"{nm}.{np}")
+    return params, names
+
+def configure_all_model_blip2(model):
+    """Configure model for use with tent."""
+    # train mode, because tent optimizes the model to minimize entropy
+    model.train()
+    # disable grad, to (re-)enable only what tent updates
+    model.requires_grad_(False)
+    # configure norm for tent updates: enable grad + force batch statisics
+    for m in model.modules(): # 针对blip2模型结构，仅tta更新Qformer参数；freeze visual_encoder/query_tokens/temp(erature)/image_proj/text_proj/itm_head的参数；
+        if isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.LayerNorm):
+            m.requires_grad_(True)
+            # force use of batch stats in train and eval modes
+            m.track_running_stats = False
+            m.running_mean = None
+            m.running_var = None
+    return model
+
+def collect_all_params_blip2(model):
+    """Collect the affine scale + shift parameters from batch norms.
+
+    Walk the model's modules and collect all batch normalization parameters.
+    Return the parameters and their names.
+
+    Note: other choices of parameterization are possible!
+    """
+    params = []
+    names = []
+    for nm, m in model.named_modules():
+        if isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.LayerNorm):
+            for np, p in m.named_parameters():
+                if np in ['weight', 'bias']:  # weight is scale, bias is shift
+                    params.append(p)
+                    names.append(f"{nm}.{np}")
+    return params, names
+
+def copy_model_and_optimizer(model, optimizer):
+    """Copy the model and optimizer states for resetting after adaptation."""
+    model_state = deepcopy(model.state_dict())
+    optimizer_state = deepcopy(optimizer.state_dict())
+    return model_state, optimizer_state
+
+def load_model_and_optimizer(model, optimizer, model_state, optimizer_state):
+    """Restore the model and optimizer states from copies."""
+    model.load_state_dict(model_state, strict=True)
+    optimizer.load_state_dict(optimizer_state)
 
 def check_model(model):
     """Check model for compatability with tent."""

@@ -153,7 +153,7 @@ def compute_i2t_sim_matrix(model, data_loader, **kwargs):
             tbar.update(1)
 
     coeffi_list_json = json.dumps(coeffi_list)
-    json_path = os.path.join(registry.get_path("output_dir"), f"coeffi_list.json")
+    json_path = os.path.join(registry.get_path("output_dir"), f"zeroshot_coeffi_list.json")
     with open(json_path, "w") as f:
         json.dump(coeffi_list_json, f)
 

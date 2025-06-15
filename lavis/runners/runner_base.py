@@ -501,6 +501,16 @@ class RunnerBase:
             params, param_names = itm_adapt.collect_params_blip2(model)
             optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
             tta_model = itm_adapt.ITM_ADAPT(model, optimizer)
+        elif tta_cfg.name == "visenc_itm_adapt":
+            model = itm_adapt.configure_visenc_model_blip2(model)
+            params, param_names = itm_adapt.collect_visenc_params_blip2(model)
+            optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
+            tta_model = itm_adapt.ITM_ADAPT(model, optimizer)
+        elif tta_cfg.name == "all_itm_adapt":
+            model = itm_adapt.configure_all_model_blip2(model)
+            params, param_names = itm_adapt.collect_all_params_blip2(model)
+            optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
+            tta_model = itm_adapt.ITM_ADAPT(model, optimizer)
 
         self.task.before_evaluation(
             # model=model,
