@@ -75,5 +75,5 @@ tta: #加入可视化和所有param的base yaml，根据exp版本自行修改下
   tta_task: "i2t" # "i2t" or "t2i"
   zero_shot_eval: False
 
-  # debug_visual: True
+  debug_visual: True
   log_iters: 50

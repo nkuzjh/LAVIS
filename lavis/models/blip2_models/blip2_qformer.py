@@ -41,6 +41,8 @@ from lavis.models.blip2_models.blip2 import (
     compute_t2i_sim_matrix_adapt_itm_sigmoid,
 )
 from lavis.models.blip2_models.blip2_speed_up import compute_i2t_sim_matrix_adapt_itm as compute_i2t_sim_matrix_adapt_itm_vislog
+from lavis.models.blip2_models.blip2_speed_up import compute_i2t_sim_matrix as compute_i2t_sim_matrix_vislog
+
 from lavis.models.blip_models.blip_outputs import BlipOutput, BlipOutputFeatures
 
 
@@ -427,7 +429,7 @@ class Blip2Qformer(Blip2Base):
         vl_embeddings = output_itm.last_hidden_state[:, : query_tokens.size(1), :]#128,32,768
         itm_logit = self.itm_head(vl_embeddings)# 128,32,2
         itm_logit = itm_logit[:, :, 1].mean(dim=1) #itm_logit[:, :, 1].shape=128,32 #itm_logit[:, :, 1].mean(dim=1).shape=128
-        
+
         # self.visual_encoder.to(image_inputs.device)
         # self.ln_vision.to(image_inputs.device)
         # self.vision_proj.to(image_inputs.device)
@@ -439,6 +441,35 @@ class Blip2Qformer(Blip2Base):
         # self.itm_head.to(image_inputs.device)
         return itm_logit
 
+    def compute_itm_logits(self, image_inputs, text_ids, text_atts): # shape = #128,677,1408 #128,35 #128,35
+
+        image_atts = torch.ones(image_inputs.size()[:-1], dtype=torch.long).to(
+            image_inputs.device
+        )#  image_inputs.shape=128,677,1408 -> image_atts.shape=128,677
+        query_tokens = self.query_tokens.expand(image_inputs.shape[0], -1, -1).to(
+            image_inputs.device
+        ) #self.query_tokens.shape=1,32,768 -> query_tokens.shap=128,32,768
+        query_atts = torch.ones(query_tokens.size()[:-1], dtype=torch.long).to(
+            image_inputs.device
+        )# 128,32
+        attention_mask = torch.cat([query_atts, text_atts], dim=1).to(
+            image_inputs.device
+        ) #128,67
+        output_itm = self.Qformer.bert(
+            text_ids, #128,35
+            query_embeds=query_tokens, #128,32,768
+            attention_mask=attention_mask, #128,67
+            encoder_hidden_states=image_inputs, #128,677,1408
+            encoder_attention_mask=image_atts, #128,677
+            return_dict=True,
+        )# output_itm.last_hidden_state=128,67,768
+        vl_embeddings = output_itm.last_hidden_state[:, : query_tokens.size(1), :]#128,32,768
+        itm_logit = self.itm_head(vl_embeddings)# 128,32,2
+        # itm_logit = itm_logit[:, :, 1].mean(dim=1) #itm_logit[:, :, 1].shape=128,32 #itm_logit[:, :, 1].mean(dim=1).shape=128
+        itm_logits = itm_logit.mean(dim=1)# # 128,32,2 -> 128.2
+
+        return itm_logits
+    
     @torch.no_grad()
     def extract_features(self, samples, mode="multimodal"):
         """
@@ -701,8 +732,11 @@ class Blip2Qformer(Blip2Base):
         Compute similarity i2t, t2i matrix for the given data loader.
         """
         k_test = task_cfg.k_test
-
-        score_i2t = compute_i2t_sim_matrix(model=self, data_loader=data_loader, k_test=k_test)
+        # if hasattr(tta_cfg, "debug_visual") and tta_cfg.debug_visual == True:
+        if 1:
+            score_i2t = compute_i2t_sim_matrix_vislog(model=self, data_loader=data_loader, k_test=k_test)
+        else:
+            score_i2t = compute_i2t_sim_matrix(model=self, data_loader=data_loader, k_test=k_test)
         return score_i2t
 
     def compute_t2i_sim_matrix(self, data_loader, task_cfg):

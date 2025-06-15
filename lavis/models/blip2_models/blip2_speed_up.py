@@ -26,11 +26,27 @@ import matplotlib.pyplot as plt
 import json
 
 
+def find_recall_type(label_list, topk_idx):
+    if topk_idx[0] in label_list:
+        return "recall@1"
+    else: 
+        for _idx in topk_idx[:5].tolist():
+            if _idx in label_list:
+                return "recall@5"
+        for _idx in topk_idx[:10].tolist():
+            if _idx in label_list:
+                return "recall@10"
+    return "negative sample"
+
+
 @torch.no_grad()
-def compute_sim_matrix_spd(model, data_loader, **kwargs):
+def compute_i2t_sim_matrix(model, data_loader, **kwargs):
     k_test = kwargs.pop("k_test")
 
-    logging.info("Computing features for evaluation...")
+    metric_logger = MetricLogger(delimiter="  ")
+    header = "i2t offline Evaluation:"
+
+    logging.info("i2t offline Computing features for evaluation...")
     start_time = time.time()
 
     model.eval()
@@ -41,6 +57,7 @@ def compute_sim_matrix_spd(model, data_loader, **kwargs):
     text_ids = []
     text_embeds = []
     text_atts = []
+    logging.info("    text features...")
     for i in range(0, num_text, text_bs):
         text = texts[i : min(num_text, i + text_bs)]
         text_input = model.tokenizer(
@@ -62,6 +79,7 @@ def compute_sim_matrix_spd(model, data_loader, **kwargs):
 
     vit_feats = []
     image_embeds = []
+    logging.info("    image features...")
     for samples in data_loader:
         image = samples["image"]
 
@@ -77,6 +95,7 @@ def compute_sim_matrix_spd(model, data_loader, **kwargs):
     image_embeds = torch.cat(image_embeds, dim=0)
 
     sims_matrix = []
+    logging.info("    cosine similarity...")
     for image_embed in image_embeds: # 5000,32,256
         sim_q2t = image_embed @ text_embeds.t() # image_embed.shape=32,256 text_embeds.shape=25010,256
         sim_i2t, _ = sim_q2t.max(0) #32,25010
@@ -93,64 +112,63 @@ def compute_sim_matrix_spd(model, data_loader, **kwargs):
     start = rank * step
     end = min(sims_matrix.size(0), start + step)
 
-    for i, sims in enumerate(sims_matrix[start:end]):
-        topk_sim, topk_idx = sims.topk(k=k_test, dim=0)
-        image_inputs = vit_feats[start + i].repeat(k_test, 1, 1).to(model.device)
-        score = model.compute_itm(
-            image_inputs=image_inputs,
-            text_ids=text_ids[topk_idx],
-            text_atts=text_atts[topk_idx],
-        ).float()
-        score_matrix_i2t[start + i, topk_idx] = score + topk_sim
-        if i % 50 == 0:
-            logging.info("[ITM Evaluation]")
+    coeffi_list = []
+    labels = data_loader.dataset.img2txt
+    with tqdm( total=sims_matrix.size(0), desc=header ) as tbar:
+        for i, sims in enumerate(sims_matrix[start:end]):
+            topk_sim, topk_idx = sims.topk(k=k_test, dim=0)
+            image_inputs = vit_feats[start + i].repeat(k_test, 1, 1).to(model.device)
+            logits = model.compute_itm_logits(
+                image_inputs=image_inputs,
+                text_ids=text_ids[topk_idx],
+                text_atts=text_atts[topk_idx],
+            ).float()
+            score = logits[:, 1]
+            score_matrix_i2t[start + i, topk_idx] = score + topk_sim
 
-    sims_matrix = sims_matrix.t()
-    score_matrix_t2i = torch.full(
-        (len(texts), len(data_loader.dataset.image)), -100.0
-    ).to(model.device)
+            recall_type = find_recall_type(labels[i], topk_idx)
 
-    step = sims_matrix.size(0) // num_tasks + 1
-    start = rank * step
-    end = min(sims_matrix.size(0), start + step)
+            # itm entropy adapt
+            entropy_logits_softmax = -(F.softmax(logits, dim=1) * F.log_softmax(logits, dim=1)).sum(1).mean()
+            entropy_sigmoid_sum = -(F.sigmoid(score) * torch.log(F.sigmoid(score))).sum().mean()
+            entropy_sigmoid_mean = -(F.sigmoid(score) * torch.log(F.sigmoid(score))).mean().mean()
+            entropy_softmax = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum().mean()
 
-    for i, sims in enumerate(sims_matrix[start:end]):
-        topk_sim, topk_idx = sims.topk(k=k_test, dim=0)
-        image_inputs = vit_feats[topk_idx.cpu()].to(model.device)
-        score = model.compute_itm(
-            image_inputs=image_inputs,
-            text_ids=text_ids[start + i].repeat(k_test, 1),
-            text_atts=text_atts[start + i].repeat(k_test, 1),
-        ).float()
-        score_matrix_t2i[start + i, topk_idx] = score + topk_sim
+            coeffi_list.append({
+                "recall_type" : recall_type,
+                "label" : labels[i],
+                "topk_sim" : topk_sim.detach().cpu().numpy().tolist(),
+                "topk_idx" : topk_idx.detach().cpu().numpy().tolist(),
+                "score" : score.detach().cpu().numpy().tolist(),
+                "entropy_logits_softmax" : entropy_logits_softmax.detach().cpu().numpy().tolist(),
+                "entropy_sigmoid_sum" : entropy_sigmoid_sum.detach().cpu().numpy().tolist(),
+                "entropy_sigmoid_mean" : entropy_sigmoid_mean.detach().cpu().numpy().tolist(),
+                "entropy_softmax" : entropy_softmax.detach().cpu().numpy().tolist(),
+            })
+            ## tqdm logging
+            tbar.set_postfix(entropy_logits_softmax=entropy_logits_softmax.detach().cpu().numpy(), 
+                            entropy_sigmoid_sum=entropy_sigmoid_sum.detach().cpu().numpy(),
+                            entropy_sigmoid_mean=entropy_sigmoid_mean.detach().cpu().numpy(), 
+                            entropy_softmax=entropy_softmax.detach().cpu().numpy())
+            tbar.update(1)
+
+    coeffi_list_json = json.dumps(coeffi_list)
+    json_path = os.path.join(registry.get_path("output_dir"), f"coeffi_list.json")
+    with open(json_path, "w") as f:
+        json.dump(coeffi_list_json, f)
 
     if dist_utils.is_dist_avail_and_initialized():
         dist.barrier()
         torch.distributed.all_reduce(
             score_matrix_i2t, op=torch.distributed.ReduceOp.SUM
         )
-        torch.distributed.all_reduce(
-            score_matrix_t2i, op=torch.distributed.ReduceOp.SUM
-        )
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-    logging.info("Evaluation time {}".format(total_time_str))
+    logging.info("i2t offline Evaluation time {}".format(total_time_str))
 
-    return score_matrix_i2t.cpu().numpy(), score_matrix_t2i.cpu().numpy(), sims_matrix.cpu().numpy()
+    return score_matrix_i2t.cpu().numpy(), _, sims_matrix.cpu().numpy()
 
-
-def find_recall_type(label_list, topk_idx):
-    if topk_idx[0] in label_list:
-        return "recall@1"
-    else: 
-        for _idx in topk_idx[:5].tolist():
-            if _idx in label_list:
-                return "recall@5"
-        for _idx in topk_idx[:10].tolist():
-            if _idx in label_list:
-                return "recall@10"
-    return "negative sample"
 
 def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epoch, **kwargs):
     k_test = kwargs.pop("k_test")
@@ -257,15 +275,22 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
 
     start_time = time.time()
     model.train()
-    with tqdm( total=sims_matrix_i2t.size(0)) as tbar:
+    with tqdm( total=sims_matrix_i2t.size(0) ) as tbar:
         for i, sims_i2t in enumerate(sims_matrix_i2t[start:end]): # 遍历每个image与25010个text的sim_matrix
             topk_sim_i2t, topk_idx_i2t = sims_i2t.topk(k=k_test, dim=0) #sims.shape=25010 topk_sim.shape=128 topk_idx=top128_idx
             image_inputs = vit_feats[start + i].repeat(k_test, 1, 1).to(model.device) # vit_feats[i].shape=1,677,1408 image_inputs.shape=128,677,1408
-            score = model.compute_itm(
-                image_inputs=image_inputs, #128,677,1408
-                text_ids=text_ids[topk_idx_i2t], #128,35
-                text_atts=text_atts[topk_idx_i2t], #128,35
-            ).float() # score.shape=128
+            if hasattr(tta_cfg, 'entropy_type') and tta_cfg.entropy_type == "logits_softmax":
+                logits = model.compute_itm_logits(image_inputs=image_inputs, #128,677,1408
+                                                  text_ids=text_ids[topk_idx_i2t], #128,35
+                                                  text_atts=text_atts[topk_idx_i2t], #128,35
+                                                ).float() # score.shape=128
+                score = logits[:, 1]
+            else:
+                score = model.compute_itm(
+                    image_inputs=image_inputs, #128,677,1408
+                    text_ids=text_ids[topk_idx_i2t], #128,35
+                    text_atts=text_atts[topk_idx_i2t], #128,35
+                ).float() # score.shape=128
 
             recall_type = find_recall_type(labels[i], topk_idx_i2t)
             if recall_type=="negative sample": #i==112
@@ -288,7 +313,9 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
                 top1_match_coeffi = torch.exp(1 - (proba_top1_sim_i2t + proba_sim_t2i_top1_idx_i2t)/2 )
 
             # itm entropy adapt
-            if hasattr(tta_cfg, 'entropy_type') and tta_cfg.entropy_type == "sigmoid_sum":
+            if hasattr(tta_cfg, 'entropy_type') and tta_cfg.entropy_type == "logits_softmax":
+                loss_entropy_topk_gallery = -(F.softmax(logits, dim=1) * F.log_softmax(logits, dim=1)).sum(1)
+            elif hasattr(tta_cfg, 'entropy_type') and tta_cfg.entropy_type == "sigmoid_sum":
                 loss_entropy_topk_gallery = -(F.sigmoid(score) * torch.log(F.sigmoid(score))).sum() / sigmoid_temper
             elif hasattr(tta_cfg, 'entropy_type') and tta_cfg.entropy_type == "sigmoid_mean":
                 loss_entropy_topk_gallery = -(F.sigmoid(score) * torch.log(F.sigmoid(score))).mean() / sigmoid_temper
@@ -296,7 +323,8 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
                 loss_entropy_topk_gallery = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum()
             else:
                 loss_entropy_topk_gallery = -(F.softmax(score, dim=0) * F.log_softmax(score, dim=0)).sum()
-            loss_entropy_uncertainty = loss_entropy_topk_gallery.mean() / top1_match_coeffi
+            loss_entropy_topk_gallery = loss_entropy_topk_gallery.mean()  
+            loss_entropy_uncertainty = loss_entropy_topk_gallery / top1_match_coeffi
             loss_entropy_uncertainty = loss_entropy_uncertainty / itm_loss_backward_accum_bs
             loss_entropy_uncertainty.backward()
             grad_accum_num += 1
@@ -309,30 +337,31 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
             score_matrix_i2t[start+i, topk_idx_i2t] = score + topk_sim_i2t
 
             ## tqdm logging
-            tbar.set_postfix(entropy=loss_entropy_topk_gallery, loss=loss_entropy_uncertainty*itm_loss_backward_accum_bs, lr=optimizer.param_group['lr'])
+            tbar.set_postfix(entropy=loss_entropy_topk_gallery.detach().cpu().numpy(), loss=loss_entropy_uncertainty.detach().cpu().numpy()*itm_loss_backward_accum_bs, lr=optimizer.param_groups[0]['lr'])
+            tbar.update(1)
             ## log_iters logging
-            iters_entropy += loss_entropy_topk_gallery.mean().detach().cpu().numpy()
+            iters_entropy += loss_entropy_topk_gallery.detach().cpu().numpy()
             iters_loss += loss_entropy_uncertainty.detach().cpu().numpy() * itm_loss_backward_accum_bs
             coeffi_list.append({
                 "label" : labels[i],
-                "score[:10]" : score[:10].detach().cpu().numpy().tolist(),
+                "score" : score.detach().cpu().numpy().tolist(),
                 "recall_type" : recall_type,
                 "entropy" : loss_entropy_topk_gallery.detach().cpu().numpy().tolist(),
-                "topk_sim_i2t[:10]" : topk_sim_i2t[:10].detach().cpu().numpy().tolist(),
-                "topk_idx_i2t[:10]" : topk_idx_i2t[:10].detach().cpu().numpy().tolist(),
-                "proba_top1_sim_i2t" : proba_top1_sim_i2t.detach().cpu().numpy().tolist(),
-                "topk_sim_t2i_top1_idx_i2t[:10]" : topk_sim_t2i_top1_idx_i2t[:10].detach().cpu().numpy().tolist(),
-                "topk_idx_t2i_top1_idx_i2t[:10]" : topk_idx_t2i_top1_idx_i2t[:10].detach().cpu().numpy().tolist(),
-                "proba_sim_t2i_top1_idx_i2t" : proba_sim_t2i_top1_idx_i2t.detach().cpu().numpy().tolist(),
+                "topk_sim_i2t" : topk_sim_i2t.detach().cpu().numpy().tolist(),
+                "topk_idx_i2t" : topk_idx_i2t.detach().cpu().numpy().tolist(),
+                # "proba_top1_sim_i2t" : proba_top1_sim_i2t.detach().cpu().numpy().tolist(),
+                # "topk_sim_t2i_top1_idx_i2t" : topk_sim_t2i_top1_idx_i2t.detach().cpu().numpy().tolist(),
+                # "topk_idx_t2i_top1_idx_i2t" : topk_idx_t2i_top1_idx_i2t.detach().cpu().numpy().tolist(),
+                # "proba_sim_t2i_top1_idx_i2t" : proba_sim_t2i_top1_idx_i2t.detach().cpu().numpy().tolist(),
                 "top1_match_coeffi": top1_match_coeffi.detach().cpu().numpy().tolist(),
                 "loss_entropy_uncertainty" : [ loss * itm_loss_backward_accum_bs for loss in loss_entropy_uncertainty.detach().cpu().numpy().tolist()],
             })
-            if i % tta_cfg.log_iters == 0 or i>= end:
+            if (i+1) % tta_cfg.log_iters == 0 or i+1>end:
                 logging.info(" ")
                 logging.info(f"[i2t online Evaluation itm adapt] Iteration: {i}, Iters Average Entropy: {iters_entropy / tta_cfg.log_iters}, Iters Average Loss: {iters_loss / tta_cfg.log_iters} ")
                 iters_entropy = 0.0
                 iters_loss = 0.0
-                epoch_entropy_list.append(loss_entropy_topk_gallery.mean().detach().cpu().numpy())
+                epoch_entropy_list.append(loss_entropy_topk_gallery.detach().cpu().numpy())
                 epoch_loss_list.append(loss_entropy_uncertainty.detach().cpu().numpy() * itm_loss_backward_accum_bs)
 
             # if tta_cfg.debug_visual == True:

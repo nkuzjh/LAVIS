@@ -54,7 +54,7 @@ run:
   # output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_gradacc_offline_multiepochs5/i2t"
   # output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_lr5e-6_wd0_wotemper_QformerTentwoUnc_divtopkmatchcoeffi_gradacc_offline_multiepochs5/i2t"
   # output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp0/i2t"
-  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp1.1.base/i2t"
+  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp3.3/i2t"
 
   evaluate: True
 
@@ -75,5 +75,5 @@ tta:
   tta_task: "i2t" # "i2t" or "t2i"
   zero_shot_eval: False
 
-  # debug_visual: True
+  debug_visual: True
   log_iters: 50
