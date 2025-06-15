@@ -425,7 +425,7 @@
 
 ### exp 5
 1. parameters:
-    - loss = visual_encoder + Qformer itm_logits softmax entropy; top1_match_coeffi=False; temper=1
+    - loss = visual_encoder + Qformer tent; top1_match_coeffi=False; temper=1
     - lr=3.5e-4 wd=0.0
     - grad_accum_bs = 1
     - offline, online=False
@@ -435,12 +435,12 @@
     - **update model.eval() in eval funtion to fix diff of bsl**
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp5.yaml > ret_coco_eval_itm_adapt_i2t_exp5.out 2>&1 &   
-        59 running 
+        59 running pid=2265423
 
 
 ### exp 6
 1. parameters:
-    - loss = All Model itm_logits softmax entropy; top1_match_coeffi=False; temper=1
+    - loss = All Model tent; top1_match_coeffi=False; temper=1
     - lr=3.5e-4 wd=0.0
     - grad_accum_bs = 1
     - offline, online=False
@@ -450,4 +450,4 @@
     - **update model.eval() in eval funtion to fix diff of bsl**
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp6.yaml > ret_coco_eval_itm_adapt_i2t_exp6.out 2>&1 &   
-        59 running 
+        59 running pid=2265662
