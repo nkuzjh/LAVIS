@@ -419,5 +419,5 @@
     - log_iters=50
     - **update model.eval() in eval funtion to fix diff of bsl**
 2. results i2t best:
-    - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp4-0-1.yaml > ret_coco_eval_itm_adapt_i2t_exp4.0.1.out 2>&1 &   
-        59
+    - CUDA_VISIBLE_DEVICES=01 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp4-0-1.yaml > ret_coco_eval_itm_adapt_i2t_exp4.0.1.out 2>&1 &   
+        59 running pid=2000518
