@@ -68,7 +68,7 @@ tta:
   offline_multi_epochs: 10
   init_lr: 3.5e-4
   weight_decay: 0.0
-  grad_accum_bs: 1
+  grad_accum_bs: 64
 
   wo_rerank: False
   online: False
