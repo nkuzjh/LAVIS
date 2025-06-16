@@ -22,7 +22,7 @@
         report t2i zero-shot metrics : 
             {"txt_r1": -999, "txt_r5": -999, "txt_r10": -999, "txt_r_mean": -999, "img_r1": 67.36505397840864, "img_r5": 87.21311475409836, "img_r10": 92.42702918832467, "img_r_mean": 82.33506597361055, "r_mean": -999, "agg_metrics": -999}
     - --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_my_implementation_debug.yaml
-        58 finish debugging
+        58 finish
         **update model.eval() in eval funtion to fix diff of bsl**
         report i2t zero-shot metrics : 
             {"txt_r1": 85.42, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.64, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
@@ -126,20 +126,20 @@
 1. paramenters:
     - 增加日志： 训练loss
     - 增加日志： indicator exp(1 - inter_topk_match_proba) 与 正负样本 的关系
-2. i2t debugging:
+2. i2t:
     - --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_visual_log_debug.yaml
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_visual_log_debug.yaml > ret_coco_eval_itm_adapt_i2t_visual_log_debug.out 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
         59 finish;
         report i2t metrics offline, at epoch 3 / 9:
-            {"txt_r1": 85.5, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+            {"txt_r1": **85.5**, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
         **entropy和loss曲线没有下降，只是抖动**
      - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-1-1.yaml > ret_coco_eval_itm_adapt_i2t_exp1.1.1.out1 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
         修改了记录log和曲线图的方法
         58 finish
         report i2t metrics offline, at epoch 3 / 9:
-            {"txt_r1": 85.5, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+            {"txt_r1": **85.5**, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
      - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_visual_log_debug.yaml > ret_coco_eval_itm_adapt_i2t_visual_log_debug.out1 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
         修改了记录log和曲线图的方法
@@ -151,13 +151,13 @@
     - 增加日志： 训练loss
     - 增加日志： indicator exp(1 - inter_topk_match_proba) 与 正负样本 的关系
     - exp改为中的inter_topk_match_proba改为由sigmoid计算产生
-2. i2t debugging:
+2. i2t:
     - --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-1-2.yaml
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-1-2.yaml > ret_coco_eval_itm_adapt_i2t_1.1.2.out 2>&1 & 
         **update model.eval() in eval funtion to fix diff of bsl**
         58 finish
         report i2t metrics offline, at epoch 3 / 9:
-            {"txt_r1": 85.5, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+            {"txt_r1": **85.5**, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
         **entropy和loss曲线没有下降，只是抖动**
         **且改变inter_topk_match_proba为sigmoid也对结果无影响**
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp1-1-2.yaml > ret_coco_eval_itm_adapt_i2t_1.1.2.out1 2>&1 & 
@@ -165,7 +165,7 @@
         修改了记录log和曲线图的方法
         58 finish
         report i2t metrics offline, at epoch 3 / 9:
-            {"txt_r1": 85.5, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+            {"txt_r1": **85.5**, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
 
 ### exp 1.0.1
 1. parameters:
@@ -214,7 +214,7 @@
         **update model.eval() in eval funtion to fix diff of bsl**
         58 finish;
         report i2t metrics offline, at epoch 1 :
-            {"txt_r1": 85.44, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.58666666666666, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+            {"txt_r1": **85.44**, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.58666666666666, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
 ### exp 1.0.6
 1. parameters:
     - lr=1e-6 wd=0.0
@@ -223,7 +223,7 @@
         **update model.eval() in eval funtion to fix diff of bsl**
         58 finish;
         report i2t metrics offline, at epoch 1 :
-            {"txt_r1": 85.46, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.65333333333332, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+            {"txt_r1": **85.46**, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.65333333333332, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
 ### exp 1.0.7
 1. parameters:
     - lr=5e-6 wd=0.0
@@ -233,7 +233,7 @@
         **update model.eval() in eval funtion to fix diff of bsl**
         59 finish
         report i2t metrics offline, at epoch 9 / 9:
-            {"txt_r1": 85.48, "txt_r5": 96.86, "txt_r10": 98.44, "txt_r_mean": 93.59333333333332, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+            {"txt_r1": **85.48**, "txt_r5": 96.86, "txt_r10": 98.44, "txt_r_mean": 93.59333333333332, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
 ### exp 1.0.8
 1. parameters:
     - lr=5e-6 wd=1e-4
@@ -243,7 +243,7 @@
         **update model.eval() in eval funtion to fix diff of bsl**
         59 finish;
         report i2t metrics offline, at epoch 3 / 9:
-            {"txt_r1": 85.5, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+            {"txt_r1": **85.5**, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
 ### exp 1.0.9
 1. parameters:
     - lr=5e-6 wd=0.0
@@ -391,7 +391,9 @@
     - **update model.eval() in eval funtion to fix diff of bsl**
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp3-3-1.yaml > ret_coco_eval_itm_adapt_i2t_exp3.3.1out 2>&1 &   
-        58 running pid=4111657
+        58 finish
+        report i2t metrics offline, at epoch 0 / 9:
+            {"txt_r1": 85.42, "txt_r5": 97.0, "txt_r10": 98.48, "txt_r_mean": 93.63333333333334, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
 
 
 ### exp 4
@@ -406,8 +408,8 @@
     - **update model.eval() in eval funtion to fix diff of bsl**
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp4.yaml > ret_coco_eval_itm_adapt_i2t_exp4.out 2>&1 &   
-        58 running pid=4114986
-    
+        58 finish
+        不收敛
 ### exp 4.0.1
 1. parameters:
     - loss = Qformer itm_logits softmax entropy; top1_match_coeffi=False; temper=1
@@ -437,7 +439,8 @@
     - **update model.eval() in eval funtion to fix diff of bsl**
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp5.yaml > ret_coco_eval_itm_adapt_i2t_exp5.out 2>&1 &   
-        59 running pid=2404154
+        59 finish
+        epoch0 = 0.82+; 但比exp 1.0.2 的0.82+好一些
 ### exp 5.0.1
 1. parameters:
     - lr=5e-6 wd=0.0
@@ -459,3 +462,9 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp6.yaml > ret_coco_eval_itm_adapt_i2t_exp6.out 2>&1 &   
         59 running pid=2404393
+### exp 6.0.1
+1. parameters:
+    - lr=5e-6 wd=0.0
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp6.0.1.yaml > ret_coco_eval_itm_adapt_i2t_exp6.0.1.out 2>&1 &   
+        59 running pid=
