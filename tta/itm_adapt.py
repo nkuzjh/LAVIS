@@ -14,6 +14,13 @@ import numpy as np
 import os
 import json
 
+from .utils import (
+    compute_embeds,
+    compute_i2t_itm_score,
+    adapt_i2t_itm_score,
+    
+)
+
 class ITM_ADAPT(nn.Module):
     """Tent adapts a model by entropy minimization during testing.
 
@@ -36,13 +43,18 @@ class ITM_ADAPT(nn.Module):
         if self.episodic:
             self.reset()
 
-        for _ in range(self.steps):
+        # for _ in range(self.steps):
+        if 1:
             if tta_cfg.name == 'itm_adapt' or tta_cfg.name == 'visenc_itm_adapt' or tta_cfg.name == 'all_itm_adapt':
                 outputs = forward_and_itm_adapt(self, self.optimizer, data_loader, task_cfg, tta_cfg)
             elif tta_cfg.name == 'itm_adapt_ss':
                 outputs = forward_and_itm_adapt_ss(self, self.optimizer, data_loader, task_cfg, tta_cfg)
             elif tta_cfg.name == 'itm_adapt_sigmoid':
                 outputs = forward_and_itm_adapt_sigmoid(self, self.optimizer, data_loader, task_cfg, tta_cfg)
+            elif tta_cfg.name == 'itm_adapt_v1':
+                outputs = forward_and_itm_adapt_v1(self, self.optimizer, data_loader, task_cfg, tta_cfg)
+            elif tta_cfg.name == 'itc_adapt_v1':
+                outputs = forward_and_itc_adapt_v1(self, self.optimizer, data_loader, task_cfg, tta_cfg)
 
         return outputs
 
@@ -52,10 +64,6 @@ class ITM_ADAPT(nn.Module):
         load_model_and_optimizer(self.model, self.optimizer,
                                  self.model_state, self.optimizer_state)
 
-@torch.jit.script
-def zhh_softmax_entropy(x: torch.Tensor) -> torch.Tensor:
-    """Entropy of softmax distribution from logits."""
-    return (-(F.softmax(x) * F.log_softmax(x))).sum()
 
 def configure_model_blip2(model):
     """Configure model for use with tent."""
@@ -659,3 +667,122 @@ def forward_and_itm_adapt_sigmoid(tta_model, optimizer, dataloader, task_cfg, tt
         return score_i2t, score_t2i, score_i2t_offline, score_t2i_offline
     else:
         return score_i2t, score_t2i
+
+
+def forward_and_itm_adapt_v1(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
+    score_i2t, score_t2i = None, None
+
+    logging.info("compute cosine similarity matrix")
+    sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
+
+    ## i2t tta
+    if tta_cfg.tta_task == "i2t":
+        if tta_cfg.zero_shot_eval:
+            logging.info("compute i2t itm score, zero-shot")
+            score_i2t_zeroshot= compute_i2t_itm_score(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts)
+            result = report_metrics(scores_i2t=score_i2t_zeroshot, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics, zero-shot :")
+            logging.info(result)
+        ## multi epochs
+        for tta_epoch in range(tta_cfg.offline_multi_epochs):
+            logging.info(f"start i2t tta epoch {tta_epoch}")
+            logging.info("adapt i2t itm score online, epoch %d :", tta_epoch)
+            score_i2t = adapt_i2t_itm_score(tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
+            results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics online, epoch {tta_epoch} :")
+            logging.info(results)
+            # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"i2t_tta_model_model_epoch_{tta_epoch}.pth"))
+            # logging.info(f"save i2t tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f'i2t_tta_model_model_epoch_{tta_epoch}.pth')}")
+
+            logging.info("compute i2t itm score offline, epoch %d :", tta_epoch)
+            score_i2t= compute_i2t_itm_score(tta_model.model, dataloader, task_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
+            results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics offline, epoch {tta_epoch} :")
+            logging.info(results)
+
+    ## reset model to original state before t2i task
+    tta_model.reset()
+    ## t2i tta
+    if tta_cfg.tta_task == "t2i":
+        if tta_cfg.zero_shot_eval:
+            logging.info("compute t2i itm score, zero-shot")
+            score_t2i_zeroshot= compute_t2i_itm_score(tta_model.model, dataloader, task_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts)
+            result = report_metrics(scores_i2t=None, scores_t2i=score_t2i_zeroshot, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics, zero-shot :")
+            logging.info(result)
+        ## multi epochs
+        for tta_epoch in range(tta_cfg.offline_multi_epochs):
+            logging.info(f"start t2i tta epoch {tta_epoch}")
+            logging.info("adapt t2i itm score online, epoch %d :", tta_epoch)
+            score_t2i = adapt_t2i_itm_score(tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
+            results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics online, epoch {tta_epoch} :")
+            logging.info(results)
+            # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"t2i_tta_model_model_epoch_{tta_epoch}.pth"))
+            # logging.info(f"save t2i tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f't2i_tta_model_model_epoch_{tta_epoch}.pth')}")
+            logging.info("compute t2i itm score offline, epoch %d :", tta_epoch)    
+            score_t2i= compute_t2i_itm_score(tta_model.model, dataloader, task_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
+            results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, epoch {tta_epoch} :")
+            logging.info(results)
+            
+    return score_i2t, score_t2i
+
+
+def forward_and_itc_adapt_v1(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
+
+    score_i2t, score_t2i = None, None
+    logging.info("compute cosine similarity matrix, zero-shot")
+    sim_matrix_i2t_zs, sim_matrix_t2i_zs, image_embeds_zs, vit_feats_zs, text_embeds_zs, text_ids_zs, text_atts_zs = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
+
+    ## i2t tta
+    if tta_cfg.tta_task == "i2t":
+        if tta_cfg.zero_shot_eval:
+            logging.info("compute i2t itm score, zero-shot")
+            score_i2t_zeroshot= compute_i2t_itm_score(tta_model.model, dataloader, task_cfg, sim_matrix_i2t_zs, vit_feats_zs, text_ids_zs, text_atts_zs)
+            result = report_metrics(scores_i2t=score_i2t_zeroshot, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics, zero-shot :")
+            logging.info(result)
+        ## multi epochs
+        for tta_epoch in range(tta_cfg.offline_multi_epochs):
+            logging.info(f"start i2t tta epoch {tta_epoch}")
+
+            logging.info("adapt cosine similarity matrix, online")
+            sim_matrix_i2t, image_embeds, vit_feats, text_embeds, text_ids, text_atts = adapt_i2t_itc_sim(tta_model.model, dataloader, task_cfg, optimizer, tta_cfg)
+            logging.info("compute i2t itm score online, epoch %d :", tta_epoch)
+            score_i2t= compute_i2t_itm_score(tta_model.model, dataloader, task_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts)
+            results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics online, at epoch {tta_epoch} :")
+            logging.info(results)
+            # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"i2t_tta_model_model_epoch_{tta_epoch}.pth"))
+            # logging.info(f"save i2t tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f'i2t_tta_model_model_epoch_{tta_epoch}.pth')}")
+            
+            logging.info("compute cosine similarity matrix, offline")
+            sim_matrix_i2t, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
+            logging.info("compute i2t itm score offline, epoch %d :", tta_epoch)
+            score_i2t= compute_i2t_itm_score(tta_model.model, dataloader, task_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts)
+            results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics offline, at epoch {tta_epoch} :")
+            logging.info(results)
+
+    ## reset model to original state before t2i task
+    tta_model.reset()
+    ## t2i tta
+    if tta_cfg.tta_task == "t2i":
+        if tta_cfg.zero_shot_eval:
+            logging.info("compute t2i itm score, zero-shot")
+            score_t2i_zeroshot= compute_t2i_itm_score(tta_model.model, dataloader, task_cfg, sim_matrix_t2i_zs, vit_feats_zs, text_ids_zs, text_atts_zs)
+            result = report_metrics(scores_i2t=None, scores_t2i=score_t2i_zeroshot, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics, zero-shot :")
+            logging.info(result)
+        ## multi epochs
+        for tta_epoch in range(tta_cfg.offline_multi_epochs):
+            logging.info(f"start t2i tta epoch {tta_epoch}")
+
+            logging.info("adapt cosine similarity matrix, online")
+            sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = adapt_t2i_itc_sim(tta_model.model, dataloader, task_cfg, optimizer, tta_cfg)
+            logging.info("compute t2i itm score online, epoch %d :", tta_epoch)
+            score_t2i= compute_t2i_itm_score(tta_model.model, dataloader, task_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts)
+            results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics online, at epoch {tta_epoch} :")
+            logging.info(results)
+            # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"t2i_tta_model_model_epoch_{tta_epoch}.pth"))
+            # logging.info(f"save t2i tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f't2i_tta_model_model_epoch_{tta_epoch}.pth')}")
+            
+            logging.info("compute cosine similarity matrix, offline")
+            sim_matrix_i2t, sim_matrix_t2i,  image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg=task_cfg)
+            logging.info("compute t2i itm score offline, epoch %d :", tta_epoch)
+            score_t2i= compute_t2i_itm_score(tta_model.model, dataloader, task_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts)
+            results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, at epoch {tta_epoch} :")
+            logging.info(results)
+            
+    return score_i2t, score_t2i

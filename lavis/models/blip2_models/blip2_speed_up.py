@@ -274,7 +274,8 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
     coeffi_list = []
 
     start_time = time.time()
-    model.train()
+    # model.train()
+    model.eval()
     with tqdm( total=sims_matrix_i2t.size(0) ) as tbar:
         for i, sims_i2t in enumerate(sims_matrix_i2t[start:end]): # 遍历每个image与25010个text的sim_matrix
             topk_sim_i2t, topk_idx_i2t = sims_i2t.topk(k=k_test, dim=0) #sims.shape=25010 topk_sim.shape=128 topk_idx=top128_idx
@@ -401,9 +402,6 @@ def compute_i2t_sim_matrix_adapt_itm(model, data_loader, optimizer, tta_cfg, epo
             score_matrix_i2t, op=torch.distributed.ReduceOp.SUM
         )
 
-    total_time = time.time() - start_time
-    total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-    logging.info("i2t online Evaluation time {}".format(total_time_str))
 
     return score_matrix_i2t.cpu().detach().numpy()
 

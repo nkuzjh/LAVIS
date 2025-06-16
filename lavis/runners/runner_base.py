@@ -435,6 +435,22 @@ class RunnerBase:
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
         logging.info("Training time {}".format(total_time_str))
 
+    def train_epoch(self, epoch):
+        # train
+        self.model.train()
+
+        return self.task.train_epoch(
+            epoch=epoch,
+            model=self.model,
+            data_loader=self.train_loader,
+            optimizer=self.optimizer,
+            scaler=self.scaler,
+            lr_scheduler=self.lr_scheduler,
+            cuda_enabled=self.cuda_enabled,
+            log_freq=self.log_freq,
+            accum_grad_iters=self.accum_grad_iters,
+        )
+    
     def evaluate(self, cur_epoch="best", skip_reload=False, wo_rerank=False):
         test_logs = dict()
 
@@ -445,7 +461,41 @@ class RunnerBase:
                 )
 
             return test_logs
+        
+    @torch.no_grad()
+    def eval_epoch(self, split_name, cur_epoch, skip_reload=False, wo_rerank=False):
+        """
+        Evaluate the model on a given split.
 
+        Args:
+            split_name (str): name of the split to evaluate on.
+            cur_epoch (int): current epoch.
+            skip_reload_best (bool): whether to skip reloading the best checkpoint.
+                During training, we will reload the best checkpoint for validation.
+                During testing, we will use provided weights and skip reloading the best checkpoint .
+        """
+        data_loader = self.dataloaders.get(split_name, None)
+        assert data_loader, "data_loader for split {} is None.".format(split_name)
+
+        # TODO In validation, you need to compute loss as well as metrics
+        # TODO consider moving to model.before_evaluation()
+        model = self.unwrap_dist_model(self.model)
+        if not skip_reload and cur_epoch == "best":
+            model = self._reload_best_model(model)
+        model.eval()
+
+        self.task.before_evaluation(
+            model=model,
+            dataset=self.datasets[split_name],
+        )
+        results = self.task.evaluation(model, data_loader, wo_rerank=wo_rerank)
+
+        if results is not None:
+            return self.task.after_evaluation(
+                val_result=results,
+                split_name=split_name,
+                epoch=cur_epoch,
+            )
 
     def evaluate_tta(self, cur_epoch="best", skip_reload=False, tta_cfg=None):
         test_logs = dict()
@@ -511,6 +561,22 @@ class RunnerBase:
             params, param_names = itm_adapt.collect_all_params_blip2(model)
             optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
             tta_model = itm_adapt.ITM_ADAPT(model, optimizer)
+        elif tta_cfg.name == "itm_adapt_v1" or tta_cfg.name == "itc_adapt_v1":
+            if tta_cfg.adapt_module == "qformer":
+                model = itm_adapt.configure_model_blip2(model)
+                params, param_names = itm_adapt.collect_params_blip2(model)
+                optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
+                tta_model = itm_adapt.ITM_ADAPT(model, optimizer)
+            elif tta_cfg.adapt_module == "visenc_qformer":
+                model = itm_adapt.configure_visenc_model_blip2(model)
+                params, param_names = itm_adapt.collect_visenc_params_blip2(model)
+                optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
+                tta_model = itm_adapt.ITM_ADAPT(model, optimizer)
+            elif tta_cfg.adapt_module == "all":
+                model = itm_adapt.configure_all_model_blip2(model)
+                params, param_names = itm_adapt.collect_all_params_blip2(model)
+                optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
+                tta_model = itm_adapt.ITM_ADAPT(model, optimizer)
 
         self.task.before_evaluation(
             # model=model,
@@ -519,57 +585,6 @@ class RunnerBase:
         )
         # results = self.task.evaluation(model, data_loader)
         results = self.task.evaluation_tta(tta_model, data_loader, tta_cfg)
-
-        if results is not None:
-            return self.task.after_evaluation(
-                val_result=results,
-                split_name=split_name,
-                epoch=cur_epoch,
-            )
-
-    def train_epoch(self, epoch):
-        # train
-        self.model.train()
-
-        return self.task.train_epoch(
-            epoch=epoch,
-            model=self.model,
-            data_loader=self.train_loader,
-            optimizer=self.optimizer,
-            scaler=self.scaler,
-            lr_scheduler=self.lr_scheduler,
-            cuda_enabled=self.cuda_enabled,
-            log_freq=self.log_freq,
-            accum_grad_iters=self.accum_grad_iters,
-        )
-
-    @torch.no_grad()
-    def eval_epoch(self, split_name, cur_epoch, skip_reload=False, wo_rerank=False):
-        """
-        Evaluate the model on a given split.
-
-        Args:
-            split_name (str): name of the split to evaluate on.
-            cur_epoch (int): current epoch.
-            skip_reload_best (bool): whether to skip reloading the best checkpoint.
-                During training, we will reload the best checkpoint for validation.
-                During testing, we will use provided weights and skip reloading the best checkpoint .
-        """
-        data_loader = self.dataloaders.get(split_name, None)
-        assert data_loader, "data_loader for split {} is None.".format(split_name)
-
-        # TODO In validation, you need to compute loss as well as metrics
-        # TODO consider moving to model.before_evaluation()
-        model = self.unwrap_dist_model(self.model)
-        if not skip_reload and cur_epoch == "best":
-            model = self._reload_best_model(model)
-        model.eval()
-
-        self.task.before_evaluation(
-            model=model,
-            dataset=self.datasets[split_name],
-        )
-        results = self.task.evaluation(model, data_loader, wo_rerank=wo_rerank)
 
         if results is not None:
             return self.task.after_evaluation(

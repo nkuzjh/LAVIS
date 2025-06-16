@@ -114,14 +114,14 @@ def forward_and_adapt_blip2(tta_model, optimizer, dataloader, task_cfg, wo_reran
     # image to text retrieval task TTA
     # forward & adapt
     score_i2t = tta_model.model.compute_i2t_sim_matrix_adapt(dataloader, task_cfg, optimizer, wo_rerank)
-    torch.save(tta_model.model.state_dict(), "tta_model_model_state_dict_after_i2tadapt_debug.pth")
+    # torch.save(tta_model.model.state_dict(), "tta_model_model_state_dict_after_i2tadapt_debug.pth")
 
     tta_model.reset()
 
     # text to image retrieval task TTA
     # forward & adapt
     score_t2i = tta_model.model.compute_t2i_sim_matrix_adapt(dataloader, task_cfg, optimizer, wo_rerank)
-    torch.save(tta_model.model.state_dict(), "tta_model_model_state_dict_after_t2iadapt_debug.pth")
+    # torch.save(tta_model.model.state_dict(), "tta_model_model_state_dict_after_t2iadapt_debug.pth")
 
     return score_i2t, score_t2i
 
