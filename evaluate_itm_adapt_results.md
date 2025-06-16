@@ -506,7 +506,7 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7.yaml > ret_coco_eval_itm_adapt_i2t_exp7.out 2>&1 &   
-        58 running pid=1612083
+        58 running pid=1636602
 
 ### exp 7.1
 1. parameters:
@@ -522,7 +522,7 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-1.yaml > ret_coco_eval_itm_adapt_i2t_exp7.1.out 2>&1 &   
-        58 running pid=1612276
+        58 running pid=1636956
 ### exp 7.1.1
 1. parameters:
     - loss = Qformer tent
@@ -537,7 +537,7 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-1-1.yaml > ret_coco_eval_itm_adapt_i2t_exp7.1.1.out 2>&1 &   
-        58 running pid=1612553
+        58 running pid=1637256
 ### exp 7.1.2
 1. parameters:
     - loss = Qformer tent
