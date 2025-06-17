@@ -570,7 +570,7 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-1-3.yaml > ret_coco_eval_itm_adapt_i2t_exp7.1.3.out 2>&1 &   
         59 kill; 效果不好，epoch0=0.80+; lr=3.5e-4
-        59 running pid=; lr=3.5e-5
+        59 running pid=43678; lr=3.5e-5
 
 ### exp 7.2
 1. parameters:
@@ -587,4 +587,4 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-2.yaml > ret_coco_eval_itm_adapt_i2t_exp7.2.out 2>&1 &   
         59 kill; 不收敛; lr=3.5e-4
-        59 running pid=; lr=3.5e-5
+        59 running pid=43900; lr=3.5e-5
