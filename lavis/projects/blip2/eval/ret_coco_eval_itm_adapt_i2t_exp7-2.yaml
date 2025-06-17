@@ -64,7 +64,7 @@ tta:
   top1_match_coeffi_src: "softmax" #"sigmoid" # this param will be used when top1_match_coeffi=True
 
   offline_multi_epochs: 10
-  init_lr: 3.5e-5
+  init_lr: 5e-6
   weight_decay: 0.0
   grad_accum_bs: 1
 
