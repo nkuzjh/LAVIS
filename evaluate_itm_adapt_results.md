@@ -497,7 +497,7 @@
     - loss = Qformer itm_logtis softmax entropy
     - top1_match_coeffi=False, top1_match_coeffi_src=cos_sim
     - sigmoid_temper=1
-    - lr=3.5e-4, wd=0.0
+    - lr=3.5e-5, wd=0.0
     - grad_accum_bs=1
     - offline: online=False
     - rerank_score = itm_score +　cos_sim wo div temp
@@ -506,7 +506,8 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7.yaml > ret_coco_eval_itm_adapt_i2t_exp7.out 2>&1 &   
-        58 running pid=1636602
+        58 kill; 不收敛; lr=3.5e-4 
+        58 running pid=1987656; lr=3.5e-5
 
 ### exp 7.1
 1. parameters:
@@ -526,7 +527,7 @@
 ### exp 7.1.1
 1. parameters:
     - loss = Qformer tent
-    - top1_match_coeffi=False, top1_match_coeffi_src=softmax
+    - top1_match_coeffi=True, top1_match_coeffi_src=softmax
     - sigmoid_temper=1
     - lr=3.5e-4, wd=0.0
     - grad_accum_bs=64
@@ -537,7 +538,8 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-1-1.yaml > ret_coco_eval_itm_adapt_i2t_exp7.1.1.out 2>&1 &   
-        58 running pid=1637256
+        58 kill; 效果不好 epoch=0.84+;top1_match_coeffi=False
+        58 running pid=2008902;top1_match_coeffi=True
 ### exp 7.1.2
 1. parameters:
     - loss = Qformer tent
@@ -558,7 +560,7 @@
     - loss = Qformer tent
     - top1_match_coeffi=False, top1_match_coeffi_src=softmax
     - sigmoid_temper=1
-    - lr=3.5e-4, wd=0.0
+    - lr=3.5e-5, wd=0.0
     - grad_accum_bs=1
     - offline: online=False
     - rerank_score = itm_score +　cos_sim wo div temp
@@ -567,14 +569,15 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-1-3.yaml > ret_coco_eval_itm_adapt_i2t_exp7.1.3.out 2>&1 &   
-        59 running pid=3808565
+        59 kill; 效果不好，epoch0=0.80+; lr=3.5e-4
+        59 running pid=; lr=3.5e-5
 
 ### exp 7.2
 1. parameters:
     - loss = Qformer sigmoid_mean entropy
     - top1_match_coeffi=False, top1_match_coeffi_src=softmax
     - sigmoid_temper=1
-    - lr=3.5e-4, wd=0.0
+    - lr=3.5e-5, wd=0.0
     - grad_accum_bs=1
     - offline: online=False
     - rerank_score = itm_score +　cos_sim wo div temp
@@ -583,4 +586,5 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-2.yaml > ret_coco_eval_itm_adapt_i2t_exp7.2.out 2>&1 &   
-        59 running pid=3808936
+        59 kill; 不收敛; lr=3.5e-4
+        59 running pid=; lr=3.5e-5

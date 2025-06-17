@@ -60,7 +60,7 @@ tta:
   adapt_module: "qformer"
   entropy_type: "softmax"
   temper: 1.0
-  top1_match_coeffi: False
+  top1_match_coeffi: True
   top1_match_coeffi_src: "softmax" #"sigmoid" # this param will be used when top1_match_coeffi=True
 
   offline_multi_epochs: 10
