@@ -561,7 +561,7 @@ class RunnerBase:
             params, param_names = itm_adapt.collect_all_params_blip2(model)
             optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
             tta_model = itm_adapt.ITM_ADAPT(model, optimizer)
-        elif tta_cfg.name == "itm_adapt_v1" or tta_cfg.name == "itc_adapt_v1":
+        elif tta_cfg.name in ["itm_adapt_v1","itc_adapt_v1","itm_adapt_v2"]:
             if tta_cfg.adapt_module == "qformer":
                 model = itm_adapt.configure_model_blip2(model)
                 params, param_names = itm_adapt.collect_params_blip2(model)
