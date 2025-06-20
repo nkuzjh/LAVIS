@@ -605,7 +605,7 @@
     - k_tta = 16; negative sample = 15 from top32~top128
     - top1_match_coeffi=False, top1_match_coeffi_src=softmax with temperature
     - lr=1e-4, wd=0.0
-    - batchsize = 16
+    - batchsize = 8
     - grad_accum_bs=1
     - multi_epochs=10
     - offline eval topk=128
@@ -613,15 +613,28 @@
     - model.eval() in adapt&evaluation
     - log_iters=50
 2. results i2t best:
-    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.yaml > ret_coco_eval_itm_adapt_i2t_exp8.out 2>&1 &   
+    - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.yaml > ret_coco_eval_itm_adapt_i2t_exp8.out 2>&1 &  
+        58 debugging ~
+### exp 8.0.1
+1. parameters:
+    - lr=5e-4, wd=0.0
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.0.1.yaml > ret_coco_eval_itm_adapt_i2t_exp8.0.1.out 2>&1 & 
+        58 running pid=2123682
+### exp 8.0.2
+1. parameters:
+    - lr=1e-5, wd=0.0
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.0.2.yaml > ret_coco_eval_itm_adapt_i2t_exp8.0.2.out 2>&1 & 
+        58 running pid=2123757
 
 ### exp 8.1
 1. parameters:
     - loss = itm softmax entrop
     - all rerank samples = 16; negative samples = 15 from top32~top128
-    - top1_match_coeffi=True, top1_match_coeffi_src=softmax with temperature
+    - **top1_match_coeffi=True**, top1_match_coeffi_src=softmax with temperature
     - lr=1e-4, wd=0.0
-    - batchsize = 16
+    - batchsize = 8
     - grad_accum_bs=1
     - multi_epochs=10
     - offline eval topk=128
@@ -636,9 +649,9 @@
     - loss = itm softmax entrop
     - all rerank samples = 16; negative samples = 15 from top32~top128
     - top1_match_coeffi=True, top1_match_coeffi_src=softmax with temperature
-    - sample selection = top1
+    - **sample selection = top1**
     - lr=1e-4, wd=0.0
-    - batchsize = 16
+    - batchsize = 8
     - grad_accum_bs=1
     - multi_epochs=10
     - offline eval topk=128

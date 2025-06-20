@@ -61,13 +61,13 @@ tta:
   # entropy_type: "softmax"
   k_tta: 16
   # temper: 1.0
-  top1_match_coeffi: True
+  top1_match_coeffi: False
   # top1_match_coeffi_src: "softmax" #"sigmoid" # this param will be used when top1_match_coeffi=True
   coeffi_i2t_temper: 100.0
   coeffi_t2i_temper: 20.0
-  sample_selection: "top1"
+  sample_selection: "all"
 
-  init_lr: 1e-4
+  init_lr: 5e-4
   weight_decay: 0.0
   tta_bs: 8
   grad_accum_bs: 1

@@ -76,6 +76,6 @@ tta:
   tta_task: "i2t" # "i2t" or "t2i"
   # wo_rerank: False
   # online: False
-  zero_shot_eval: True
+  zero_shot_eval: False
   debug_visual: True
   log_iters: 50
