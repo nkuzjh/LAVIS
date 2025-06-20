@@ -67,7 +67,7 @@ tta:
   coeffi_t2i_temper: 20.0
   sample_selection: "all"
 
-  init_lr: 1e-4
+  init_lr: 1e-3
   weight_decay: 0.0
   tta_bs: 8
   grad_accum_bs: 1

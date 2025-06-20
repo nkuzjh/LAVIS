@@ -642,7 +642,14 @@
     - model.eval() in adapt&evaluation
     - log_iters=50
 2. results i2t best:
-    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.yaml > ret_coco_eval_itm_adapt_i2t_exp8.out 2>&1 &  
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.out 2>&1 &  
+        59 running pid=383017
+### exp 8.1.1
+1. parameters:
+    - lr=1e-3, wd=0.0
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.1.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.1.out 2>&1 & 
+        58 running pid=384853
 
 ### exp 8.2
 1. parameters:
@@ -659,4 +666,4 @@
     - model.eval() in adapt&evaluation
     - log_iters=50
 2. results i2t best:
-    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.yaml > ret_coco_eval_itm_adapt_i2t_exp8.out 2>&1 &  
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.2.yaml > ret_coco_eval_itm_adapt_i2t_exp8.2.out 2>&1 &  
