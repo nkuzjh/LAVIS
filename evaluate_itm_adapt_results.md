@@ -661,27 +661,34 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.out 2>&1 &  
-        59 running pid=383017
+        59 kill; epoch0=0.83+
 ### exp 8.1.1
 1. parameters:
     - lr=1e-3, wd=0.0
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.1.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.1.out 2>&1 & 
-        59 running pid=384853
+        59 kill; epoch0=0.80+
 ### exp 8.1.2
 1. parameters:
     - lr=3e-4, wd=0.0
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.2.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.2.out 2>&1 & 
-        59 running pid=857638
+        59 kill; epoch0=0.82+
 ### exp 8.1.3
 1. parameters:
     - lr=1e-4, wd=0.0
     - batchsize = 12
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.3.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.3.out 2>&1 & 
-        59 running pid=1087425
-
+        59 kill; epoch0=0.84+
+### exp 8.1.4
+1. parameters:
+    - lr=1e-4, wd=0.0
+    - batchsize = 14
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.4.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.4.out 2>&1 & 
+        59 running pid=1356188
+        
 ### exp 8.2
 1. parameters:
     - loss = itm softmax entrop
