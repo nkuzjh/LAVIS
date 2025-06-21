@@ -51,7 +51,7 @@ run:
 
   # misc
   seed: 42
-  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp8.1/i2t"
+  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp8.1.1/i2t"
 
   evaluate: True
 
