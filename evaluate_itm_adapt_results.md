@@ -697,7 +697,7 @@
     - grad_accum_bs=2
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.5.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.5.out 2>&1 & 
-        59 running pid=
+        59 running pid=1383685
 ### exp 8.1.6
 1. parameters:
     - lr=1e-4, wd=0.0
