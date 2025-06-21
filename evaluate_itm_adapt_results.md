@@ -667,7 +667,13 @@
     - lr=1e-3, wd=0.0
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.1.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.1.out 2>&1 & 
-        58 running pid=384853
+        59 running pid=384853
+### exp 8.1.2
+1. parameters:
+    - lr=3e-4, wd=0.0
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.2.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.2.out 2>&1 & 
+        59 running pid=857638
 
 ### exp 8.2
 1. parameters:

@@ -51,7 +51,7 @@ run:
 
   # misc
   seed: 42
-  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp8.1/i2t"
+  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp8.1.2/i2t"
 
   evaluate: True
 
@@ -67,7 +67,7 @@ tta:
   coeffi_t2i_temper: 20.0
   sample_selection: "all"
 
-  init_lr: 1e-3
+  init_lr: 3e-4
   weight_decay: 0.0
   tta_bs: 8
   grad_accum_bs: 1
