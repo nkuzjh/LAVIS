@@ -483,7 +483,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                 loss = loss / tta_cfg.grad_accum_bs
                 loss.backward()
                 grad_accum_num += 1
-                if grad_accum_num >= tta_cfg.grad_accum_bs or iter+1>sampled_sims_matrix_i2t.size(0) // tta_cfg.tta_bs + 1 :
+                if grad_accum_num >= tta_cfg.grad_accum_bs or iter + 1 > sampled_sims_matrix_i2t.size(0)//tta_cfg.tta_bs + 1 :
                     optimizer.step()
                     optimizer.zero_grad()
                     grad_accum_num = 0
