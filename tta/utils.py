@@ -367,7 +367,6 @@ def sample_neg_idxs(sims_matrix_i2t, k_tta, k_test):
         neg_idxs.append(topk_idx_i2t[random_idx])
     return torch.stack(neg_sims, dim=0), torch.stack(neg_idxs, dim=0)
 
-
 def compute_tta_coeffis(sims_matrix_i2t, sims_matrix_t2i, k_test, i2t_temper=100, t2i_temper=20):
     coeffis = []
     for i, sims_i2t in enumerate(sims_matrix_i2t):
@@ -385,6 +384,14 @@ def compute_tta_coeffis(sims_matrix_i2t, sims_matrix_t2i, k_test, i2t_temper=100
         coeffis.append(coeffi)
     return coeffis
 
+def find_inter_top1_sample_selection(sims_matrix_i2t, sims_matrix_t2i):
+    ss_idxs = []
+    for i, sims_i2t in enumerate(sims_matrix_i2t):
+        top1_sim_i2t, top1_idx_i2t = sims_i2t.topk(k=1, dim=0) # 获取i2t top1的相似度(top1_sim_i2t)和索引(top1_idx_i2t)
+        top1_sim_t2i, top1_idx_t2i  = sims_matrix_t2i[top1_idx_i2t][0].topk(k=1, dim=0) # 获取top1_idx_i2t对应的t2i相似度和索引
+        if top1_idx_t2i == i: # 只保留i2t和t2i互为top1的样本
+            ss_idxs.append(i)
+    return ss_idxs #4286个互为top1的样本
 
 def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims_matrix_i2t, vit_feats, text_ids, text_atts, epoch=-1):
     ## top1 sample selection + 负样本采样计算softmax_entropy
@@ -411,22 +418,22 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     tta_coeffis = compute_tta_coeffis(sims_matrix_i2t, sims_matrix_i2t.t(), k_test, tta_cfg.coeffi_i2t_temper, tta_cfg.coeffi_t2i_temper)
 
     if tta_cfg.sample_selection == "top1":
-        ss_idxs = find_inter_top1_sample_selection(sims_matrix_i2t)
+        ss_idxs = find_inter_top1_sample_selection(sims_matrix_i2t, sims_matrix_i2t.t()) # 找到i2t和t2i互为top1的样本索引
         # 只保留top1 sample selection的样本
         # sims_matrix_i2t = sims_matrix_i2t[ss_idxs] 
         vit_feats = vit_feats[ss_idxs]
-        text_ids = text_ids[ss_idxs]
-        text_atts = text_atts[ss_idxs]
-        labels = [labels[i.numpy()] for i in ss_idxs]
-        recall_types = recall_types[ss_idxs]
-        top1_sims, top1_idxs = top1_sims[ss_idxs], top1_idxs[ss_idxs]
-        neg_sims, neg_idxs = neg_sims[ss_idxs], neg_idxs[ss_idxs]
+        # text_ids = text_ids[ss_idxs]
+        # text_atts = text_atts[ss_idxs]
+        labels = [labels[i] for i in ss_idxs]
+        recall_types = [recall_types[i] for i in ss_idxs]
+        # top1_sims, top1_idxs = top1_sims[ss_idxs], top1_idxs[ss_idxs]
+        # neg_sims, neg_idxs = neg_sims[ss_idxs], neg_idxs[ss_idxs]
         sampled_sims_matrix_i2t = sampled_sims_matrix_i2t[ss_idxs]
-        tta_coeffis = tta_coeffis[ss_idxs]
-        score_matrix_i2t = score_matrix_i2t[ss_idxs]
-    # else:
-    #     ss_idxs = torch.arange(0, len(dataloader.dataset.image)) # 全部样本
-    
+        tta_coeffis = [tta_coeffis[i] for i in ss_idxs]
+        # score_matrix_i2t = score_matrix_i2t[ss_idxs]
+    else:
+        ss_idxs = torch.arange(0, len(dataloader.dataset.image)) # 全部样本
+    logging.info("    number of sample_selection: {}".format(len(ss_idxs)))
 
     iters_entropy_accum = 0.0
     epoch_entropy_list = []
@@ -440,7 +447,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     model.eval()
     with torch.enable_grad():
         with tqdm( desc="ITM ADAPT", total = sampled_sims_matrix_i2t.size(0) // tta_cfg.tta_bs + 1 ) as tbar:
-            for idx in range(0, sampled_sims_matrix_i2t.size(0), tta_cfg.tta_bs): # 遍历每个image与25010个text的sim_matrix
+            for iter, idx in enumerate(range(0, sampled_sims_matrix_i2t.size(0), tta_cfg.tta_bs)): # 遍历每个image与25010个text的sim_matrix
                 idx_end = min(idx+tta_cfg.tta_bs, sampled_sims_matrix_i2t.size(0))
                 sims_i2t = sampled_sims_matrix_i2t[idx:idx_end] # 取出当前batch的sims_i2t
                 idxs_i2t = sampled_sims_idx_i2t[idx:idx_end] # 取出当前batch的idxs_i2t
@@ -462,7 +469,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
 
                 ## score = itm_score + cos_sim
                 for i, bs_idx in enumerate(range(idx,idx_end)):
-                    score_matrix_i2t[bs_idx, idxs_i2t[i]] = score[i].detach().cpu() + sims_i2t.reshape(-1, tta_cfg.k_tta)[i].detach().cpu()
+                    score_matrix_i2t[ss_idxs][bs_idx, idxs_i2t[i]] = score[i].detach().cpu() + sims_i2t.reshape(-1, tta_cfg.k_tta)[i].detach().cpu()
 
                 # coeffi
                 if tta_cfg.top1_match_coeffi == True:
@@ -476,13 +483,14 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                 loss = loss / tta_cfg.grad_accum_bs
                 loss.backward()
                 grad_accum_num += 1
-                if grad_accum_num >= tta_cfg.grad_accum_bs or i+1>sampled_sims_matrix_i2t.size(0) // tta_cfg.tta_bs + 1 :
+                if grad_accum_num >= tta_cfg.grad_accum_bs or iter+1>sampled_sims_matrix_i2t.size(0) // tta_cfg.tta_bs + 1 :
                     optimizer.step()
                     optimizer.zero_grad()
                     grad_accum_num = 0
 
                 ## logging json
                 logging_list.append({
+                    "sample_idx" : [i for i in range(idx,idx_end)],
                     "label" : [labels[i] for i in range(idx,idx_end)],
                     "score" : score.detach().cpu().numpy().tolist(),
                     "recall_type" : recall_types[idx:idx_end],
@@ -493,15 +501,15 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                     "loss" : loss.detach().cpu().numpy()  * tta_cfg.grad_accum_bs,
                 })
                 ## log_iters logging
+                epoch_entropy_list.append(entropy.mean().detach().cpu().numpy())
+                epoch_loss_list.append(loss.detach().cpu().numpy() * tta_cfg.grad_accum_bs)
                 iters_entropy_accum += entropy.mean().detach().cpu().numpy()
                 iters_loss_accum += loss.detach().cpu().numpy() * tta_cfg.grad_accum_bs
-                if (i+1) % tta_cfg.log_iters == 0 or i+1>sims_matrix_i2t.size(0):
+                if (iter+1) % tta_cfg.log_iters == 0 or iter+1>sims_matrix_i2t.size(0):
                     logging.info(" ")
-                    logging.info(f"[ITM ADAPT] Iteration: {i}, Iters Average Entropy: {iters_entropy_accum / tta_cfg.log_iters}, Iters Average Loss: {iters_loss_accum / tta_cfg.log_iters} ")
+                    logging.info(f"[ITM ADAPT] Iteration: {iter}, Iters Average Entropy: {iters_entropy_accum / tta_cfg.log_iters}, Iters Average Loss: {iters_loss_accum / tta_cfg.log_iters} ")
                     iters_entropy_accum = 0.0
                     iters_loss_accum = 0.0
-                    epoch_entropy_list.append(entropy.detach().cpu().numpy())
-                    epoch_loss_list.append(loss.detach().cpu().numpy() * tta_cfg.grad_accum_bs)
                 ## tqdm logging
                 tbar.set_postfix(
                     entropy=entropy.mean().detach().cpu().numpy(), 
