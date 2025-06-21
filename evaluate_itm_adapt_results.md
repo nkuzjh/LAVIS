@@ -687,8 +687,8 @@
     - batchsize = 14
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.4.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.4.out 2>&1 & 
-        59 running pid=1356188
-        
+        59 running pid=1359592
+
 ### exp 8.2
 1. parameters:
     - loss = itm softmax entrop
