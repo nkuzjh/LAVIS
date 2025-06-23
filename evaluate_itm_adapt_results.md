@@ -757,11 +757,11 @@
 ### exp 8.1.12
 1. parameters:
     - lr=1e-4, wd=0.0
-    - batchsize = 14
+    - batchsize = 12
     - grad_accum_bs=8
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29502 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.12.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.12.out 2>&1 & 
-        58 running pid=928221
+        58 running pid=934660
 
 ### exp 8.2
 1. parameters:
