@@ -399,7 +399,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
 
     score_matrix_i2t = torch.full(
         (len(dataloader.dataset.image), len(dataloader.dataset.text)), -100.0
-    )
+    ).to(model.device)
     num_tasks = dist_utils.get_world_size()
     rank = dist_utils.get_rank()
     step = sims_matrix_i2t.size(0) // num_tasks + 1
@@ -409,7 +409,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     vit_feats = vit_feats[start:end] # 只取当前rank的样本
     # text_ids = text_ids[start:end] # 只取当前rank的样本
     # text_atts = text_atts[start:end] # 只取当前rank的样本
-    score_matrix_i2t_ = score_matrix_i2t[start:end] # 只取当前rank的样本
+    score_matrix_i2t_ = score_matrix_i2t[start:end].cpu() # 只取当前rank的样本
 
     k_test = task_cfg.k_test
     labels = dataloader.dataset.img2txt
@@ -549,7 +549,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     # if tta_cfg.debug_visual == True:
     #     plt.show()
 
-    score_matrix_i2t[start:end] = score_matrix_i2t_ # 将当前rank的score_matrix_i2t放回到全局的score_matrix_i2t中
+    score_matrix_i2t[start:end] = score_matrix_i2t_.to(model.device) # 将当前rank的score_matrix_i2t放回到全局的score_matrix_i2t中
     if dist_utils.is_dist_avail_and_initialized():
         dist.barrier()
         torch.distributed.all_reduce(

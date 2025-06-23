@@ -799,4 +799,4 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1,2 nohup python -m torch.distributed.run --nproc_per_node=2 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.yaml > ret_coco_eval_itm_adapt_i2t_exp9.out 2>&1 &  
-        58 running pid=834795
+        58 running pid=854061
