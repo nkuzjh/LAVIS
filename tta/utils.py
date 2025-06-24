@@ -374,7 +374,7 @@ def compute_tta_coeffis(sims_matrix_i2t, sims_matrix_t2i, k_test, i2t_temper=100
 
         coeffi = torch.ones(1)
         proba_top1_sim_i2t = F.softmax(topk_sim_i2t * i2t_temper, dim=0)[0]
-
+# i2t和t2i的logtis rank/distribution呈现长尾or平均的现象
         proba_sim_t2i_top1_idx_i2t = torch.zeros(1)
         topk_sim_t2i_top1_idx_i2t, topk_idx_t2i_top1_idx_i2t = sims_matrix_t2i[topk_idx_i2t[0]].topk(k=k_test, dim=0)
         if i in topk_idx_t2i_top1_idx_i2t:
@@ -417,6 +417,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     top1_sims, top1_idxs = sims_matrix_i2t.topk(k=1, dim=1) #正样本直接使用top1 TODO 使用top5采样一个正样本？
     top1_sims, top1_idxs =top1_sims[:,0], top1_idxs[:,0]
     neg_sims, neg_idxs = sample_neg_idxs(sims_matrix_i2t, tta_cfg.k_tta, k_test) # 负样本采样k_tta-1个
+     # sample top10-top32 采样困难负样本 根据score数值差异
     sampled_sims_matrix_i2t = []
     sampled_sims_idx_i2t = []
     for i in range(sims_matrix_i2t.size(0)):
@@ -478,6 +479,8 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                 ).float() # logits.shape=bs*k_tta, 2
                 logits = logits.reshape(-1, tta_cfg.k_tta, 2) # logits.shape=bs, k_tta, 2
                 score = logits[..., 1] # logits.shape=bs, k_tta
+                # score。show，观察pos和neg样本的差异，即可以区分又不至于差异太大
+
 
                 ## score = itm_score + cos_sim
                 for i, bs_idx in enumerate(range(idx,idx_end)):
@@ -489,7 +492,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                 else:
                     tta_coeffi = torch.ones(tta_cfg.tta_bs).to(model.device)
                 # itm entropy adapt
-                entropy = -(F.softmax(score, dim=-1) * F.log_softmax(score, dim=-1)).sum(-1)
+                entropy = -(F.softmax(score, dim=-1) * F.log_softmax(score, dim=-1)).sum(-1)# score * temper
                 loss = entropy / tta_coeffi
                 loss = loss.mean()
                 loss = loss / tta_cfg.grad_accum_bs

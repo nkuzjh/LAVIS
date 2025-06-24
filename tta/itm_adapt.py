@@ -287,6 +287,47 @@ def report_metrics(scores_i2t=None, scores_t2i=None, txt2img=None, img2txt=None,
         r_mean = (tr_mean + ir_mean) / 2
         agg_metrics = (tr1 + tr5 + tr10) / 3
 
+        # Compute mAP if labels are provided
+        mAP = ""
+        if "i2t_labels" in locals() and scores_i2t is not None:
+            # i2t_labels: shape [num_images, num_texts], binary relevance
+            # scores_i2t: [num_images, num_texts]
+            def average_precision(y_true, y_score):
+                # y_true: binary relevance, y_score: predicted score
+                order = np.argsort(y_score)[::-1]
+                y_true = np.asarray(y_true)[order]
+                cumsum = np.cumsum(y_true)
+                precision = cumsum / (np.arange(len(y_true)) + 1)
+                ap = (precision * y_true).sum() / max(1, y_true.sum())
+                return ap
+
+            aps = []
+            for i in range(scores_i2t.shape[0]):
+                if "i2t_labels" in locals():
+                    y_true = i2t_labels[i]
+                    y_score = scores_i2t[i]
+                    aps.append(average_precision(y_true, y_score))
+            mAP = np.mean(aps) if aps else ""
+
+        elif "t2i_labels" in locals() and scores_t2i is not None:
+            # t2i_labels: shape [num_texts, num_images], binary relevance
+            # scores_t2i: [num_texts, num_images]
+            def average_precision(y_true, y_score):
+                order = np.argsort(y_score)[::-1]
+                y_true = np.asarray(y_true)[order]
+                cumsum = np.cumsum(y_true)
+                precision = cumsum / (np.arange(len(y_true)) + 1)
+                ap = (precision * y_true).sum() / max(1, y_true.sum())
+                return ap
+
+            aps = []
+            for i in range(scores_t2i.shape[0]):
+                if "t2i_labels" in locals():
+                    y_true = t2i_labels[i]
+                    y_score = scores_t2i[i]
+                    aps.append(average_precision(y_true, y_score))
+            mAP = np.mean(aps) if aps else ""
+
     eval_result = {
         "txt_r1": tr1,
         "txt_r5": tr5,
@@ -298,6 +339,7 @@ def report_metrics(scores_i2t=None, scores_t2i=None, txt2img=None, img2txt=None,
         "img_r_mean": ir_mean,
         "r_mean": r_mean,
         "agg_metrics": agg_metrics,
+        "mAP":"",
     }
     with open(
         os.path.join(registry.get_path("output_dir"), "evaluate.txt"), "a"

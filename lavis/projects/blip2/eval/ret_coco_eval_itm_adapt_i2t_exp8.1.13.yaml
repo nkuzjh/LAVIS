@@ -51,7 +51,7 @@ run:
 
   # misc
   seed: 42
-  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp8.1.12/i2t"
+  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp8.1.13/i2t"
 
   evaluate: True
 
@@ -71,7 +71,7 @@ tta:
   weight_decay: 0.0
   tta_bs: 8
   grad_accum_bs: 16
-  offline_multi_epochs: 5
+  offline_multi_epochs: 10
  
   tta_task: "i2t" # "i2t" or "t2i"
   # wo_rerank: False

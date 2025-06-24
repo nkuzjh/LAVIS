@@ -738,6 +738,8 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.9.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.9.out 2>&1 & 
         59 running pid=136726
+        report i2t metrics offline, epoch 0 :
+{"txt_r1": 85.28, "txt_r5": 96.78, "txt_r10": 98.42, "txt_r_mean": 93.49333333333334,
 ### exp 8.1.10
 1. parameters:
     - lr=5e-6, wd=0.0
@@ -754,6 +756,8 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29502 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.11.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.11.out 2>&1 & 
         59 running pid=131872
+        report i2t metrics offline, epoch 4 :
+{"txt_r1": **85.44**, "txt_r5": 96.84, "txt_r10": 98.46, "txt_r_mean": 93.58,
 ### exp 8.1.12
 1. parameters:
     - lr=1e-4, wd=0.0
@@ -767,9 +771,13 @@
     - lr=5e-6, wd=0.0
     - batchsize=8
     - grad_accum_bs=16
+    - epoch=5
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29501 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.13.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.13.out 2>&1 & 
-        59 running pid=132098
+        59 finish;
+        report i2t metrics offline, epoch 0 : {"txt_r1": 85.42, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.64, 
+    - epoch=5    
+        59 running pid=411488
 
 ### exp 8.2
 1. parameters:
@@ -826,4 +834,6 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.0.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.0.1.out 2>&1 &  
-        58 running pid=1835555
+        58 running pid=1835555 
+        report i2t metrics offline, epoch 0 :
+{"txt_r1": 84.76, "txt_r5": 96.42, "txt_r10": 98.12, "txt_r_mean": 93.10000000000001
