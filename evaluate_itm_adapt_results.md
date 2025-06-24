@@ -729,7 +729,7 @@
     - grad_accum_bs=1
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.8.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.8.out 2>&1 & 
-        59 running pid=3537339
+        59 finish; epoch0=84.7
 ### exp 8.1.9
 1. parameters:
     - lr=1e-5, wd=0.0
@@ -745,7 +745,7 @@
     - grad_accum_bs=1
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29501 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.10.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.10.out 2>&1 & 
-        59 running pid=3537718
+        59 finish; epoch0=85.42
 ### exp 8.1.11
 1. parameters:
     - lr=1e-6, wd=0.0
@@ -757,11 +757,19 @@
 ### exp 8.1.12
 1. parameters:
     - lr=1e-4, wd=0.0
-    - batchsize = 12
-    - grad_accum_bs=8
+    - batchsize = 8
+    - grad_accum_bs=16
 2. results i2t best:
-    - CUDA_VISIBLE_DEVICES=0 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29502 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.12.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.12.out 2>&1 & 
-        58 running pid=934660
+    - CUDA_VISIBLE_DEVICES=0 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29501 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.12.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.12.out 2>&1 & 
+        58 finish; epoch0=85.34
+### exp 8.1.13
+1. parameters:
+    - lr=5e-6, wd=0.0
+    - batchsize=8
+    - grad_accum_bs=16
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=0 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29501 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.13.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.13.out 2>&1 & 
+        59 running pid=
 
 ### exp 8.2
 1. parameters:
@@ -781,14 +789,14 @@
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.2.yaml > ret_coco_eval_itm_adapt_i2t_exp8.2.out 2>&1 &  
         58 finish; 不收敛; epoch0=64.6
 
-
 ### exp 9
-- 多卡训练直接增加batchsize
+1. **多卡训练直接增加batchsize** 
+    - nproc_per_node=2
 1. parameters:
     - loss = itm softmax entrop
     - all rerank samples = 16; negative samples = 15 from top32~top128
     - top1_match_coeffi=True, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
-    - sample selection = top1
+    - **sample selection = all**
     - lr=1e-4, wd=0.0
     - batchsize = 8
     - grad_accum_bs=1
@@ -799,4 +807,23 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1,2 nohup python -m torch.distributed.run --nproc_per_node=2 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.yaml > ret_coco_eval_itm_adapt_i2t_exp9.out 2>&1 &  
-        58 running pid=854061
+        58 finish; epoch0=84.54
+### exp 9.0.1
+1. **多卡训练直接增加batchsize** 
+    - nproc_per_node=3
+1. parameters:
+    - loss = itm softmax entrop
+    - all rerank samples = 16; negative samples = 15 from top32~top128
+    - top1_match_coeffi=True, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
+    - **sample selection = all**
+    - lr=1e-4, wd=0.0
+    - batchsize=8
+    - grad_accum_bs=1
+    - multi_epochs=10
+    - offline eval topk=128
+    - rerank_score = itm_score +　cos_sim wo div temp
+    - model.eval() in adapt&evaluation
+    - log_iters=50
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.0.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.0.1.out 2>&1 &  
+        58 running pid=1824563

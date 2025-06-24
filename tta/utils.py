@@ -443,7 +443,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
         tta_coeffis = [tta_coeffis[i] for i in ss_idxs]
         # score_matrix_i2t = score_matrix_i2t[ss_idxs]
     else:
-        ss_idxs = torch.arange(0, len(dataloader.dataset.image)) # 全部样本
+        ss_idxs = torch.arange(0, sims_matrix_i2t.size(0)) # 全部样本
     logging.info("    number of sample_selection: {}".format(len(ss_idxs)))
 
     iters_entropy_accum = 0.0
