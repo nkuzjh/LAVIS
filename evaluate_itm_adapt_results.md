@@ -821,9 +821,9 @@
     - grad_accum_bs=1
     - multi_epochs=10
     - offline eval topk=128
-    - rerank_score = itm_score +　cos_sim wo div temp
+    - rerank_score = itm_score + cos_sim wo div temp
     - model.eval() in adapt&evaluation
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.0.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.0.1.out 2>&1 &  
-        58 running pid=1824563
+        58 running pid=1835555
