@@ -13,6 +13,10 @@
         58 finish
         _report_metrics: 
             {"txt_r1": 85.42, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.64, "img_r1": 68.25269892043183, "img_r5": 87.72890843662535, "img_r10": 92.62694922031187, "img_r_mean": 82.869518859123, "r_mean": 88.2547594295615, "agg_metrics": 93.64}
+        report recall metrics, zero-shot : 
+            {"txt_r1": 74.36, "txt_r5": 94.22, "txt_r10": 97.42, "txt_r_mean": 88.66666666666667, "txt_mAP": 63.56, "img_r1": 63.514594162335065, "img_r5": 86.08156737305077, "img_r10": 91.84726109556178, "img_r_mean": 80.48114087698254, "img_mAP": 73.56, "r_mean": 84.5739037718246}
+        report i2t metrics, zero-shot : 
+            {"txt_r1": 85.42, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.64, "txt_mAP": 71.34,}
 2. my implemention:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.out 2>&1 & 
         report zero-shot metrics with origin function : 
@@ -502,7 +506,7 @@
     - offline: online=False
     - rerank_score = itm_score +　cos_sim wo div temp
     - multi_epochs=10
-    - model.eval() in adapt&evaluation
+    - **model.eval() in adapt&evaluation**
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7.yaml > ret_coco_eval_itm_adapt_i2t_exp7.out 2>&1 &   
@@ -520,7 +524,7 @@
     - offline: online=False
     - rerank_score = itm_score +　cos_sim wo div temp
     - multi_epochs=10
-    - model.eval() in adapt&evaluation
+    - **model.eval() in adapt&evaluation**
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-1.yaml > ret_coco_eval_itm_adapt_i2t_exp7.1.out 2>&1 &   
@@ -559,7 +563,7 @@
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-1-2.yaml > ret_coco_eval_itm_adapt_i2t_exp7.1.2.out 2>&1 &   
         59 finish; 等于exp7.1，说明如果训好时top1_match_coeffi也不会影响训练
         report i2t metrics online, epoch 6 /9:
-{"txt_r1": 85.56, "txt_r5": 96.82, "txt_r10": 98.44, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
+{"txt_r1": **85.56**, "txt_r5": 96.82, "txt_r10": 98.44, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
 
 
 ### exp 7.1.3 grad_accum=1~exp7.1
@@ -601,7 +605,7 @@
     
 ### exp 8
 1. parameters:
-    - loss = itm softmax entrop
+    - loss = itm softmax entropy
     - k_tta = 16; negative sample = 15 from top32~top128
     - top1_match_coeffi=False, top1_match_coeffi_src=softmax with temperature
     - lr=1e-4, wd=0.0
@@ -647,10 +651,18 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.0.5.yaml > ret_coco_eval_itm_adapt_i2t_exp8.0.5.out 2>&1 & 
         58 kill epoch1=80+
+### exp 8.0.6 ~8.1.13 ~8.0.3
+1. parameters:
+    - lr=5e-6, wd=0.0
+    - batchsize=8
+    - grad_accum_bs=16
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.0.6.yaml > ret_coco_eval_itm_adapt_i2t_exp8.0.6.out 2>&1 & 
+        59 running pid=
 
 ### exp 8.1
 1. parameters:
-    - loss = itm softmax entrop
+    - loss = itm softmax entropy
     - all rerank samples = 16; negative samples = 15 from top32~top128
     - **top1_match_coeffi=True**, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
     - lr=1e-4, wd=0.0
@@ -737,8 +749,8 @@
     - grad_accum_bs=1
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.9.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.9.out 2>&1 & 
-        59 running pid=136726
-        report i2t metrics offline, epoch 0 :
+        59 finish
+        report i2t metrics offline, epoch 0 /9:
 {"txt_r1": 85.28, "txt_r5": 96.78, "txt_r10": 98.42, "txt_r_mean": 93.49333333333334,
 ### exp 8.1.10
 1. parameters:
@@ -755,8 +767,8 @@
     - grad_accum_bs=1
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29502 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.11.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.11.out 2>&1 & 
-        59 running pid=131872
-        report i2t metrics offline, epoch 4 :
+        59 finish
+        report i2t metrics offline, epoch 4 /9:
 {"txt_r1": **85.44**, "txt_r5": 96.84, "txt_r10": 98.46, "txt_r_mean": 93.58,
 ### exp 8.1.12
 1. parameters:
@@ -776,12 +788,14 @@
     - CUDA_VISIBLE_DEVICES=0 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29501 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.1.13.yaml > ret_coco_eval_itm_adapt_i2t_exp8.1.13.out 2>&1 & 
         59 finish;
         report i2t metrics offline, epoch 0 : {"txt_r1": 85.42, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.64, 
-    - epoch=5    
-        59 running pid=411488
+    - epoch=10    
+        59 finish
+        report i2t metrics offline, epoch 7 /9:
+{"txt_r1": **85.48**, "txt_r5": 96.88, "txt_r10": 98.44, "txt_r_mean": 93.60000000000001,
 
 ### exp 8.2
 1. parameters:
-    - loss = itm softmax entrop
+    - loss = itm softmax entropy
     - all rerank samples = 16; negative samples = 15 from top32~top128
     - top1_match_coeffi=True, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
     - **sample selection = top1**
@@ -801,7 +815,7 @@
 1. **多卡训练直接增加batchsize** 
     - nproc_per_node=2
 1. parameters:
-    - loss = itm softmax entrop
+    - loss = itm softmax entropy
     - all rerank samples = 16; negative samples = 15 from top32~top128
     - top1_match_coeffi=True, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
     - **sample selection = all**
@@ -820,7 +834,7 @@
 1. **多卡训练直接增加batchsize** 
     - nproc_per_node=3
 1. parameters:
-    - loss = itm softmax entrop
+    - loss = itm softmax entropy
     - all rerank samples = 16; negative samples = 15 from top32~top128
     - top1_match_coeffi=True, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
     - **sample selection = all**
@@ -834,6 +848,27 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.0.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.0.1.out 2>&1 &  
-        58 running pid=1835555 
+        58 finish;
         report i2t metrics offline, epoch 0 :
-{"txt_r1": 84.76, "txt_r5": 96.42, "txt_r10": 98.12, "txt_r_mean": 93.10000000000001
+"txt_r1": 84.76, "txt_r5": 96.42, "txt_r10": 98.12, "txt_r_mean": 93.10000000000001
+
+### exp 9.1
+1. **多卡训练直接增加batchsize** 
+    - nproc_per_node=3
+1. parameters:
+    - loss = softmax_entropy ( itm_score / score_temper ), **score_temper=1.0**
+    - all rerank samples = 16; negative samples = 15 from **top10~32**
+    - **top1_match_coeffi=False**, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
+    - **sample selection = all**
+    - lr=1e-4, wd=0.0
+    - batchsize=8
+    - grad_accum_bs=1
+    - multi_epochs=10
+    - offline eval topk=128
+    - rerank_score = itm_score +　cos_sim wo div temp
+    - model.eval() in adapt&evaluation
+    - log_iters=50
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1.out 2>&1 &  
+        58 finish;
+        report i2t metrics offline, epoch 0 : "txt_r1": 84.18, "txt_r5": 96.38, "txt_r10": 97.96, "txt_r_mean": 92.83999999999999, "txt_mAP": 69.21,
