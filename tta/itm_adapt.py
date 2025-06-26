@@ -886,7 +886,7 @@ def forward_and_itm_adapt_v2(tta_model, optimizer, dataloader, task_cfg, tta_cfg
 
             logging.info("compute t2i itm score offline, epoch %d :", tta_epoch)
             score_t2i= compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
-            results = report_metrics(scores_i2t=None, scores_t2i=score_i2t, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, epoch {tta_epoch} :")
+            results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, epoch {tta_epoch} :")
             logging.info(f"report t2i metrics offline, epoch {tta_epoch} :")
             logging.info(results)
             
