@@ -693,9 +693,9 @@ def adapt_t2i_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
         ss_idxs = find_inter_top1_sample_selection(sims_matrix_t2i, sims_matrix_t2i.t()) # 找到i2t和t2i互为top1的样本索引
         # 只保留top1 sample selection的样本
         # sims_matrix_t2i = sims_matrix_t2i[ss_idxs] 
-        # vit_feats = vit_feats[start:end] # 只取当前rank的样本
-        text_ids = text_ids[start:end] # 只取当前rank的样本
-        text_atts = text_atts[start:end] # 只取当前rank的样本
+        # vit_feats = vit_feats[ss_idxs]
+        text_ids = text_ids[ss_idxs]
+        text_atts = text_atts[ss_idxs]
         labels = [labels[i] for i in ss_idxs]
         recall_types = [recall_types[i] for i in ss_idxs]
         # top1_sims, top1_idxs = top1_sims[ss_idxs], top1_idxs[ss_idxs]
