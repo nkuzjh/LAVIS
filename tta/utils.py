@@ -659,9 +659,9 @@ def adapt_t2i_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     start = rank * step
     end = min(sims_matrix_t2i.size(0), start + step)
     sims_matrix_t2i = sims_matrix_t2i[start:end] # 只取当前rank的样本
-    vit_feats = vit_feats[start:end] # 只取当前rank的样本
-    # text_ids = text_ids[start:end] # 只取当前rank的样本
-    # text_atts = text_atts[start:end] # 只取当前rank的样本
+    # vit_feats = vit_feats[start:end] # 只取当前rank的样本
+    text_ids = text_ids[start:end] # 只取当前rank的样本
+    text_atts = text_atts[start:end] # 只取当前rank的样本
     score_matrix_t2i_ = score_matrix_t2i[start:end].cpu() # 只取当前rank的样本
 
     k_test = task_cfg.k_test    
