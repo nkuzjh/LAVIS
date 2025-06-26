@@ -95,42 +95,67 @@ class RetrievalTask(BaseTask):
         ir10 = -999
         ir_mean = -999
         r_mean = -999
-        agg_metrics = -999
+        # agg_metrics = -999
+        mAP_i2t = -999
+        mAP_t2i = -999
 
         if scores_i2t is not None:
             # Images->Text
             ranks = np.zeros(scores_i2t.shape[0])
+            average_precisions_i2t = []
+
             for index, score in enumerate(scores_i2t):
                 inds = np.argsort(score)[::-1]
                 # Score
                 rank = 1e20
                 for i in img2txt[index]:
                     tmp = np.where(inds == i)[0][0]
+                    relevant_positions.append(tmp)
                     if tmp < rank:
                         rank = tmp
                 ranks[index] = rank
+                
+                # Calculate average precision
+                relevant_positions.sort()
+                precisions = [(i + 1) / (pos + 1) for i, pos in enumerate(relevant_positions)]
+                average_precision = np.mean(precisions) if precisions else 0
+                average_precisions_i2t.append(average_precision)
 
             # Compute metrics
             tr1 = 100.0 * len(np.where(ranks < 1)[0]) / len(ranks)
             tr5 = 100.0 * len(np.where(ranks < 5)[0]) / len(ranks)
             tr10 = 100.0 * len(np.where(ranks < 10)[0]) / len(ranks)
             tr_mean = (tr1 + tr5 + tr10) / 3
-            agg_metrics = (tr1 + tr5 + tr10) / 3
+            # agg_metrics = (tr1 + tr5 + tr10) / 3
+            # Calculate mAP and format to two decimal places
+            mAP_i2t = np.mean(average_precisions_i2t) * 100
 
         if scores_t2i is not None:
 
             # Text->Images
             ranks = np.zeros(scores_t2i.shape[0])
+            average_precisions_t2i = []
 
             for index, score in enumerate(scores_t2i):
                 inds = np.argsort(score)[::-1]
-                ranks[index] = np.where(inds == txt2img[index])[0][0]
+                # ranks[index] = np.where(inds == txt2img[index])[0][0]
+                relevant_positions = []
+                tmp = np.where(inds == txt2img[index])[0][0]
+                relevant_positions.append(tmp)
+                ranks[index] = tmp 
+
+            # Calculate average precision
+            relevant_positions.sort()
+            precisions = [(i + 1) / (pos + 1) for i, pos in enumerate(relevant_positions)]
+            average_precision = np.mean(precisions) if precisions else 0
+            average_precisions_t2i.append(average_precision)
 
             # Compute metrics
             ir1 = 100.0 * len(np.where(ranks < 1)[0]) / len(ranks)
             ir5 = 100.0 * len(np.where(ranks < 5)[0]) / len(ranks)
             ir10 = 100.0 * len(np.where(ranks < 10)[0]) / len(ranks)
             ir_mean = (ir1 + ir5 + ir10) / 3
+            mAP_t2i = np.mean(average_precisions_t2i) * 100
 
         if scores_i2t is not None and scores_t2i is not None:
             r_mean = (tr_mean + ir_mean) / 2
@@ -140,16 +165,18 @@ class RetrievalTask(BaseTask):
             "txt_r5": tr5,
             "txt_r10": tr10,
             "txt_r_mean": tr_mean,
+            "txt_mAP": mAP_i2t,
             "img_r1": ir1,
             "img_r5": ir5,
             "img_r10": ir10,
             "img_r_mean": ir_mean,
+            "img_mAP": mAP_t2i,
             "r_mean": r_mean,
-            "agg_metrics": agg_metrics,
+            # "agg_metrics": agg_metrics,
         }
         with open(
             os.path.join(registry.get_path("output_dir"), "evaluate.txt"), "a"
         ) as f:
-            f.write("_report_metrics: \n")
-            f.write(json.dumps(eval_result) + "\n")
+            f.write("\n")
+            f.write("baseline_report_metrics:  " + json.dumps(eval_result) + "\n")
         return eval_result

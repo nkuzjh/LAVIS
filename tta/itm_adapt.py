@@ -20,6 +20,8 @@ from .utils import (
     adapt_i2t_itm_score,
     adapt_i2t_itm_score_v2,
     compute_i2t_itm_score_v2,
+    adapt_t2i_itm_score_v2,
+    compute_t2i_itm_score_v2,
 )
 
 class ITM_ADAPT(nn.Module):
@@ -248,104 +250,89 @@ def report_metrics(scores_i2t=None, scores_t2i=None, txt2img=None, img2txt=None,
     ir10 = -999
     ir_mean = -999
     r_mean = -999
-    agg_metrics = -999
+    # agg_metrics = -999
+    mAP_i2t = -999
+    mAP_t2i = -999
 
     if scores_i2t is not None:
         # Images->Text
         ranks = np.zeros(scores_i2t.shape[0])
+        average_precisions_i2t = []
+    
         for index, score in enumerate(scores_i2t):
             inds = np.argsort(score)[::-1]
             # Score
             rank = 1e20
+            relevant_positions = []
             for i in img2txt[index]:
                 tmp = np.where(inds == i)[0][0]
+                relevant_positions.append(tmp)
                 if tmp < rank:
                     rank = tmp
             ranks[index] = rank
+
+            # Calculate average precision
+            relevant_positions.sort()
+            precisions = [(i + 1) / (pos + 1) for i, pos in enumerate(relevant_positions)]
+            average_precision = np.mean(precisions) if precisions else 0
+            average_precisions_i2t.append(average_precision)
 
         # Compute metrics
         tr1 = 100.0 * len(np.where(ranks < 1)[0]) / len(ranks)
         tr5 = 100.0 * len(np.where(ranks < 5)[0]) / len(ranks)
         tr10 = 100.0 * len(np.where(ranks < 10)[0]) / len(ranks)
         tr_mean = (tr1 + tr5 + tr10) / 3
+        # Calculate mAP and format to two decimal places
+        mAP_i2t = round(np.mean(average_precisions_i2t) * 100, 2)
 
     if scores_t2i is not None:
         # Text->Images
         ranks = np.zeros(scores_t2i.shape[0])
+        average_precisions_t2i = []
 
         for index, score in enumerate(scores_t2i):
             inds = np.argsort(score)[::-1]
-            ranks[index] = np.where(inds == txt2img[index])[0][0]
+            relevant_positions = []
+            tmp = np.where(inds == txt2img[index])[0][0]
+            relevant_positions.append(tmp)
+            ranks[index] = tmp 
 
+            # Calculate average precision
+            relevant_positions.sort()
+            precisions = [(i + 1) / (pos + 1) for i, pos in enumerate(relevant_positions)]
+            average_precision = np.mean(precisions) if precisions else 0
+            average_precisions_t2i.append(average_precision)
+            
         # Compute metrics
         ir1 = 100.0 * len(np.where(ranks < 1)[0]) / len(ranks)
         ir5 = 100.0 * len(np.where(ranks < 5)[0]) / len(ranks)
         ir10 = 100.0 * len(np.where(ranks < 10)[0]) / len(ranks)
         ir_mean = (ir1 + ir5 + ir10) / 3
+        mAP_t2i = round(np.mean(average_precisions_t2i) * 100, 2)
 
     if scores_i2t is not None and scores_t2i is not None:
         r_mean = (tr_mean + ir_mean) / 2
-        agg_metrics = (tr1 + tr5 + tr10) / 3
-
-        # Compute mAP if labels are provided
-        mAP = ""
-        if "i2t_labels" in locals() and scores_i2t is not None:
-            # i2t_labels: shape [num_images, num_texts], binary relevance
-            # scores_i2t: [num_images, num_texts]
-            def average_precision(y_true, y_score):
-                # y_true: binary relevance, y_score: predicted score
-                order = np.argsort(y_score)[::-1]
-                y_true = np.asarray(y_true)[order]
-                cumsum = np.cumsum(y_true)
-                precision = cumsum / (np.arange(len(y_true)) + 1)
-                ap = (precision * y_true).sum() / max(1, y_true.sum())
-                return ap
-
-            aps = []
-            for i in range(scores_i2t.shape[0]):
-                if "i2t_labels" in locals():
-                    y_true = i2t_labels[i]
-                    y_score = scores_i2t[i]
-                    aps.append(average_precision(y_true, y_score))
-            mAP = np.mean(aps) if aps else ""
-
-        elif "t2i_labels" in locals() and scores_t2i is not None:
-            # t2i_labels: shape [num_texts, num_images], binary relevance
-            # scores_t2i: [num_texts, num_images]
-            def average_precision(y_true, y_score):
-                order = np.argsort(y_score)[::-1]
-                y_true = np.asarray(y_true)[order]
-                cumsum = np.cumsum(y_true)
-                precision = cumsum / (np.arange(len(y_true)) + 1)
-                ap = (precision * y_true).sum() / max(1, y_true.sum())
-                return ap
-
-            aps = []
-            for i in range(scores_t2i.shape[0]):
-                if "t2i_labels" in locals():
-                    y_true = t2i_labels[i]
-                    y_score = scores_t2i[i]
-                    aps.append(average_precision(y_true, y_score))
-            mAP = np.mean(aps) if aps else ""
+        # agg_metrics = (tr1 + tr5 + tr10) / 3
 
     eval_result = {
         "txt_r1": tr1,
         "txt_r5": tr5,
         "txt_r10": tr10,
         "txt_r_mean": tr_mean,
+        "txt_mAP": mAP_i2t,
         "img_r1": ir1,
         "img_r5": ir5,
         "img_r10": ir10,
         "img_r_mean": ir_mean,
+        "img_mAP": mAP_t2i,
         "r_mean": r_mean,
-        "agg_metrics": agg_metrics,
-        "mAP":"",
+        # "agg_metrics": agg_metrics,
     }
     with open(
         os.path.join(registry.get_path("output_dir"), "evaluate.txt"), "a"
     ) as f:
-        f.write(prefix_info + "\n")
-        f.write(json.dumps(eval_result) + "\n")
+        f.write("\n")
+        f.write(prefix_info + " " + json.dumps(eval_result) + "\n")
     return eval_result
 
 @torch.enable_grad()
@@ -879,26 +866,28 @@ def forward_and_itm_adapt_v2(tta_model, optimizer, dataloader, task_cfg, tta_cfg
             logging.info(results)
 
     # ## reset model to original state before t2i task
-    # tta_model.reset()
-    # ## t2i tta
-    # if tta_cfg.tta_task == "t2i":
-    #     if tta_cfg.zero_shot_eval:
-    #         logging.info("compute t2i itm score, zero-shot")
-    #         score_t2i_zeroshot= compute_t2i_itm_score(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts)
-    #         result = report_metrics(scores_i2t=None, scores_t2i=score_t2i_zeroshot, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics, zero-shot :")
-    #         logging.info(result)
-    #     ## multi epochs
-    #     for tta_epoch in range(tta_cfg.offline_multi_epochs):
-    #         logging.info(f"start t2i tta epoch {tta_epoch}")
-    #         logging.info("adapt t2i itm score online, epoch %d :", tta_epoch)
-    #         score_t2i = adapt_t2i_itm_score(tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
-    #         results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics online, epoch {tta_epoch} :")
-    #         logging.info(results)
-    #         # torch.save(tta_model.model.state_dict(), os.path.join(registry.get_path("output_dir"), f"t2i_tta_model_model_epoch_{tta_epoch}.pth"))
-    #         # logging.info(f"save t2i tta model at epoch {tta_epoch} to {os.path.join(registry.get_path('output_dir'), f't2i_tta_model_model_epoch_{tta_epoch}.pth')}")
-    #         logging.info("compute t2i itm score offline, epoch %d :", tta_epoch)    
-    #         score_t2i= compute_t2i_itm_score(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
-    #         results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, epoch {tta_epoch} :")
-    #         logging.info(results)
+    tta_model.reset()
+    ## t2i tta
+    if tta_cfg.tta_task == "t2i":
+        if tta_cfg.zero_shot_eval:
+            logging.info("compute t2i itm score, zero-shot")
+            score_t2i_zeroshot= compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts)
+            result = report_metrics(scores_i2t=None, scores_t2i=score_t2i_zeroshot, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics, zero-shot :")
+            logging.info(f"report t2i metrics, zero-shot :")
+            logging.info(result)
+        ## multi epochs
+        for tta_epoch in range(tta_cfg.offline_multi_epochs):
+            logging.info(f"start t2i tta epoch {tta_epoch}")
+            logging.info("adapt t2i itm score online, epoch %d :", tta_epoch)
+            score_t2i = adapt_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
+            results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics online, epoch {tta_epoch} :")
+            logging.info(f"report t2i metrics online, epoch {tta_epoch} :")
+            logging.info(results)
+
+            logging.info("compute t2i itm score offline, epoch %d :", tta_epoch)
+            score_t2i= compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
+            results = report_metrics(scores_i2t=None, scores_t2i=score_i2t, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, epoch {tta_epoch} :")
+            logging.info(f"report t2i metrics offline, epoch {tta_epoch} :")
+            logging.info(results)
             
     return score_i2t, score_t2i

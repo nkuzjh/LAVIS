@@ -15,8 +15,10 @@
             {"txt_r1": 85.42, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.64, "img_r1": 68.25269892043183, "img_r5": 87.72890843662535, "img_r10": 92.62694922031187, "img_r_mean": 82.869518859123, "r_mean": 88.2547594295615, "agg_metrics": 93.64}
         report recall metrics, zero-shot : 
             {"txt_r1": 74.36, "txt_r5": 94.22, "txt_r10": 97.42, "txt_r_mean": 88.66666666666667, "txt_mAP": 63.56, "img_r1": 63.514594162335065, "img_r5": 86.08156737305077, "img_r10": 91.84726109556178, "img_r_mean": 80.48114087698254, "img_mAP": 73.56, "r_mean": 84.5739037718246}
-        report i2t metrics, zero-shot : 
-            {"txt_r1": 85.42, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.64, "txt_mAP": 71.34,}
+        report i2t metrics, zero-shot :
+            **{"txt_r1": 85.42, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.64, "txt_mAP": 71.34,}**
+        report t2i metrics, zero-shot :
+            **{'img_r1': 68.25269892043183, 'img_r5': 87.72890843662535, 'img_r10': 92.62694922031187, 'img_r_mean': 82.869518859123, 'img_mAP': 77.0,}**
 2. my implemention:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_sigmoid.yaml > ret_coco_eval_itm_adapt_i2t_exp3.out 2>&1 & 
         report zero-shot metrics with origin function : 
@@ -496,7 +498,7 @@
             {"txt_r1": **85.5**, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
 
 
-### exp 7
+### exp 7 增加了eval() in online adapt
 1. parameters:
     - loss = Qformer itm_logtis softmax entropy
     - top1_match_coeffi=False, top1_match_coeffi_src=cos_sim
@@ -546,7 +548,7 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-1-1.yaml > ret_coco_eval_itm_adapt_i2t_exp7.1.1.out 2>&1 &   
         58 kill; 效果不好 epoch=0.84+;top1_match_coeffi=False
-        58 kill; 效果不好且结果类似epoch=0.84+，说明如果训不好时top1_match_coeffi实际上没有影响训练;top1_match_coeffi=True
+        58 kill; 效果不好且结果类似epoch=0.84+，**说明如果训不好时top1_match_coeffi实际上没有影响训练**;top1_match_coeffi=True
 ### exp 7.1.2 无加权系数~exp7.1
 1. parameters:
     - loss = Qformer tent
@@ -561,11 +563,9 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp7-1-2.yaml > ret_coco_eval_itm_adapt_i2t_exp7.1.2.out 2>&1 &   
-        59 finish; 等于exp7.1，说明如果训好时top1_match_coeffi也不会影响训练
+        59 finish; 等于exp7.1，**说明如果训好时top1_match_coeffi也不会影响训练**
         report i2t metrics online, epoch 6 /9:
 {"txt_r1": **85.56**, "txt_r5": 96.82, "txt_r10": 98.44, "txt_r_mean": 93.60666666666667, "img_r1": -999, "img_r5": -999, "img_r10": -999, "img_r_mean": -999, "r_mean": -999, "agg_metrics": -999}
-
-
 ### exp 7.1.3 grad_accum=1~exp7.1
 1. parameters:
     - loss = Qformer tent
@@ -658,7 +658,9 @@
     - grad_accum_bs=16
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp8.0.6.yaml > ret_coco_eval_itm_adapt_i2t_exp8.0.6.out 2>&1 & 
-        59 running pid=
+        59 finish;
+        report i2t metrics offline, epoch 7 :
+{"txt_r1": **85.5**, "txt_r5": 96.88, "txt_r10": 98.44, "txt_r_mean": 93.60666666666667
 
 ### exp 8.1
 1. parameters:
@@ -849,8 +851,7 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.0.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.0.1.out 2>&1 &  
         58 finish;
-        report i2t metrics offline, epoch 0 :
-"txt_r1": 84.76, "txt_r5": 96.42, "txt_r10": 98.12, "txt_r_mean": 93.10000000000001
+        report i2t metrics offline, epoch 0 : "txt_r1": 84.76, "txt_r5": 96.42, "txt_r10": 98.12, "txt_r_mean": 93.10000000000001
 
 ### exp 9.1
 1. **多卡训练直接增加batchsize** 
@@ -872,3 +873,6 @@
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1.out 2>&1 &  
         58 finish;
         report i2t metrics offline, epoch 0 : "txt_r1": 84.18, "txt_r5": 96.38, "txt_r10": 97.96, "txt_r_mean": 92.83999999999999, "txt_mAP": 69.21,
+3. t2i
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.out 2>&1 &
+        58 running pid=24967
