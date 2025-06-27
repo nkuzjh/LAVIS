@@ -894,7 +894,8 @@
         report i2t metrics offline, epoch 0 : "txt_r1": 84.18, "txt_r5": 96.38, "txt_r10": 97.96, "txt_r_mean": 92.83999999999999, "txt_mAP": 69.21,
 3. t2i
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.out 2>&1 &
-        58 running pid=236214
+        58 finish;
+        report t2i metrics offline, epoch 0 : "img_r1": 67.20911635345861, "img_r5": 87.39304278288685, "img_r10": 92.51899240303878, "img_r_mean": 82.37371717979475, "img_mAP": 76.22,
 ### exp 9.1.1
 1. 多卡训练直接增加batchsize
     - nproc_per_node=3
@@ -912,8 +913,8 @@
     - model.eval() in adapt&evaluation
     - log_iters=50
 2. results i2t best:
-    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1.out 2>&1 &  
-        59 running pid=
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1.1.out 2>&1 &  
+        58 running pid=1156391
 3. t2i
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.out 2>&1 &
 
