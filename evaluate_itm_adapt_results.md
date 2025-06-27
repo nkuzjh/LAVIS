@@ -834,7 +834,7 @@
         58 finish; epoch0=84.54
 ### exp 9.0.1
 1. **多卡训练直接增加batchsize** 
-    - nproc_per_node=3
+    - **nproc_per_node=3**
 1. parameters:
     - loss = itm softmax entropy
     - all rerank samples = 16; negative samples = 15 from top32~top128
@@ -854,7 +854,7 @@
         report i2t metrics offline, epoch 0 : "txt_r1": 84.76, "txt_r5": 96.42, "txt_r10": 98.12, "txt_r_mean": 93.10000000000001
 ### exp 9.0.2 ~9.0.1 =8.0.6的多卡版本
 1. **多卡训练直接增加batchsize** 
-    - nproc_per_node=3
+    - **nproc_per_node=3**
 1. parameters:
     - loss = itm softmax entropy
     - all rerank samples = 16; negative samples = 15 from top32~top128
@@ -873,8 +873,8 @@
         59 running pid=
 
 ### exp 9.1
-1. **多卡训练直接增加batchsize** 
-    - nproc_per_node=3
+1. 多卡训练直接增加batchsize
+    - **nproc_per_node=3**
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=1.0**
     - all rerank samples = 16; negative samples = 15 from **top10~32**
@@ -896,7 +896,7 @@
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.out 2>&1 &
         58 running pid=236214
 ### exp 9.1.1
-1. **多卡训练直接增加batchsize** 
+1. 多卡训练直接增加batchsize
     - nproc_per_node=3
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), score_temper=1.0
@@ -918,7 +918,7 @@
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.out 2>&1 &
 
 ### exp 9.1.2
-1. **多卡训练直接增加batchsize** 
+1. 多卡训练直接增加batchsize
     - nproc_per_node=3
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=0.1**
@@ -941,11 +941,11 @@
 
 
 ### exp 10
-1. **多卡训练直接增加batchsize** 
+1. 多卡训练直接增加batchsize
     - nproc_per_node=3
 1. parameters:
-    - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=0.1**
-    - all rerank samples = 16; negative samples = 15 from **top5~27**
+    - loss = softmax_entropy ( itm_score * score_temper ), score_temper=1.0
+    - all rerank samples = 16; negative samples = 15 from top10~32
     - **top1_match_coeffi=True, top1_match_coeffi_src=KL-Divergence of Augmentations**
     - sample selection = all
     - lr=1e-4, wd=0.0
