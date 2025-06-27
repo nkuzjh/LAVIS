@@ -90,7 +90,7 @@ class RetrievalEvalDataset(BaseDataset, __DisplMixin):
         image_path = os.path.join(self.vis_root, self.annotation[index]["image"])
         image = Image.open(image_path).convert("RGB")
 
-        image = self.vis_processor(image)
+        image = self.vis_processor(image)# <lavis.processors.blip_processors.BlipImageEvalProcessor object at 0x7ff0b35f7990>
 
         return {"image": image, "index": index}
 

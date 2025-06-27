@@ -24,6 +24,7 @@ from lavis.common.registry import registry
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import json
+import albumentations as A
 
 
 def find_recall_type(label_list, topk_idx):
@@ -77,8 +78,17 @@ def compute_top1_match_coeffis(sims_matrix_i2t, sims_matrix_t2i, top1_match_coef
         coeffis.append(coeffi)
     return coeffis
 
+def get_image_transform():
+    tta_image_transforms = A.Compose([
+        # A.RandomResizedCrop(224, 224),
+        A.HorizontalFlip(p=0.5),
+        A.RandomBrightnessContrast(p=0.5),
+        # A.Normalize(mean=[0.48145466, 0.4578275, 0.40821073], std=[0.26862954, 0.26130258, 0.27577711]),
+        # A.ToTensorV2(),
+    ])
+    return tta_image_transforms
 
-def compute_embeds(model, dataloader, task_cfg, tta_cfg):
+def compute_embeds(model, dataloader, task_cfg, tta_cfg, is_aug=False):
     logging.info("compute_embeds: start")
 
     model.eval()
@@ -115,11 +125,30 @@ def compute_embeds(model, dataloader, task_cfg, tta_cfg):
         logging.info("    text features time: {}".format(str(datetime.timedelta(seconds=int(curr_time)))))
 
         logging.info("    image features...")
+        if is_aug and tta_cfg.top1_match_coeffi==True and tta_cfg.top1_match_coeffi_src in ["KL_itc", "KL_itm"] and tta_cfg.KL_aug_modal in ["image","multimodal"]:
+            image_transform = get_image_transform()
+        else:
+            image_transform = None
         start_time = time.time()
         vit_feats = []
         image_embeds = []
         for i, samples in  tqdm(enumerate(dataloader), total=len(dataloader)):
             image = samples["image"]
+            if is_aug and image_transform is not None:
+                imgs = []
+                # i = 0 
+                for img in image.cpu().numpy().transpose(0,2,3,1):
+                    # from PIL import Image
+                    # import numpy as np
+                    # print(img.shape)
+                    # orig_img = Image.fromarray((255*(img - img.min()) / (img.max()-img.min())).astype(np.uint8))
+                    # orig_img.save(f"orig_img_{i}.jpg")
+                    _img = image_transform(image=img)["image"]
+                    # aug_img = Image.fromarray((255*(_img - _img.min()) / (_img.max()-_img.min())).astype(np.uint8))
+                    # aug_img.save(f"aug_img_{i}.jpg")
+                    # i+=1
+                    imgs.append(torch.from_numpy(_img.transpose(2,0,1)))
+                image = torch.stack(imgs)
             image = image.to(model.device)
             image_feat, vit_feat = model.forward_image(image)
             image_embed = model.vision_proj(image_feat)

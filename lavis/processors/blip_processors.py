@@ -193,6 +193,36 @@ class BlipImageEvalProcessor(BlipImageBaseProcessor):
 
         return cls(image_size=image_size, mean=mean, std=std)
 
+@registry.register_processor("blip_image_eval_aug")
+class BlipImageEvalProcessor(BlipImageBaseProcessor):
+    def __init__(self, image_size=384, mean=None, std=None):
+        super().__init__(mean=mean, std=std)
+
+        self.transform = transforms.Compose(
+            [
+                transforms.Resize(
+                    (image_size, image_size), interpolation=InterpolationMode.BICUBIC
+                ),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                self.normalize,
+            ]
+        )
+
+    def __call__(self, item):
+        return self.transform(item)
+
+    @classmethod
+    def from_config(cls, cfg=None):
+        if cfg is None:
+            cfg = OmegaConf.create()
+
+        image_size = cfg.get("image_size", 384)
+
+        mean = cfg.get("mean", None)
+        std = cfg.get("std", None)
+
+        return cls(image_size=image_size, mean=mean, std=std)
 
 @registry.register_processor("blip2_image_train")
 class Blip2ImageTrainProcessor(BlipImageBaseProcessor):
