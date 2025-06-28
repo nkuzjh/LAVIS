@@ -935,8 +935,8 @@
     - model.eval() in adapt&evaluation
     - log_iters=50
 2. results i2t best:
-    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1.out 2>&1 &  
-        59 running pid=
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1.2.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1.2.out 2>&1 &  
+        58 running pid=1433058
 3. t2i
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.out 2>&1 &
 
