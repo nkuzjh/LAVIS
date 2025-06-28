@@ -869,8 +869,8 @@
     - model.eval() in adapt&evaluation
     - log_iters=50
 2. results i2t best:
-    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.0.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.0.1.out 2>&1 & 
-        59 running pid=
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.0.2.yaml > ret_coco_eval_itm_adapt_i2t_exp9.0.2.out 2>&1 & 
+        59 running pid=1984759
 
 ### exp 9.1
 1. 多卡训练直接增加batchsize
@@ -917,7 +917,6 @@
         58 running pid=1156391
 3. t2i
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.out 2>&1 &
-
 ### exp 9.1.2
 1. 多卡训练直接增加batchsize
     - nproc_per_node=3
@@ -939,7 +938,25 @@
         58 running pid=1433058
 3. t2i
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1_t2i.out 2>&1 &
-
+### exp 9.1.3
+1. 多卡训练直接增加batchsize
+    - nproc_per_node=3
+1. parameters:
+    - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=10**
+    - all rerank samples = 16; negative samples = 15 from top10~32
+    - top1_match_coeffi=False, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
+    - sample selection = all
+    - lr=1e-4, wd=0.0
+    - batchsize=8
+    - grad_accum_bs=1
+    - multi_epochs=10
+    - offline eval topk=128
+    - rerank_score = itm_score +　cos_sim wo div temp
+    - model.eval() in adapt&evaluation
+    - log_iters=50
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.1.3.yaml > ret_coco_eval_itm_adapt_i2t_exp9.1.3.out 2>&1 &  
+        58 running pid=
 
 ### exp 10
 1. 多卡训练直接增加batchsize
