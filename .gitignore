@@ -171,8 +171,10 @@ cache/
 
 # experiment files
 lavis/output/
+logs/
 *.out
 *.out*
+debugs/
 
 lavis/configs/default.yaml
 lavis/configs/models/blip2/blip2_coco.yaml

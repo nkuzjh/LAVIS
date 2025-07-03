@@ -826,53 +826,51 @@ def forward_and_itm_adapt_v2(tta_model, optimizer, dataloader, task_cfg, tta_cfg
     score_i2t, score_t2i = None, None
 
     ## compute cosine similarity matrix
-    if is_main_process():  # 只在rank=0的机器上预先计算multimodal embeddings并保存
-        logging.info("compute cosine similarity matrix")
-        # sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
-        # np.save("debug_sim_matrix_i2t.npy",sim_matrix_i2t.numpy())
-        # np.save("debug_sim_matrix_t2i.npy",sim_matrix_t2i.numpy())
-        # np.save("debug_image_embeds.npy",image_embeds.numpy())
-        # np.save("debug_vit_feats.npy",vit_feats.numpy())
-        # np.save("debug_text_embeds.npy",text_embeds.numpy())
-        # np.save("debug_text_ids.npy",text_ids.numpy())
-        # np.save("debug_text_atts.npy",text_atts.numpy())
-        sim_matrix_i2t = torch.from_numpy(np.load("debug_sim_matrix_i2t.npy"))
-        sim_matrix_t2i = torch.from_numpy(np.load("debug_sim_matrix_t2i.npy"))
-        image_embeds = torch.from_numpy(np.load("debug_image_embeds.npy"))
-        vit_feats = torch.from_numpy(np.load("debug_vit_feats.npy"))
-        text_embeds = torch.from_numpy(np.load("debug_text_embeds.npy"))
-        text_ids = torch.from_numpy(np.load("debug_text_ids.npy"))
-        text_atts = torch.from_numpy(np.load("debug_text_atts.npy"))
-        result = report_metrics(scores_i2t=sim_matrix_i2t.numpy(), scores_t2i=sim_matrix_t2i.numpy(), txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report recall metrics, zero-shot :")
-        logging.info(f"report recall metrics, zero-shot :")
-        logging.info(result)
+    logging.info("compute cosine similarity matrix")
+    # sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
+    # np.save("debug_sim_matrix_i2t.npy",sim_matrix_i2t.numpy())
+    # np.save("debug_sim_matrix_t2i.npy",sim_matrix_t2i.numpy())
+    # np.save("debug_image_embeds.npy",image_embeds.numpy())
+    # np.save("debug_vit_feats.npy",vit_feats.numpy())
+    # np.save("debug_text_embeds.npy",text_embeds.numpy())
+    # np.save("debug_text_ids.npy",text_ids.numpy())
+    # np.save("debug_text_atts.npy",text_atts.numpy())
+    sim_matrix_i2t = torch.from_numpy(np.load("debug_sim_matrix_i2t.npy"))
+    sim_matrix_t2i = torch.from_numpy(np.load("debug_sim_matrix_t2i.npy"))
+    image_embeds = torch.from_numpy(np.load("debug_image_embeds.npy"))
+    vit_feats = torch.from_numpy(np.load("debug_vit_feats.npy"))
+    text_embeds = torch.from_numpy(np.load("debug_text_embeds.npy"))
+    text_ids = torch.from_numpy(np.load("debug_text_ids.npy"))
+    text_atts = torch.from_numpy(np.load("debug_text_atts.npy"))
+    result = report_metrics(scores_i2t=sim_matrix_i2t.numpy(), scores_t2i=sim_matrix_t2i.numpy(), txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report recall metrics, zero-shot :")
+    logging.info(f"report recall metrics, zero-shot :")
+    logging.info(result)
 
     ## compute augmentation cosine similarity matrix
-    if is_main_process():
-        if tta_cfg.top1_match_coeffi == True and tta_cfg.top1_match_coeffi_src in ["KL_itm", "KL_itc"]:
-            logging.info("compute augmentation cosine similarity matrix")
-            # sim_matrix_i2t_aug, sim_matrix_t2i_aug, image_embeds_aug, vit_feats_aug, text_embeds_aug, text_ids_aug, text_atts_aug = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg, is_aug=True)
-            # np.save("debug_sim_matrix_i2t_aug.npy",sim_matrix_i2t_aug.numpy())
-            # np.save("debug_sim_matrix_t2i_aug.npy",sim_matrix_t2i_aug.numpy())
-            # np.save("debug_image_embeds_aug.npy",image_embeds_aug.numpy())
-            # np.save("debug_vit_feats_aug.npy",vit_feats_aug.numpy())
-            # np.save("debug_text_embeds_aug.npy",text_embeds_aug.numpy())
-            # np.save("debug_text_ids_aug.npy",text_ids_aug.numpy())
-            # np.save("debug_text_atts_aug.npy",text_atts_aug.numpy())
-            sim_matrix_i2t_aug = torch.from_numpy(np.load("debug_sim_matrix_i2t_aug.npy"))
-            sim_matrix_t2i_aug = torch.from_numpy(np.load("debug_sim_matrix_t2i_aug.npy"))
-            image_embeds_aug = torch.from_numpy(np.load("debug_image_embeds_aug.npy"))
-            vit_feats_aug = torch.from_numpy(np.load("debug_vit_feats_aug.npy"))
-            text_embeds_aug = torch.from_numpy(np.load("debug_text_embeds_aug.npy"))
-            text_ids_aug = torch.from_numpy(np.load("debug_text_ids_aug.npy"))
-            text_atts_aug = torch.from_numpy(np.load("debug_text_atts_aug.npy"))
-            result = report_metrics(scores_i2t=sim_matrix_i2t_aug.numpy(), scores_t2i=sim_matrix_t2i_aug.numpy(), txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report recall metrics, aug zero-shot :")
-            logging.info(f"report recall metrics, aug zero-shot :")
-            logging.info(result)
-            # {'txt_r1': 67.58, 'txt_r5': 90.34, 'txt_r10': 94.88, 'txt_r_mean': 84.26666666666667, 'txt_mAP': 57.78, 'img_r1': 58.972411035585765, 'img_r5': 82.86685325869652, 'img_r10': 89.31627349060376, 'img_r_mean': 77.05184592829535, 'img_mAP': 69.62, 'r_mean': 80.65925629748101}
-            # {'txt_r1': 68.12, 'txt_r5': 90.54, 'txt_r10': 94.92, 'txt_r_mean': 84.52666666666669, 'txt_mAP': 58.01, 'img_r1': 59.21231507397041, 'img_r5': 82.83486605357857, 'img_r10': 89.23230707716914, 'img_r_mean': 77.09316273490604, 'img_mAP': 69.77, 'r_mean': 80.80991470078636}
-            # {'txt_r1': 67.8, 'txt_r5': 90.24, 'txt_r10': 94.62, 'txt_r_mean': 84.22, 'txt_mAP': 57.91, 'img_r1': 58.82846861255498, 'img_r5': 82.89884046381448, 'img_r10': 89.42423030787685, 'img_r_mean': 77.0505131280821, 'img_mAP': 69.54, 'r_mean': 80.63525656404104}
-            kl_coeffis_i2t, kl_coeffis_t2i = compute_kl_coeffis(sim_matrix_i2t, sim_matrix_i2t_aug)
+    if tta_cfg.top1_match_coeffi == True and tta_cfg.top1_match_coeffi_src in ["KL_itm", "KL_itc"]:
+        logging.info("compute augmentation cosine similarity matrix")
+        # sim_matrix_i2t_aug, sim_matrix_t2i_aug, image_embeds_aug, vit_feats_aug, text_embeds_aug, text_ids_aug, text_atts_aug = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg, is_aug=True)
+        # np.save("debug_sim_matrix_i2t_aug.npy",sim_matrix_i2t_aug.numpy())
+        # np.save("debug_sim_matrix_t2i_aug.npy",sim_matrix_t2i_aug.numpy())
+        # np.save("debug_image_embeds_aug.npy",image_embeds_aug.numpy())
+        # np.save("debug_vit_feats_aug.npy",vit_feats_aug.numpy())
+        # np.save("debug_text_embeds_aug.npy",text_embeds_aug.numpy())
+        # np.save("debug_text_ids_aug.npy",text_ids_aug.numpy())
+        # np.save("debug_text_atts_aug.npy",text_atts_aug.numpy())
+        sim_matrix_i2t_aug = torch.from_numpy(np.load("debug_sim_matrix_i2t_aug.npy"))
+        sim_matrix_t2i_aug = torch.from_numpy(np.load("debug_sim_matrix_t2i_aug.npy"))
+        image_embeds_aug = torch.from_numpy(np.load("debug_image_embeds_aug.npy"))
+        vit_feats_aug = torch.from_numpy(np.load("debug_vit_feats_aug.npy"))
+        text_embeds_aug = torch.from_numpy(np.load("debug_text_embeds_aug.npy"))
+        text_ids_aug = torch.from_numpy(np.load("debug_text_ids_aug.npy"))
+        text_atts_aug = torch.from_numpy(np.load("debug_text_atts_aug.npy"))
+        result = report_metrics(scores_i2t=sim_matrix_i2t_aug.numpy(), scores_t2i=sim_matrix_t2i_aug.numpy(), txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report recall metrics, aug zero-shot :")
+        logging.info(f"report recall metrics, aug zero-shot :")
+        logging.info(result)
+        # {'txt_r1': 67.58, 'txt_r5': 90.34, 'txt_r10': 94.88, 'txt_r_mean': 84.26666666666667, 'txt_mAP': 57.78, 'img_r1': 58.972411035585765, 'img_r5': 82.86685325869652, 'img_r10': 89.31627349060376, 'img_r_mean': 77.05184592829535, 'img_mAP': 69.62, 'r_mean': 80.65925629748101}
+        # {'txt_r1': 68.12, 'txt_r5': 90.54, 'txt_r10': 94.92, 'txt_r_mean': 84.52666666666669, 'txt_mAP': 58.01, 'img_r1': 59.21231507397041, 'img_r5': 82.83486605357857, 'img_r10': 89.23230707716914, 'img_r_mean': 77.09316273490604, 'img_mAP': 69.77, 'r_mean': 80.80991470078636}
+        # {'txt_r1': 67.8, 'txt_r5': 90.24, 'txt_r10': 94.62, 'txt_r_mean': 84.22, 'txt_mAP': 57.91, 'img_r1': 58.82846861255498, 'img_r5': 82.89884046381448, 'img_r10': 89.42423030787685, 'img_r_mean': 77.0505131280821, 'img_mAP': 69.54, 'r_mean': 80.63525656404104}
+        kl_coeffis_i2t, kl_coeffis_t2i = compute_kl_coeffis(sim_matrix_i2t, sim_matrix_i2t_aug)
 
     ## i2t tta
     if tta_cfg.tta_task == "i2t":
