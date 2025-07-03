@@ -653,7 +653,7 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
         (len(dataloader.dataset.image), len(dataloader.dataset.text)), -100.0
     ).to(model.device)
     scores_mat = torch.full(
-        (len(dataloader.dataset.image), tta_cfg.k_tta), -100.0
+        (len(dataloader.dataset.image), k_test), -100.0
     ).to(model.device)
     logging_list = []
 
@@ -679,7 +679,7 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
                 score = logits[:, 1]
                 ## score = itm_score + cos_sim
                 score_matrix_i2t[start + i, topk_idx_i2t] = score + topk_sim_i2t.to(model.device)
-                scores_mat[start + i, :] = score
+                scores_mat[start + i, ...] = score
 
                 ## entropy
                 entropy = -(F.softmax(score, dim=-1) * F.log_softmax(score, dim=-1)).sum(-1).mean()
@@ -722,7 +722,8 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
     if is_main_process(): 
         plt.figure(figsize=(32,8))
         plt.plot(scores_mat[:,0].cpu().detach().numpy(), alpha=0.7)
-        plt.plot(scores_mat[:,1:].cpu().detach().numpy().mean(axis=1), alpha=0.7)
+        plt.plot(scores_mat[:,0:5].cpu().detach().numpy().mean(axis=1), alpha=0.7)
+        plt.plot(scores_mat[:,5:5+tta_cfg.k_tta-1].cpu().detach().numpy().mean(axis=1), alpha=0.7)
         plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/eval_epoch{epoch}_score_distribution.jpg"))
 
     logging.info("compute_i2t_itm_score: end")
@@ -944,7 +945,7 @@ def compute_t2i_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_t
         (len(dataloader.dataset.text), len(dataloader.dataset.image)),  -100.0
     ).to(model.device)
     scores_mat = torch.full(
-        (len(dataloader.dataset.text), tta_cfg.k_tta), -100.0
+        (len(dataloader.dataset.text), k_test), -100.0
     ).to(model.device)
     logging_list = []
 
@@ -1015,7 +1016,7 @@ def compute_t2i_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_t
     if is_main_process(): 
         plt.figure(figsize=(32,8))
         plt.plot(scores_mat[:,0].cpu().detach().numpy(), alpha=0.7)
-        plt.plot(scores_mat[:,1:].cpu().detach().numpy().mean(axis=1), alpha=0.7)
+        plt.plot(scores_mat[:,1:1+tta_cfg.k_tta-1].cpu().detach().numpy().mean(axis=1), alpha=0.7)
         plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/eval_epoch{epoch}_score_distribution.jpg"))
 
     logging.info("compute_t2i_itm_score: end")

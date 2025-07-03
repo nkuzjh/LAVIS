@@ -1042,9 +1042,27 @@
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.yaml > ret_coco_eval_itm_adapt_i2t_exp9.2.out 2>&1 &  
         59 finish;
         report i2t metrics offline, epoch 0 : **"txt_r1": 85.44**, "txt_r5": 96.98, "txt_r10": 98.48, "txt_r_mean": 93.63333333333334, "txt_mAP": 71.33,
+### exp 9.2.1
+1. 多卡训练直接增加batchsize
+    - nproc_per_node=3
+1. parameters:
+    - loss = softmax_entropy ( itm_score * score_temper ), score_temper=1.0
+    - sampling stretegy: pos/neg=1/3; i2t pos = top1; neg from top hard negs;
+    - top1_match_coeffi=True, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
+    - sample selection = all
+    - **lr=5e-4**, wd=0.0
+    - batchsize=32 =128/4
+    - grad_accum_bs=1
+    - multi_epochs=10
+    - offline eval topk=128
+    - rerank_score = itm_score +　cos_sim wo div temp
+    - model.eval() in adapt&evaluation
+    - log_iters=50
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.1.yaml > ret_coco_eval_itm_adapt_i2t_exp9.2.1.out 2>&1 &  
+        59 running pid=2928967
 
-
-### exp 10
+### exp 10 TODO 暂时不需要aug或者dl加权的方法
 1. 多卡训练直接增加batchsize
     - nproc_per_node=3
 1. parameters:
@@ -1062,4 +1080,4 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp10.yaml > ret_coco_eval_itm_adapt_i2t_exp10.out 2>&1 &  
-        59 coding
+        59 abandoned
