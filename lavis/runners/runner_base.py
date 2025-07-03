@@ -351,15 +351,20 @@ class RunnerBase:
 
         output_dir = lib_root / self.config.run_cfg.output_dir / self.job_id
         result_dir = output_dir / "result"
+        result_rank_dir = result_dir / f"rank{get_rank()}"
 
         output_dir.mkdir(parents=True, exist_ok=True)
         result_dir.mkdir(parents=True, exist_ok=True)
+        result_rank_dir.mkdir(parents=True, exist_ok=True)
+        
 
         registry.register_path("result_dir", str(result_dir))
         registry.register_path("output_dir", str(output_dir))
+        registry.register_path("result_rank_dir", str(result_dir))
 
         self.result_dir = result_dir
         self.output_dir = output_dir
+        self.result_rank_dir = result_rank_dir
 
     def train(self):
         start_time = time.time()

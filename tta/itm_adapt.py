@@ -16,12 +16,14 @@ import json
 
 from .utils import (
     compute_embeds,
+    compute_kl_coeffis,
     compute_i2t_itm_score,
     adapt_i2t_itm_score,
     adapt_i2t_itm_score_v2,
     compute_i2t_itm_score_v2,
     adapt_t2i_itm_score_v2,
     compute_t2i_itm_score_v2,
+    plt_itm_score,
 )
 
 class ITM_ADAPT(nn.Module):
@@ -823,70 +825,92 @@ def forward_and_itc_adapt_v1(tta_model, optimizer, dataloader, task_cfg, tta_cfg
 def forward_and_itm_adapt_v2(tta_model, optimizer, dataloader, task_cfg, tta_cfg):
     score_i2t, score_t2i = None, None
 
-    logging.info("compute cosine similarity matrix")
-    # sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
-    # np.save("debug_sim_matrix_i2t.npy",sim_matrix_i2t.numpy())
-    # np.save("debug_sim_matrix_t2i.npy",sim_matrix_t2i.numpy())
-    # np.save("debug_image_embeds.npy",image_embeds.numpy())
-    # np.save("debug_vit_feats.npy",vit_feats.numpy())
-    # np.save("debug_text_embeds.npy",text_embeds.numpy())
-    # np.save("debug_text_ids.npy",text_ids.numpy())
-    # np.save("debug_text_atts.npy",text_atts.numpy())
-    sim_matrix_i2t = torch.from_numpy(np.load("debug_sim_matrix_i2t.npy"))
-    sim_matrix_t2i = torch.from_numpy(np.load("debug_sim_matrix_t2i.npy"))
-    image_embeds = torch.from_numpy(np.load("debug_image_embeds.npy"))
-    vit_feats = torch.from_numpy(np.load("debug_vit_feats.npy"))
-    text_embeds = torch.from_numpy(np.load("debug_text_embeds.npy"))
-    text_ids = torch.from_numpy(np.load("debug_text_ids.npy"))
-    text_atts = torch.from_numpy(np.load("debug_text_atts.npy"))
-    result = report_metrics(scores_i2t=sim_matrix_i2t.numpy(), scores_t2i=sim_matrix_t2i.numpy(), txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report recall metrics, zero-shot :")
-    logging.info(f"report recall metrics, zero-shot :")
-    logging.info(result)
-
-    if tta_cfg.top1_match_coeffi == True and tta_cfg.top1_match_coeffi_src in ["KL_itm", "KL_itc"]:
-        sim_matrix_i2t_aug, sim_matrix_t2i_aug, image_embeds_aug, vit_feats_aug, text_embeds_aug, text_ids_aug, text_atts_aug = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg, is_aug=True)
-        np.save("debug_sim_matrix_i2t_aug.npy",sim_matrix_i2t_aug.numpy())
-        np.save("debug_sim_matrix_t2i_aug.npy",sim_matrix_t2i_aug.numpy())
-        np.save("debug_image_embeds_aug.npy",image_embeds_aug.numpy())
-        np.save("debug_vit_feats_aug.npy",vit_feats_aug.numpy())
-        np.save("debug_text_embeds_aug.npy",text_embeds_aug.numpy())
-        np.save("debug_text_ids_aug.npy",text_ids_aug.numpy())
-        np.save("debug_text_atts_aug.npy",text_atts_aug.numpy())
-        # sim_matrix_i2t_aug = torch.from_numpy(np.load("debug_sim_matrix_i2t_aug.npy"))
-        # sim_matrix_t2i_aug = torch.from_numpy(np.load("debug_sim_matrix_t2i_aug.npy"))
-        # image_embeds_aug = torch.from_numpy(np.load("debug_image_embeds_aug.npy"))
-        # vit_feats_aug = torch.from_numpy(np.load("debug_vit_feats_aug.npy"))
-        # text_embeds_aug = torch.from_numpy(np.load("debug_text_embeds_aug.npy"))
-        # text_ids_aug = torch.from_numpy(np.load("debug_text_ids_aug.npy"))
-        # text_atts_aug = torch.from_numpy(np.load("debug_text_atts_aug.npy"))
-        result = report_metrics(scores_i2t=sim_matrix_i2t_aug.numpy(), scores_t2i=sim_matrix_t2i_aug.numpy(), txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report recall metrics, aug zero-shot :")
-        logging.info(f"report recall metrics, aug zero-shot :")
+    ## compute cosine similarity matrix
+    if is_main_process():  # 只在rank=0的机器上预先计算multimodal embeddings并保存
+        logging.info("compute cosine similarity matrix")
+        # sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
+        # np.save("debug_sim_matrix_i2t.npy",sim_matrix_i2t.numpy())
+        # np.save("debug_sim_matrix_t2i.npy",sim_matrix_t2i.numpy())
+        # np.save("debug_image_embeds.npy",image_embeds.numpy())
+        # np.save("debug_vit_feats.npy",vit_feats.numpy())
+        # np.save("debug_text_embeds.npy",text_embeds.numpy())
+        # np.save("debug_text_ids.npy",text_ids.numpy())
+        # np.save("debug_text_atts.npy",text_atts.numpy())
+        sim_matrix_i2t = torch.from_numpy(np.load("debug_sim_matrix_i2t.npy"))
+        sim_matrix_t2i = torch.from_numpy(np.load("debug_sim_matrix_t2i.npy"))
+        image_embeds = torch.from_numpy(np.load("debug_image_embeds.npy"))
+        vit_feats = torch.from_numpy(np.load("debug_vit_feats.npy"))
+        text_embeds = torch.from_numpy(np.load("debug_text_embeds.npy"))
+        text_ids = torch.from_numpy(np.load("debug_text_ids.npy"))
+        text_atts = torch.from_numpy(np.load("debug_text_atts.npy"))
+        result = report_metrics(scores_i2t=sim_matrix_i2t.numpy(), scores_t2i=sim_matrix_t2i.numpy(), txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report recall metrics, zero-shot :")
+        logging.info(f"report recall metrics, zero-shot :")
         logging.info(result)
-        # {'txt_r1': 67.58, 'txt_r5': 90.34, 'txt_r10': 94.88, 'txt_r_mean': 84.26666666666667, 'txt_mAP': 57.78, 'img_r1': 58.972411035585765, 'img_r5': 82.86685325869652, 'img_r10': 89.31627349060376, 'img_r_mean': 77.05184592829535, 'img_mAP': 69.62, 'r_mean': 80.65925629748101}
-        # {'txt_r1': 68.12, 'txt_r5': 90.54, 'txt_r10': 94.92, 'txt_r_mean': 84.52666666666669, 'txt_mAP': 58.01, 'img_r1': 59.21231507397041, 'img_r5': 82.83486605357857, 'img_r10': 89.23230707716914, 'img_r_mean': 77.09316273490604, 'img_mAP': 69.77, 'r_mean': 80.80991470078636}
-        # {'txt_r1': 67.8, 'txt_r5': 90.24, 'txt_r10': 94.62, 'txt_r_mean': 84.22, 'txt_mAP': 57.91, 'img_r1': 58.82846861255498, 'img_r5': 82.89884046381448, 'img_r10': 89.42423030787685, 'img_r_mean': 77.0505131280821, 'img_mAP': 69.54, 'r_mean': 80.63525656404104}
+
+    ## compute augmentation cosine similarity matrix
+    if is_main_process():
+        if tta_cfg.top1_match_coeffi == True and tta_cfg.top1_match_coeffi_src in ["KL_itm", "KL_itc"]:
+            logging.info("compute augmentation cosine similarity matrix")
+            # sim_matrix_i2t_aug, sim_matrix_t2i_aug, image_embeds_aug, vit_feats_aug, text_embeds_aug, text_ids_aug, text_atts_aug = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg, is_aug=True)
+            # np.save("debug_sim_matrix_i2t_aug.npy",sim_matrix_i2t_aug.numpy())
+            # np.save("debug_sim_matrix_t2i_aug.npy",sim_matrix_t2i_aug.numpy())
+            # np.save("debug_image_embeds_aug.npy",image_embeds_aug.numpy())
+            # np.save("debug_vit_feats_aug.npy",vit_feats_aug.numpy())
+            # np.save("debug_text_embeds_aug.npy",text_embeds_aug.numpy())
+            # np.save("debug_text_ids_aug.npy",text_ids_aug.numpy())
+            # np.save("debug_text_atts_aug.npy",text_atts_aug.numpy())
+            sim_matrix_i2t_aug = torch.from_numpy(np.load("debug_sim_matrix_i2t_aug.npy"))
+            sim_matrix_t2i_aug = torch.from_numpy(np.load("debug_sim_matrix_t2i_aug.npy"))
+            image_embeds_aug = torch.from_numpy(np.load("debug_image_embeds_aug.npy"))
+            vit_feats_aug = torch.from_numpy(np.load("debug_vit_feats_aug.npy"))
+            text_embeds_aug = torch.from_numpy(np.load("debug_text_embeds_aug.npy"))
+            text_ids_aug = torch.from_numpy(np.load("debug_text_ids_aug.npy"))
+            text_atts_aug = torch.from_numpy(np.load("debug_text_atts_aug.npy"))
+            result = report_metrics(scores_i2t=sim_matrix_i2t_aug.numpy(), scores_t2i=sim_matrix_t2i_aug.numpy(), txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report recall metrics, aug zero-shot :")
+            logging.info(f"report recall metrics, aug zero-shot :")
+            logging.info(result)
+            # {'txt_r1': 67.58, 'txt_r5': 90.34, 'txt_r10': 94.88, 'txt_r_mean': 84.26666666666667, 'txt_mAP': 57.78, 'img_r1': 58.972411035585765, 'img_r5': 82.86685325869652, 'img_r10': 89.31627349060376, 'img_r_mean': 77.05184592829535, 'img_mAP': 69.62, 'r_mean': 80.65925629748101}
+            # {'txt_r1': 68.12, 'txt_r5': 90.54, 'txt_r10': 94.92, 'txt_r_mean': 84.52666666666669, 'txt_mAP': 58.01, 'img_r1': 59.21231507397041, 'img_r5': 82.83486605357857, 'img_r10': 89.23230707716914, 'img_r_mean': 77.09316273490604, 'img_mAP': 69.77, 'r_mean': 80.80991470078636}
+            # {'txt_r1': 67.8, 'txt_r5': 90.24, 'txt_r10': 94.62, 'txt_r_mean': 84.22, 'txt_mAP': 57.91, 'img_r1': 58.82846861255498, 'img_r5': 82.89884046381448, 'img_r10': 89.42423030787685, 'img_r_mean': 77.0505131280821, 'img_mAP': 69.54, 'r_mean': 80.63525656404104}
+            kl_coeffis_i2t, kl_coeffis_t2i = compute_kl_coeffis(sim_matrix_i2t, sim_matrix_i2t_aug)
 
     ## i2t tta
     if tta_cfg.tta_task == "i2t":
         if tta_cfg.zero_shot_eval:
             logging.info("compute i2t itm score, zero-shot")
-            score_i2t_zeroshot= compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts)
-            result = report_metrics(scores_i2t=score_i2t_zeroshot, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics, zero-shot :")
+            score_i2t_zeroshot, itm_score_i2t_zeroshot = compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts)
+            
+            if is_main_process(): result = report_metrics(scores_i2t=score_i2t_zeroshot, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics, zero-shot :")
             logging.info(f"report i2t metrics, zero-shot :")
             logging.info(result)
+            if is_main_process(): result = report_metrics(scores_i2t=itm_score_i2t_zeroshot, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report itm i2t metrics, zero-shot :")
+            logging.info(f"report itm i2t metrics, zero-shot :")
+            logging.info(result)
         ## multi epochs
+        itm_score_list = []
         for tta_epoch in range(tta_cfg.offline_multi_epochs):
             logging.info(f"start i2t tta epoch {tta_epoch}")
+
             logging.info("adapt i2t itm score online, epoch %d :", tta_epoch)
-            score_i2t = adapt_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
-            results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics online, epoch {tta_epoch} :")
+            score_i2t, itm_score_i2t = adapt_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
+            itm_score_list.append(itm_score_i2t)
+            plt_itm_score(np.concatenate(itm_score_list), task="i2t", mode="tta")
+
+            if is_main_process(): results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics online, epoch {tta_epoch} :")
             logging.info(f"report i2t metrics online, epoch {tta_epoch} :")
+            logging.info(results)
+            if is_main_process(): results = report_metrics(scores_i2t=itm_score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t itm metrics online, epoch {tta_epoch} :")
+            logging.info(f"report i2t itm metrics online, epoch {tta_epoch} :")
             logging.info(results)
 
             logging.info("compute i2t itm score offline, epoch %d :", tta_epoch)
-            score_i2t= compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
-            results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics offline, epoch {tta_epoch} :")
+            score_i2t, itm_score_i2t = compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
+
+            if is_main_process(): results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics offline, epoch {tta_epoch} :")
             logging.info(f"report i2t metrics offline, epoch {tta_epoch} :")
+            logging.info(results)
+            if is_main_process(): results = report_metrics(scores_i2t=itm_score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t itm metrics offline, epoch {tta_epoch} :")
+            logging.info(f"report i2t itm metrics offline, epoch {tta_epoch} :")
             logging.info(results)
 
     # ## reset model to original state before t2i task
@@ -895,23 +919,39 @@ def forward_and_itm_adapt_v2(tta_model, optimizer, dataloader, task_cfg, tta_cfg
     if tta_cfg.tta_task == "t2i":
         if tta_cfg.zero_shot_eval:
             logging.info("compute t2i itm score, zero-shot")
-            score_t2i_zeroshot= compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts)
-            result = report_metrics(scores_i2t=None, scores_t2i=score_t2i_zeroshot, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics, zero-shot :")
+            score_t2i_zeroshot, itm_score_t2i_zeroshot = compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts)
+           
+            if is_main_process(): result = report_metrics(scores_i2t=None, scores_t2i=score_t2i_zeroshot, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics, zero-shot :")
             logging.info(f"report t2i metrics, zero-shot :")
             logging.info(result)
+            if is_main_process(): result = report_metrics(scores_i2t=None, scores_t2i=itm_score_t2i_zeroshot, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i itm metrics, zero-shot :")
+            logging.info(f"report t2i itm metrics, zero-shot :")
+            logging.info(result)
         ## multi epochs
+        itm_score_list = []
         for tta_epoch in range(tta_cfg.offline_multi_epochs):
             logging.info(f"start t2i tta epoch {tta_epoch}")
+
             logging.info("adapt t2i itm score online, epoch %d :", tta_epoch)
-            score_t2i = adapt_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
-            results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics online, epoch {tta_epoch} :")
+            score_t2i, itm_score_t2i = adapt_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
+            itm_score_list.append(itm_score_t2i)
+            plt_itm_score(np.concatenate(itm_score_list), task="t2i", mode="tta")
+
+            if is_main_process(): results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics online, epoch {tta_epoch} :")
             logging.info(f"report t2i metrics online, epoch {tta_epoch} :")
+            logging.info(results)
+            if is_main_process(): results = report_metrics(scores_i2t=None, scores_t2i=itm_score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i itm metrics online, epoch {tta_epoch} :")
+            logging.info(f"report t2i itm metrics online, epoch {tta_epoch} :")
             logging.info(results)
 
             logging.info("compute t2i itm score offline, epoch %d :", tta_epoch)
-            score_t2i= compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
-            results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, epoch {tta_epoch} :")
+            score_t2i, itm_score_t2i = compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
+            
+            if is_main_process(): results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, epoch {tta_epoch} :")
             logging.info(f"report t2i metrics offline, epoch {tta_epoch} :")
+            logging.info(results)
+            if is_main_process(): results = report_metrics(scores_i2t=None, scores_t2i=itm_score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i itm metrics offline, epoch {tta_epoch} :")
+            logging.info(f"report t2i itm metrics offline, epoch {tta_epoch} :")
             logging.info(results)
             
     return score_i2t, score_t2i
