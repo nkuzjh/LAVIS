@@ -1026,14 +1026,14 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
     if task == "i2t":
         if mode == "tta":
             plt.figure(figsize=(32,8))
-            plt.plot(scores[:,0].cpu().detach().numpy(), alpha=0.7)
-            plt.plot(scores[:,1:].mean(dim=1).cpu().detach().numpy(), alpha=0.7)
+            plt.plot(scores[:,0], alpha=0.7)
+            plt.plot(scores[:,1:].mean(axis=1), alpha=0.7)
             plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epoch_epochs_score_distribution.jpg"))
 
             # 计算每100个iter的score均值，输出500维向量
             plt.figure(figsize=(32,8))
-            avg_scores_pos = scores[:,0].cpu().detach().numpy().reshape(-1, 100).mean(axis=1)
-            avg_scores_neg = scores[:,1:].mean(dim=1).cpu().detach().numpy().reshape(-1, 100).mean(axis=1)
+            avg_scores_pos = scores[:,0].reshape(-1, 100).mean(axis=1)
+            avg_scores_neg = scores[:,1:].mean(axis=1).reshape(-1, 100).mean(axis=1)
             plt.plot(avg_scores_pos, marker='o')
             plt.plot(avg_scores_neg, marker='*')
             plt.title("Averaged ITM Score (every 100 samples)")
@@ -1045,14 +1045,14 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
     elif task == "t2i":
         if mode == "tta":
             plt.figure(figsize=(32,8))
-            plt.plot(scores[:,0].cpu().detach().numpy(), alpha=0.7)
-            plt.plot(scores[:,1:].mean(dim=1).cpu().detach().numpy(), alpha=0.7)
+            plt.plot(scores[:,0], alpha=0.7)
+            plt.plot(scores[:,1:].mean(axis=1), alpha=0.7)
             plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epoch_epochs_score_distribution.jpg"))
 
             # 计算每500个iter的score均值，输出25010/500维向量
             plt.figure(figsize=(32,8))
-            avg_scores_pos = scores[:,0].cpu().detach().numpy().reshape(-1, 500).mean(axis=1)
-            avg_scores_neg = scores[:,1:].mean(dim=1).cpu().detach().numpy().reshape(-1, 500).mean(axis=1)
+            avg_scores_pos = scores[:,0].reshape(-1, 500).mean(axis=1)
+            avg_scores_neg = scores[:,1:].mean(axis=1).reshape(-1, 500).mean(axis=1)
             plt.plot(avg_scores_pos, marker='o')
             plt.plot(avg_scores_neg, marker='*')
             plt.title("Averaged ITM Score (every 500 samples)")
