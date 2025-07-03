@@ -48,7 +48,7 @@ do
 
     echo "Starting training: $script on port $port"
     # nohup torchrun --nproc_per_node=$num_gpus --master_port=$port $script > $log_file 2>&1 &
-    nohup python -m torch.distributed.run --nproc_per_node=$num_gpus --master_port=$port $script --is_tta True --cfg-path $arg_file > $log_file 2>&1 & ;
+    nohup python -m torch.distributed.run --nproc_per_node=$num_gpus --master_port=$port $script --is_tta True --cfg-path $arg_file > $log_file 2>&1 &
     
     # 等待当前任务完成
     wait
