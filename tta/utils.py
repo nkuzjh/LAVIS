@@ -32,7 +32,7 @@ def find_recall_type(label_list, topk_idx):
     label_list = label_list if isinstance(label_list, list) else [label_list]
     if topk_idx[0] in label_list:
         return "recall@1"
-    else: 
+    else:
         for _idx in topk_idx[:5].tolist():
             if _idx in label_list:
                 return "recall@5"
@@ -46,7 +46,7 @@ def find_recall_types(labels, sims_matrix_i2t, k_test):
     for i, sims_i2t in enumerate(sims_matrix_i2t):
         label_list = labels[i]
         topk_sim, topk_idx = sims_i2t.topk(k=k_test, dim=0)
-        recall_types.append(find_recall_type(label_list, topk_idx))  
+        recall_types.append(find_recall_type(label_list, topk_idx))
     return recall_types
 
 def compute_kl_divergence(true_proba, pred_proba):
@@ -148,7 +148,7 @@ def compute_embeds(model, dataloader, task_cfg, tta_cfg, is_aug=False):
             image = samples["image"]
             if is_aug and image_transform is not None:
                 imgs = []
-                # i = 0 
+                # i = 0
                 for img in image.cpu().numpy().transpose(0,2,3,1):
                     # from PIL import Image
                     # import numpy as np
@@ -174,7 +174,7 @@ def compute_embeds(model, dataloader, task_cfg, tta_cfg, is_aug=False):
 
         curr_time = time.time() - start_time
         logging.info("    image features time {}".format(str(datetime.timedelta(seconds=int(curr_time)))))
-             
+
         logging.info("    similarity matrix...") # 这里F.normaliza()后的矩阵相乘@ 就是cosine_similarity
         start_time = time.time()
         sims_matrix = []
@@ -245,9 +245,9 @@ def compute_i2t_itm_score(model, dataloader, task_cfg, tta_cfg, sims_matrix_i2t,
                 })
                 ## tqdm logging
                 tbar.set_postfix(
-                    entropy_logits_softmax=entropy_logits_softmax.detach().cpu().numpy(), 
+                    entropy_logits_softmax=entropy_logits_softmax.detach().cpu().numpy(),
                     entropy_sigmoid_sum=entropy_sigmoid_sum.detach().cpu().numpy(),
-                    entropy_sigmoid_mean=entropy_sigmoid_mean.detach().cpu().numpy(), 
+                    entropy_sigmoid_mean=entropy_sigmoid_mean.detach().cpu().numpy(),
                     entropy_softmax=entropy_softmax.detach().cpu().numpy())
                 tbar.update(1)
 
@@ -352,8 +352,8 @@ def adapt_i2t_itm_score(model, dataloader, task_cfg, optimizer, tta_cfg, sims_ma
                     epoch_loss_list.append(loss.detach().cpu().numpy() * itm_loss_backward_accum_bs)
                 ## tqdm logging
                 tbar.set_postfix(
-                    entropy=entropy.detach().cpu().numpy(), 
-                    loss=loss.detach().cpu().numpy()*itm_loss_backward_accum_bs, 
+                    entropy=entropy.detach().cpu().numpy(),
+                    loss=loss.detach().cpu().numpy()*itm_loss_backward_accum_bs,
                     lr=optimizer.param_groups[0]['lr']
                 )
                 tbar.update(1)
@@ -365,10 +365,10 @@ def adapt_i2t_itm_score(model, dataloader, task_cfg, optimizer, tta_cfg, sims_ma
         json.dump(logging_list_json, f)
 
     plt.figure()
-    plt.plot(epoch_entropy_list) 
+    plt.plot(epoch_entropy_list)
     plt.savefig(os.path.join(registry.get_path("output_dir"), f"epoch{epoch}_entropy.jpg"))
     plt.figure()
-    plt.plot(epoch_loss_list) 
+    plt.plot(epoch_loss_list)
     plt.savefig(os.path.join(registry.get_path("output_dir"), f"epoch{epoch}_loss.jpg"))
     # if tta_cfg.debug_visual == True:
     #     plt.show()
@@ -458,7 +458,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     score_matrix_i2t_ = score_matrix_i2t[start:end].cpu() # 只取当前rank的样本
     scores_mat_ = scores_mat[start:end].cpu()
     ## sampling stretegy
-    k_test = task_cfg.k_test    
+    k_test = task_cfg.k_test
     labels = dataloader.dataset.img2txt
     ## 获取metric标签用于可视化
     recall_types = find_recall_types(labels, sims_matrix_i2t, k_test=10)
@@ -491,7 +491,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     if tta_cfg.sample_selection == "top1":
         ss_idxs = find_inter_top1_sample_selection(sims_matrix_i2t, sims_matrix_i2t.t()) # 找到i2t和t2i互为top1的样本索引
         # 只保留top1 sample selection的样本
-        # sims_matrix_i2t = sims_matrix_i2t[ss_idxs] 
+        # sims_matrix_i2t = sims_matrix_i2t[ss_idxs]
         vit_feats = vit_feats[ss_idxs]
         # text_ids = text_ids[ss_idxs]
         # text_atts = text_atts[ss_idxs]
@@ -536,7 +536,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                 logits = model.compute_itm_logits(
                     image_inputs=image_inputs.to(model.device), #bs*k_tta,677,1408
                     text_ids=text_ids_inputs.to(model.device), #bs*k_tta,35
-                    text_atts=text_atts_inputs.to(model.device), #bs*k_tta,35 
+                    text_atts=text_atts_inputs.to(model.device), #bs*k_tta,35
                     # TODONE 加一个attention_mask，让每个image_inputs仅和对应的text_ids做cross-attention，节约显存和算力
                     #【无需这样做，构造的bs * tta_bs样本对已经符合image仅和对应的text计算cross-attention】
                 ).float() # logits.shape=bs*k_tta, 2
@@ -554,7 +554,8 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                 # temperature
                 score_temper = torch.Tensor([score_temper_]).to(model.device)
                 # itm entropy adapt
-                entropy = -(F.softmax(score * score_temper, dim=-1) * F.log_softmax(score * score_temper, dim=-1)).sum(-1)# score * temper
+                entropy = -(F.softmax(score * score_temper, dim=-1) * F.log_softmax(score * score_temper, dim=-1)).sum(-1) # score * temper # loss = pos-neg softmax entropy
+                entropy = (-(F.sigmoid(score * score_temper) * F.log(F.sigmoid(score * score_temper)))).sum(-1) # loss = probability sigmoid entropy
                 loss = entropy / tta_coeffi
                 loss = loss.mean()
                 loss = loss / tta_cfg.grad_accum_bs
@@ -589,8 +590,8 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                     iters_loss_accum = 0.0
                 # ## tqdm logging
                 # tbar.set_postfix(
-                #     entropy=entropy.mean().detach().cpu().numpy(), 
-                #     loss=loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs, 
+                #     entropy=entropy.mean().detach().cpu().numpy(),
+                #     loss=loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs,
                 #     lr=optimizer.param_groups[0]['lr']
                 # )
                 # tbar.update(1)
@@ -620,14 +621,14 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
         json.dump(logging_list_json, f)
     ## plt entropy
     plt.figure()
-    plt.plot(epoch_entropy_list) 
+    plt.plot(epoch_entropy_list)
     plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/tta_epoch{epoch}_entropy.jpg"))
     ## plt loss
     plt.figure()
-    plt.plot(epoch_loss_list) 
+    plt.plot(epoch_loss_list)
     plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/tta_epoch{epoch}_loss.jpg"))
     ## plt score
-    if is_main_process(): 
+    if is_main_process():
         plt.figure(figsize=(32,8))
         plt.plot(scores_mat[:,0].cpu().detach().numpy(), alpha=0.7)
         plt.plot(scores_mat[:,1:].cpu().detach().numpy().mean(axis=1), alpha=0.7)
@@ -719,7 +720,7 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
     with open(json_path, "w") as f:
         json.dump(logging_list_json, f)
     ## plt score
-    if is_main_process(): 
+    if is_main_process():
         plt.figure(figsize=(32,8))
         plt.plot(scores_mat[:,0].cpu().detach().numpy(), alpha=0.7)
         plt.plot(scores_mat[:,0:5].cpu().detach().numpy().mean(axis=1), alpha=0.7)
@@ -752,7 +753,7 @@ def adapt_t2i_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     score_matrix_t2i_ = score_matrix_t2i[start:end].cpu() # 只取当前rank的样本
     scores_mat_ = scores_mat[start:end].cpu()
     ## sampling stretegy
-    k_test = task_cfg.k_test    
+    k_test = task_cfg.k_test
     labels = dataloader.dataset.txt2img
     recall_types = find_recall_types(labels, sims_matrix_t2i, k_test=10)
     ## 采样正样本
@@ -783,7 +784,7 @@ def adapt_t2i_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     if tta_cfg.sample_selection == "top1":
         ss_idxs = find_inter_top1_sample_selection(sims_matrix_t2i, sims_matrix_t2i.t()) # 找到i2t和t2i互为top1的样本索引
         # 只保留top1 sample selection的样本
-        # sims_matrix_t2i = sims_matrix_t2i[ss_idxs] 
+        # sims_matrix_t2i = sims_matrix_t2i[ss_idxs]
         # vit_feats = vit_feats[ss_idxs]
         text_ids = text_ids[ss_idxs]
         text_atts = text_atts[ss_idxs]
@@ -828,7 +829,7 @@ def adapt_t2i_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                 logits = model.compute_itm_logits(
                     image_inputs=image_inputs.to(model.device), #bs*k_tta,677,1408
                     text_ids=text_ids_inputs.to(model.device), #bs*k_tta,35
-                    text_atts=text_atts_inputs.to(model.device), #bs*k_tta,35 
+                    text_atts=text_atts_inputs.to(model.device), #bs*k_tta,35
                     # TODONE 加一个attention_mask，让每个image_inputs仅和对应的text_ids做cross-attention，节约显存和算力
                     #【无需这样做，构造的bs * tta_bs样本对已经符合image仅和对应的text计算cross-attention】
                 ).float() # logits.shape=bs*k_tta, 2
@@ -881,8 +882,8 @@ def adapt_t2i_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                     iters_loss_accum = 0.0
                 # ## tqdm logging
                 # tbar.set_postfix(
-                #     entropy=entropy.mean().detach().cpu().numpy(), 
-                #     loss=loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs, 
+                #     entropy=entropy.mean().detach().cpu().numpy(),
+                #     loss=loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs,
                 #     lr=optimizer.param_groups[0]['lr']
                 # )
                 # tbar.update(1)
@@ -912,14 +913,14 @@ def adapt_t2i_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
         json.dump(logging_list_json, f)
     ## plt entropy
     plt.figure()
-    plt.plot(epoch_entropy_list) 
+    plt.plot(epoch_entropy_list)
     plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/tta_epoch{epoch}_entropy.jpg"))
     ## plt loss
     plt.figure()
-    plt.plot(epoch_loss_list) 
+    plt.plot(epoch_loss_list)
     plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/tta_epoch{epoch}_loss.jpg"))
     ## plt score
-    if is_main_process(): 
+    if is_main_process():
         plt.figure(figsize=(32,8))
         plt.plot(scores_mat[:,0].cpu().detach().numpy(), alpha=0.7)
         plt.plot(scores_mat[:,1:].cpu().detach().numpy().mean(axis=1), alpha=0.7)
@@ -972,7 +973,7 @@ def compute_t2i_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_t
                 ## score = itm_score + cos_sim
                 score_matrix_t2i[start + i, topk_idx_t2i] = score + topk_sim_t2i.to(model.device)
                 scores_mat[start + i, :] = score
-                
+
                 ## entropy
                 entropy = -(F.softmax(score, dim=-1) * F.log_softmax(score, dim=-1)).sum(-1).mean()
                 ## logging
@@ -1006,14 +1007,14 @@ def compute_t2i_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_t
         torch.distributed.all_reduce(
             scores_mat, op=torch.distributed.ReduceOp.SUM
         )
-    
+
     ## save logging json
     logging_list_json = json.dumps(logging_list)
     json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/eval_epoch{epoch}_logging_list.json")
     with open(json_path, "w") as f:
         json.dump(logging_list_json, f)
     ## plt score
-    if is_main_process(): 
+    if is_main_process():
         plt.figure(figsize=(32,8))
         plt.plot(scores_mat[:,0].cpu().detach().numpy(), alpha=0.7)
         plt.plot(scores_mat[:,1:1+tta_cfg.k_tta-1].cpu().detach().numpy().mean(axis=1), alpha=0.7)

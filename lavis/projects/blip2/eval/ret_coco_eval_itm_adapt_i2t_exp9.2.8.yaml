@@ -51,7 +51,7 @@ run:
 
   # misc
   seed: 42
-  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp9.2.4/i2t"
+  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp9.2.8/i2t"
 
   evaluate: True
 
@@ -59,18 +59,18 @@ tta:
   name: "itm_adapt_v2"
   adapt_module: "qformer"
   # entropy_type: "softmax"
-  score_temper: 10
+  score_temper: 1.0
   k_tta: 4 #16
   # pos_sample_range: [0, 5]
   neg_sample_range: [5, 8] #[10, 32] # (32,128)
   # temper: 1.0
-  top1_match_coeffi: True
+  top1_match_coeffi: False
   top1_match_coeffi_src: "softmax" #"sigmoid" # this param will be used when top1_match_coeffi=True
   coeffi_i2t_temper: 100.0
   coeffi_t2i_temper: 20.0
   sample_selection: "all"
 
-  init_lr: 1e-5
+  init_lr: 1e-3
   weight_decay: 0.0
   tta_bs: 32
   grad_accum_bs: 1

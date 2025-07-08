@@ -176,6 +176,13 @@ logs/
 *.out*
 debugs/
 
+# downloaded dataset & checkpoint
+lavis/configs/
 lavis/configs/default.yaml
 lavis/configs/models/blip2/blip2_coco.yaml
 lavis/configs/models/blip2/blip2_pretrain_vitL.yaml
+lavis/configs/models/blip2/blip2_pretrain_vitL.yaml
+
+lavis/configs/models/blip2/blip2_coco.yaml
+
+lavis/configs/default.yaml
