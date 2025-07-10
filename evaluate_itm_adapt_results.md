@@ -1178,3 +1178,24 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp10.yaml > ret_coco_eval_itm_adapt_i2t_exp10.out 2>&1 &
         59 abandoned
+
+### exp 11
+1. 多卡训练直接增加batchsize
+    - nproc_per_node=3
+1. parameters:
+    - itm_adapt_v3: dataset shuffle=True
+    - loss = softmax_entropy ( itm_score * score_temper ), score_temper=1.0
+    - sampling stretegy: pos/neg=1/3; i2t pos = top1; neg from top hard negs;
+    - top1_match_coeffi=True, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
+    - sample selection = all
+    - lr=1e-4, wd=0.0
+    - batchsize=32 =128/4
+    - grad_accum_bs=1
+    - multi_epochs=10
+    - offline eval topk=128
+    - rerank_score = itm_score +　cos_sim wo div temp
+    - model.eval() in adapt&evaluation
+    - log_iters=50
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.yaml > ret_coco_eval_itm_adapt_i2t_exp11.out 2>&1 &
+        59 running pid=3121677

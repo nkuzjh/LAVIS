@@ -682,7 +682,8 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
     logging.info("    start i2t itm eval... ")
     model.eval()
     with torch.no_grad():
-        with tqdm( desc=f"ITM EVAL rank{rank}", total=sims_matrix_i2t[start:end].size(0) ) as tbar:
+        # with tqdm( desc=f"ITM EVAL rank{rank}", total=sims_matrix_i2t[start:end].size(0) ) as tbar:
+        if 1:
             for i, sims_i2t in enumerate(sims_matrix_i2t[start:end]): # 遍历每个image与25010个text的sim_matrix
                 topk_sim_i2t, topk_idx_i2t = sims_i2t.topk(k=k_test, dim=0) #sims.shape=25010 topk_sim.shape=128 topk_idx=top128_idx
                 image_inputs = vit_feats[start + i].repeat(k_test, 1, 1).to(model.device) # vit_feats[i].shape=1,677,1408 image_inputs.shape=128,677,1408
@@ -710,7 +711,7 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
                 })
                 ## log_iters logging
                 if (i+1) % tta_cfg.log_iters == 0 or i+1>sims_matrix_i2t[start:end].size(0):
-                    logging.info(f"[ITM ADAPT] Iteration: {i}, Recall Type: {recall_type}, Iteration Entropy: {entropy.detach().cpu().numpy()}")
+                    logging.info(f"[ITM ADAPT rank{rank}] Iteration: {i}, Recall Type: {recall_type}, Iteration Entropy: {entropy.detach().cpu().numpy()}")
                 # ## tqdm logging
                 # tbar.set_postfix(recall_type=recall_type, entropy=entropy.detach().cpu().numpy())
                 # tbar.update(1)
