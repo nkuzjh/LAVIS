@@ -192,14 +192,14 @@ class RunnerBase:
                 "dataset_ratios not specified, datasets will be concatenated (map-style datasets) or chained (webdataset.DataPipeline)."
             )
 
-            datasets = reorg_datasets_by_split(self.datasets)
+            datasets = reorg_datasets_by_split(self.datasets)#{'train': <lavis.datasets.datasets.base_dataset.ConcatDataset object at 0x7f55a0b90b90>, 'val': <lavis.datasets.datasets.retrieval_datasets.RetrievalEvalDataset object at 0x7f5548832d90>, 'test': <lavis.datasets.datasets.retrieval_datasets.RetrievalEvalDataset object at 0x7f5547cddbd0>}
             self.datasets = concat_datasets(datasets)
 
             # print dataset statistics after concatenation/chaining
             for split_name in self.datasets:
                 if isinstance(self.datasets[split_name], tuple) or isinstance(
                     self.datasets[split_name], list
-                ):
+                ): #debuging False
                     # mixed wds.DataPipeline and torch.utils.data.Dataset
                     num_records = sum(
                         [
@@ -210,8 +210,8 @@ class RunnerBase:
                         ]
                     )
 
-                else:
-                    if hasattr(self.datasets[split_name], "__len__"):
+                else:#debuging True
+                    if hasattr(self.datasets[split_name], "__len__"):#debuging True
                         # a single map-style dataset
                         num_records = len(self.datasets[split_name])
                     else:
@@ -241,9 +241,9 @@ class RunnerBase:
                 for split in split_names
             ]
 
-            collate_fns = []
+            collate_fns = []#[<bound method BaseDataset.collater of <lavis.datasets.datasets.retrieval_datasets.Ret...evalEvalDataset object at 0x7f5547cddbd0>>, <bound method ConcatDataset.collater of <lavis.datasets.datasets.base_dataset.ConcatDataset object at 0x7f55a0b90b90>>, <bound method BaseDataset.collater of <lavis.datasets.datasets.retrieval_datasets.Ret...evalEvalDataset object at 0x7f5548832d90>>]
             for dataset in datasets:
-                if isinstance(dataset, tuple) or isinstance(dataset, list):
+                if isinstance(dataset, tuple) or isinstance(dataset, list):#debuging False
                     collate_fns.append([getattr(d, "collater", None) for d in dataset])
                 else:
                     collate_fns.append(getattr(dataset, "collater", None))
@@ -356,7 +356,7 @@ class RunnerBase:
         output_dir.mkdir(parents=True, exist_ok=True)
         result_dir.mkdir(parents=True, exist_ok=True)
         result_rank_dir.mkdir(parents=True, exist_ok=True)
-        
+
 
         registry.register_path("result_dir", str(result_dir))
         registry.register_path("output_dir", str(output_dir))
@@ -455,7 +455,7 @@ class RunnerBase:
             log_freq=self.log_freq,
             accum_grad_iters=self.accum_grad_iters,
         )
-    
+
     def evaluate(self, cur_epoch="best", skip_reload=False, wo_rerank=False):
         test_logs = dict()
 
@@ -466,7 +466,7 @@ class RunnerBase:
                 )
 
             return test_logs
-        
+
     @torch.no_grad()
     def eval_epoch(self, split_name, cur_epoch, skip_reload=False, wo_rerank=False):
         """
@@ -566,7 +566,7 @@ class RunnerBase:
             params, param_names = itm_adapt.collect_all_params_blip2(model)
             optimizer = torch.optim.AdamW(params=params, lr=tta_cfg.init_lr, weight_decay=tta_cfg.weight_decay)
             tta_model = itm_adapt.ITM_ADAPT(model, optimizer)
-        elif tta_cfg.name in ["itm_adapt_v1","itc_adapt_v1","itm_adapt_v2"]:
+        elif tta_cfg.name in ["itm_adapt_v1","itc_adapt_v1","itm_adapt_v2","itm_adapt_v3"]:
             if tta_cfg.adapt_module == "qformer":
                 model = itm_adapt.configure_model_blip2(model)
                 params, param_names = itm_adapt.collect_params_blip2(model)
@@ -589,7 +589,7 @@ class RunnerBase:
             dataset=self.datasets[split_name],
         )
         # results = self.task.evaluation(model, data_loader)
-        results = self.task.evaluation_tta(tta_model, data_loader, tta_cfg)
+        results = self.task.evaluation_tta(self.config, tta_model, data_loader, tta_cfg)
 
         if results is not None:
             return self.task.after_evaluation(
@@ -621,7 +621,7 @@ class RunnerBase:
             # create a single dataloader for each split
             if isinstance(dataset, ChainDataset) or isinstance(
                 dataset, wds.DataPipeline
-            ):
+            ):#debuging False
                 # wds.WebdDataset instance are chained together
                 # webdataset.DataPipeline has its own sampler and collate_fn
                 loader = iter(
@@ -671,7 +671,7 @@ class RunnerBase:
             datasets, batch_sizes, is_trains, collate_fns
         ):
             if isinstance(dataset, list) or isinstance(dataset, tuple):
-                loader = MultiIterLoader(
+                loader = MultiIterLoader(#debuging False
                     loaders=[
                         _create_loader(d, num_workers, bsz, is_train, collate_fn[i])
                         for i, d in enumerate(dataset)

@@ -32,6 +32,7 @@ from lavis.runners.runner_base import RunnerBase
 from lavis.tasks import *
 
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Training")
 
@@ -53,7 +54,7 @@ def parse_args():
 
 
 def setup_seeds(config):
-    seed = config.run_cfg.seed + get_rank()
+    seed = config.run_cfg.seed #+ get_rank()
 
     random.seed(seed)
     np.random.seed(seed)
@@ -82,11 +83,11 @@ def main():
     cfg.pretty_print()
 
     task = tasks.setup_task(cfg)
-    datasets = task.build_datasets(cfg)
+    datasets = task.build_datasets(cfg)#{'train': <lavis.datasets.datasets.base_dataset.ConcatDataset object at 0x7f55a0b90b90>, 'val': <lavis.datasets.datasets.retrieval_datasets.RetrievalEvalDataset object at 0x7f5548832d90>, 'test': <lavis.datasets.datasets.retrieval_datasets.RetrievalEvalDataset object at 0x7f5547cddbd0>}
     model = task.build_model(cfg)
 
     runner = RunnerBase(
-        cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets
+        cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets,
     )
     # runner.evaluate(skip_reload=True)
     runner.evaluate_tta(skip_reload=True, tta_cfg=cfg.config.tta)
@@ -97,11 +98,20 @@ if __name__ == "__main__":
 
 
 
+# TTA itm_adapt
+# - debug args: --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.yaml --is_tta True
+# - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t.yaml > ret_coco_eval_itm_adapt_i2t.out 2>&1 &
+# - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i.out 2>&1 &
+
+
+
+###########################
+###########################
+###########################
+
 # TTA tent:
 # debug args: --cfg-path lavis/projects/blip2/eval/ret_coco_eval_tent.yaml --is_tta True
 # CUDA_VISIBLE_DEVICES=1 python -m torch.distributed.run --nproc_per_node=1 ../evaluate_tta.py --tta True --cfg-path ../lavis/projects/blip2/eval/ret_coco_eval_tent.yaml
-
-
 
 # TTA zhh:
 # debug args: --cfg-path lavis/projects/blip2/eval/ret_coco_eval_zhh.yaml --is_tta True

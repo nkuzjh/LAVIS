@@ -53,10 +53,10 @@ class RetrievalTask(BaseTask):
             eval_result = None
 
         return eval_result
-    
-    def evaluation_tta(self, tta_model, data_loader, tta_cfg, **kwargs):
+
+    def evaluation_tta(self, cfg, tta_model, data_loader, tta_cfg, **kwargs):
         logging.info("tta_cfg.name: {}".format(tta_cfg.name))
-        
+
         # if tta_cfg.name in ["zhh_topk", "zhh_topk_ss", "itm_adapt", "itm_adapt_ss", "itm_adapt_sigmoid", "visenc_itm_adapt", "all_itm_adapt"]:
         #     if tta_cfg.online == True:
         #         score_i2t, score_t2i = tta_model(data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
@@ -64,8 +64,8 @@ class RetrievalTask(BaseTask):
         #         _, _, score_i2t, score_t2i = tta_model(data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
         # elif tta_cfg.name == "zhh" or tta_cfg.name == "tent":
         #     score_i2t, score_t2i = tta_model(data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
-        score_i2t, score_t2i = tta_model(data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
-        
+        score_i2t, score_t2i = tta_model(cfg, data_loader, task_cfg=self.cfg, tta_cfg=tta_cfg)
+
         if tta_cfg.name in ["tent", "zhh", "zhh_topk_ss",]:
             if is_main_process():
                 eval_result = self._report_metrics(
@@ -114,7 +114,7 @@ class RetrievalTask(BaseTask):
                     if tmp < rank:
                         rank = tmp
                 ranks[index] = rank
-                
+
                 # Calculate average precision
                 relevant_positions.sort()
                 precisions = [(i + 1) / (pos + 1) for i, pos in enumerate(relevant_positions)]
@@ -142,7 +142,7 @@ class RetrievalTask(BaseTask):
                 relevant_positions = []
                 tmp = np.where(inds == txt2img[index])[0][0]
                 relevant_positions.append(tmp)
-                ranks[index] = tmp 
+                ranks[index] = tmp
 
             # Calculate average precision
             relevant_positions.sort()
@@ -159,7 +159,7 @@ class RetrievalTask(BaseTask):
 
         if scores_i2t is not None and scores_t2i is not None:
             r_mean = (tr_mean + ir_mean) / 2
-        
+
         eval_result = {
             "txt_r1": tr1,
             "txt_r5": tr5,

@@ -21,11 +21,25 @@ from transformers import BertTokenizer
 from tta.tent import softmax_entropy
 from lavis.common.registry import registry
 
-from lavis.common.dist_utils import is_main_process
+from lavis.common.dist_utils import (
+    download_cached_file,
+    get_rank,
+    get_world_size,
+    is_main_process,
+    main_process,
+)
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import json
 import albumentations as A
+
+from tta.datasets import TTA_I2T_Dataset, TTA_T2I_Dataset
+from torch.utils.data import DataLoader
+from lavis.datasets.datasets.dataloader_utils import (
+    IterLoader,
+    MultiIterLoader,
+    PrefetchLoader,
+)
 
 
 def find_recall_type(label_list, topk_idx):
@@ -555,7 +569,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
                 score_temper = torch.Tensor([score_temper_]).to(model.device)
                 # itm entropy adapt
                 entropy = -(F.softmax(score * score_temper, dim=-1) * F.log_softmax(score * score_temper, dim=-1)).sum(-1) # score * temper # loss = pos-neg softmax entropy
-                entropy = (-(F.sigmoid(score * score_temper) * F.log(F.sigmoid(score * score_temper)))).sum(-1) # loss = probability sigmoid entropy
+                # entropy = (-(F.sigmoid(score * score_temper) * F.log(F.sigmoid(score * score_temper)))).sum(-1) # loss = probability sigmoid entropy
                 loss = entropy / tta_coeffi
                 loss = loss.mean()
                 loss = loss / tta_cfg.grad_accum_bs
@@ -1030,7 +1044,7 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
             plt.figure(figsize=(32,8))
             plt.plot(scores[:,0], alpha=0.7)
             plt.plot(scores[:,1:].mean(axis=1), alpha=0.7)
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epoch_epochs_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_score_distribution.jpg"))
 
             # 计算每100个iter的score均值，输出500维向量
             plt.figure(figsize=(32,8))
@@ -1041,7 +1055,7 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
             plt.title("Averaged ITM Score (every 100 samples)")
             plt.xlabel("Batch (100 samples per batch)")
             plt.ylabel("Average Score")
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epoch_epochs_avg100_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg100_score_distribution.jpg"))
         elif mode == "eval":
             pass ## ipynb script
     elif task == "t2i":
@@ -1049,7 +1063,7 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
             plt.figure(figsize=(32,8))
             plt.plot(scores[:,0], alpha=0.7)
             plt.plot(scores[:,1:].mean(axis=1), alpha=0.7)
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epoch_epochs_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_score_distribution.jpg"))
 
             # 计算每500个iter的score均值，输出25010/500维向量
             plt.figure(figsize=(32,8))
@@ -1060,6 +1074,238 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
             plt.title("Averaged ITM Score (every 500 samples)")
             plt.xlabel("Batch (500 samples per batch)")
             plt.ylabel("Average Score")
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epoch_epochs_avg500_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg500_score_distribution.jpg"))
         elif mode == "eval":
             pass ## ipynb script
+
+## use DistributedSampler; shuffle=True
+## top1 sample selection + 负样本采样计算softmax_entropy
+def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, tta_cfg, sims_matrix_i2t, vit_feats, text_ids, text_atts, epoch=-1):
+    logging.info("adapt_i2t_itm_score_v3: start")
+    ## return outputs
+    score_matrix_i2t = torch.full(
+        (len(dataloader.dataset.image), len(dataloader.dataset.text)), -100.0
+    ).to(model.device)
+    scores_mat = torch.full(
+        (len(dataloader.dataset.image), tta_cfg.k_tta), -100.0
+    ).to(model.device)
+    # labels_mat = torch.full(
+    #     (len(dataloader.dataset.image), 5), -100.0
+    # ).to(model.device)
+    ## sampling stretegy
+    k_test = task_cfg.k_test
+    labels = dataloader.dataset.img2txt
+    ## 获取metric标签用于可视化
+    recall_types = find_recall_types(labels, sims_matrix_i2t, k_test=10)
+    ## 采样正样本
+    # pos_sample_range =  tta_cfg.pos_sample_range if hasattr(tta_cfg, "pos_sample_range") else [0, 1] # 正样本采样范围
+    top1_sims, top1_idxs = sims_matrix_i2t.topk(k=1, dim=1) #正样本直接使用top1 TODO 使用top5采样一个正样本,但是这里相似度top5不一定就是5个label，所以还需要确定？
+    top1_sims, top1_idxs =top1_sims[:,0], top1_idxs[:,0]
+    ## 采样困难负样本
+    neg_sample_range = tta_cfg.neg_sample_range if hasattr(tta_cfg, "neg_sample_range") else [32, 128] # 负样本采样范围
+    neg_sims, neg_idxs = sample_neg_idxs(sims_matrix_i2t, tta_cfg.k_tta, k_test, neg_sample_range) # 负样本采样k_tta-1个, 根据score数值可视化差异确定采样范围
+    ## 拼接正负样本
+    sampled_sims_matrix_i2t = []
+    sampled_sims_idx_i2t = []
+    for i in range(sims_matrix_i2t.size(0)):
+        sampled_sim = torch.concatenate((sims_matrix_i2t[i,top1_idxs[i]].reshape(-1), sims_matrix_i2t[i,neg_idxs[i]]))
+        sampled_idx = torch.concatenate((top1_idxs[i].reshape(-1), neg_idxs[i]))
+        sampled_sims_matrix_i2t.append(sampled_sim)
+        sampled_sims_idx_i2t.append(sampled_idx)
+    sampled_sims_matrix_i2t = torch.stack(sampled_sims_matrix_i2t) # shape=(5000, k_tta)
+    sampled_sims_idx_i2t = torch.stack(sampled_sims_idx_i2t) # shape=(5000, k_tta)
+    ## entropy coeffis
+    if tta_cfg.top1_match_coeffi == True:
+        tta_coeffis = compute_tta_coeffis(sims_matrix_i2t, sims_matrix_i2t.t(), k_test, tta_cfg.coeffi_i2t_temper, tta_cfg.coeffi_t2i_temper)
+    else:
+        tta_coeffis = [ torch.ones(1) for _ in range(sims_matrix_i2t.size(0)) ]
+    ## score temperature
+    score_temper_ = tta_cfg.score_temper if hasattr(tta_cfg, "score_temper") else 1.0
+
+    ## sample selection stretegy
+    if tta_cfg.sample_selection == "top1":
+        ss_idxs = find_inter_top1_sample_selection(sims_matrix_i2t, sims_matrix_i2t.t()) # 找到i2t和t2i互为top1的样本索引
+        # 只保留top1 sample selection的样本
+        # sims_matrix_i2t = sims_matrix_i2t[ss_idxs]
+        vit_feats = vit_feats[ss_idxs]
+        # text_ids = text_ids[ss_idxs]
+        # text_atts = text_atts[ss_idxs]
+        labels = [labels[i] for i in ss_idxs]
+        recall_types = [recall_types[i] for i in ss_idxs]
+        # top1_sims, top1_idxs = top1_sims[ss_idxs], top1_idxs[ss_idxs]
+        # neg_sims, neg_idxs = neg_sims[ss_idxs], neg_idxs[ss_idxs]
+        sampled_sims_matrix_i2t = sampled_sims_matrix_i2t[ss_idxs]
+        tta_coeffis = [tta_coeffis[i] for i in ss_idxs]
+        score_matrix_i2t_ = score_matrix_i2t[ss_idxs].cpu()
+        scores_mat_ = scores_mat[ss_idxs].cpu()
+        # labels_mat_2_ = labels_mat_[ss_idxs]
+    else:
+        ss_idxs = torch.arange(0, sims_matrix_i2t.size(0)) # 全部样本
+        score_matrix_i2t_ = score_matrix_i2t[ss_idxs].cpu()
+        scores_mat_ = scores_mat[ss_idxs].cpu()
+        # labels_mat_2_ = labels_mat_[ss_idxs]
+    logging.info("    number of sample_selection: {}".format(len(ss_idxs)))
+
+    ## tta_dataset & tta_dataloader
+    tta_dataset = TTA_I2T_Dataset(
+        tta_cfg,
+        sampled_sims_matrix_i2t, sampled_sims_idx_i2t,
+        labels, recall_types,
+        vit_feats, text_ids, text_atts,
+        tta_coeffis
+    )
+    logging.info("    number of tta_dataset: {}".format(len(tta_dataset)))
+    ### DistributedSampler
+    if cfg.run_cfg.distributed:
+        sampler = DistributedSampler(
+            tta_dataset,
+            shuffle=True,
+            num_replicas=get_world_size(),
+            rank=get_rank(),
+        )
+    else:
+        sampler = None
+    ### Dataloader
+    tta_dataloader = DataLoader(
+        tta_dataset,
+        batch_size=tta_cfg.tta_bs,
+        num_workers=cfg.run_cfg.num_workers,
+        pin_memory=True,
+        sampler=sampler,
+        shuffle=sampler is None,
+        collate_fn=getattr(tta_dataset, "collater", None),
+        drop_last=True
+    )
+    ### 预加载batch数据，加速数据通信
+    tta_dataloader = PrefetchLoader(tta_dataloader)
+    ### DDP设置sample.set_epoch(epoch)用于分布式sampler打乱数据
+    ### 转化为无限iter(dataloader)
+    if cfg.run_cfg.distributed:
+        sampler.set_epoch(epoch)
+    # tta_dataloader = IterLoader(tta_dataloader, use_distributed=cfg.run_cfg.distributed)
+    logging.info("    number of tta_dataloader: {}".format(len(tta_dataloader)))
+
+    ## training loop
+    # score_matrix_list_ = []
+    # scores_mat_list_ = []
+    # labels_mat_list_ = []
+    epoch_entropy_list = []
+    epoch_loss_list = []
+    logging_list = []
+    grad_accum_num = 0
+
+    logging.info("    start i2t itm adapt... ")
+    start_time = time.time()
+    model.eval()
+    with torch.enable_grad():
+        for iter, batch in enumerate(tta_dataloader):
+            index = batch["index"]
+            sims = batch["sims"]
+            idxs_i2t = batch["idxs"]
+            image_inputs = batch["image_inputs"].reshape(-1, batch["image_inputs"].size(-2), batch["image_inputs"].size(-1))
+            text_ids_inputs = batch["text_ids"].reshape(-1, batch["text_ids"].size(-1))
+            text_atts_inputs = batch["text_atts"].reshape(-1, batch["text_atts"].size(-1))
+            tta_coeffi = batch["tta_coeffi"]
+            label = batch["label"]
+            recall_type = batch["recall_type"] #list of str
+
+            logits = model.compute_itm_logits(
+                image_inputs=image_inputs.to(model.device), #bs*k_tta,677,1408
+                text_ids=text_ids_inputs.to(model.device), #bs*k_tta,35
+                text_atts=text_atts_inputs.to(model.device), #bs*k_tta,35
+            ).float() # logits.shape=bs*k_tta, 2
+            logits = logits.reshape(-1, tta_cfg.k_tta, 2) # logits.shape=bs, k_tta, 2
+            score = logits[..., 1] # score.shape=bs, k_tta
+
+            ## score = itm_score + cos_sim
+            for i, idx in enumerate(index):
+                score_matrix_i2t_[idx.int(), idxs_i2t[i].int()] = score[i].detach().cpu() + sims.reshape(-1, tta_cfg.k_tta)[i].detach().cpu()
+                scores_mat_[idx.int(), ...] = score[i].detach().cpu()
+            # score_matrix_list_.append(score.detach().cpu() + sims.reshape(-1, tta_cfg.k_tta).detach().cpu())
+            # scores_mat_list_.append(score.detach().cpu())
+            # labels_mat_list_.append(label.detach().cpu())
+
+            ## coeffi
+            tta_coeffi = tta_coeffi.to(model.device)
+            ## temperature
+            score_temper = torch.Tensor([score_temper_]).to(model.device)
+            ## adapt
+            ### pos-neg softmax entropy
+            entropy = -(F.softmax(score * score_temper, dim=-1) * F.log_softmax(score * score_temper, dim=-1)).sum(-1) # score * temper
+            ### itm proba sigmoid entropy
+            # entropy = (-(F.sigmoid(score * score_temper) * F.log(F.sigmoid(score * score_temper)))).sum(-1)
+            loss = entropy / tta_coeffi
+            loss = loss.mean()
+            loss = loss / tta_cfg.grad_accum_bs
+            loss.backward()
+            grad_accum_num += 1
+            if grad_accum_num >= tta_cfg.grad_accum_bs or iter+1 >= len(tta_dataloader):
+                optimizer.step()
+                optimizer.zero_grad()
+                grad_accum_num = 0
+
+            ## logging json
+            logging_list.append({
+                "index" : index.detach().cpu().numpy().tolist(),
+                "label" : label,
+                "recall_type" : recall_type,
+                "sims" : sims.reshape(-1, tta_cfg.k_tta).detach().cpu().numpy().tolist(),
+                "idxs_i2t" : idxs_i2t.reshape(-1, tta_cfg.k_tta).detach().cpu().numpy().tolist(),
+                "score" : score.detach().cpu().numpy().tolist(),
+                "entropy" : entropy.detach().cpu().numpy().tolist(),
+                "tta_coeffi": tta_coeffi.detach().cpu().numpy().tolist(),
+                "loss" : loss.detach().cpu().numpy() * tta_cfg.grad_accum_bs,
+            })
+            ## log_iters logging
+            epoch_entropy_list.append(entropy.mean().detach().cpu().numpy())
+            epoch_loss_list.append(loss.detach().cpu().numpy() * tta_cfg.grad_accum_bs)
+            if 1:# if (iter+1) % tta_cfg.log_iters == 0 or iter+1 >= len(tta_dataloader):
+                logging.info(f"[ITM ADAPT rank{get_rank()}] Iteration: {iter}, Iter Entropy Mean: {entropy.mean().detach().cpu().numpy()}, Iter Loss: {loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs}, Learning Rate: {optimizer.param_groups[0]['lr']}")
+
+    total_time = time.time() - start_time
+    total_time_str = str(datetime.timedelta(seconds=int(total_time)))
+    logging.info("    i2t itm adapt time: {}".format(total_time_str))
+
+    # ## torch.distributed
+    score_matrix_i2t[ss_idxs] = score_matrix_i2t_.to(model.device)
+    scores_mat[ss_idxs] = scores_mat_.to(model.device)
+    if dist_utils.is_dist_avail_and_initialized():
+        dist.barrier()
+        torch.distributed.all_reduce(
+            score_matrix_i2t, op=torch.distributed.ReduceOp.SUM
+        )
+        torch.distributed.all_reduce(
+            scores_mat, op=torch.distributed.ReduceOp.SUM
+        )
+    # score_matrix_list_ = torch.cat(score_matrix_list_, dim=0).to(model.device)
+    # scores_mat_list_ = torch.cat(scores_mat_list_, dim=0).to(model.device)
+    # labels_mat_list_ = torch.cat(labels_mat_list_, dim=0).to(model.device)
+    # dist.all_gather(score_matrix_i2t, score_matrix_list_)
+    # dist.all_gather(scores_mat, scores_mat_list_)
+    # dist.all_gather(labels_mat, labels_mat_list_)
+    # score_matrix_i2t = torch.cat(score_matrix_i2t, dim=0).numpy()
+    # scores_mat = torch.cat(scores_mat, dim=0).numpy()
+    # labels_mat = torch.cat(labels_mat, dim=0).numpy()
+
+    ## save epoch logging
+    logging_list_json = json.dumps(logging_list)
+    json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/tta_epoch{epoch}_logging_list.json")
+    with open(json_path, "w") as f:
+        json.dump(logging_list_json, f)
+    ## plt entropy
+    plt.figure()
+    plt.plot(epoch_entropy_list)
+    plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/tta_epoch{epoch}_entropy.jpg"))
+    ## plt loss
+    plt.figure()
+    plt.plot(epoch_loss_list)
+    plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/tta_epoch{epoch}_loss.jpg"))
+    ## plt score
+    if is_main_process():
+        plt.figure(figsize=(32,8))
+        plt.plot(scores_mat[:,0].cpu().detach().numpy(), alpha=0.7)
+        plt.plot(scores_mat[:,1:].cpu().detach().numpy().mean(axis=1), alpha=0.7)
+        plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/tta_epoch{epoch}_score_distribution.jpg"))
+
+    logging.info("adapt_i2t_itm_score_v3: end")
+    return score_matrix_i2t.cpu().detach().numpy(), scores_mat.cpu().detach().numpy()#, labels_mat.cpu().detach().numpy()
