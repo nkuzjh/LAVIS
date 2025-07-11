@@ -1094,13 +1094,10 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.3.yaml > ret_coco_eval_itm_adapt_i2t_exp9.2.3.out 2>&1 &
         report i2t metrics offline, epoch 2 : {"txt_r1": 85.5, "txt_r5": 96.94, "txt_r10": 98.44, "txt_r_mean": 93.62666666666667, "txt_mAP": 71.31,
-    CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.3.yaml > ret_coco_eval_itm_adapt_i2t_exp9.2.3.out 2>&1 &
-        local tmux running pid=59814
-
-### exp 9.2.4
+### 59 bash gpu3
+#### exp 9.2.4
 1. 多卡训练直接增加batchsize
-    - **local**
-    - **nproc_per_node=2**
+    - nproc_per_node=3
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), score_temper=10.0
     - sampling stretegy: pos/neg=1/3; i2t pos = top1; neg from top hard negs;
@@ -1116,9 +1113,7 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.4.yaml > ret_coco_eval_itm_adapt_i2t_exp9.2.4.out 2>&1 &
-        重新跑。config参数忘记改了；
-    - CUDA_VISIBLE_DEVICES=0,1 nohup python -m torch.distributed.run --nproc_per_node=2 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.4.yaml > ret_coco_eval_itm_adapt_i2t_exp9.2.4.out 2>&1 &
-        local 2 3090
+        report i2t metrics offline, epoch 9 : {"txt_r1": 85.46, "txt_r5": 97.06, "txt_r10": 98.46, "txt_r_mean": 93.65999999999998, "txt_mAP": 71.35,
 #### 目前最优参数 以及 下一步实验的调参方向
 - 结合9.0+、9.1+、9.2+：
     **sampling stretegy: pos/neg=1/3; i2t pos = top1; neg from top hard negs;** pos/neg=others
@@ -1126,32 +1121,29 @@
     **score_temper=1（10>20>5）** 1,15
     top1_match_coeffi=False
     **lr=5e-5>1e-4>5e-4=1e-3** 1e-4,1e-5,5e-6
-
-### local bash finish
 #### exp9.2.5 ~exp9.2
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=1.0**
 2. i2t:
-
+    report i2t metrics offline, epoch 0 : {"txt_r1": 85.16, "txt_r5": 96.76, "txt_r10": 98.42, "txt_r_mean": 93.44666666666667, "txt_mAP": 70.94
 #### exp9.2.6 ~exp9.2
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), score_temper=10.0
     - **top1_match_coeffi=False**, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
 2. i2t:
-
+    report i2t metrics offline, epoch 0 : {"txt_r1": 85.5, "txt_r5": 97.0, "txt_r10": 98.48, "txt_r_mean": 93.66000000000001, "txt_mAP": 71.34,
+### 59 bash gpu2
 #### exp9.2.7 ~exp9.2
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=1.0**
     - **top1_match_coeffi=False**, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
 2. i2t:
-
 #### exp9.2.8 ~exp9.2
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=1.0**
     - **top1_match_coeffi=False**, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
     - **lr=1e-3**, wd=0.0
 2. i2t:
-
 #### exp9.2.9 ~exp9.2
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=1.0**
@@ -1159,7 +1151,7 @@
     - **lr=1e-5**, wd=0.0
 2. i2t:
 
-### exp 10 TODO 暂时不需要aug或者dl加权的方法
+### exp 10 !不需要aug或者dl加权的方法
 1. 多卡训练直接增加batchsize
     - nproc_per_node=3
 1. parameters:
@@ -1186,7 +1178,7 @@
     - itm_adapt_v3: dataset shuffle=True
     - loss = softmax_entropy ( itm_score * score_temper ), score_temper=1.0
     - sampling stretegy: pos/neg=1/3; i2t pos = top1; neg from top hard negs;
-    - top1_match_coeffi=True, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
+    - top1_match_coeffi=False, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
     - sample selection = all
     - lr=1e-4, wd=0.0
     - batchsize=32 =128/4
@@ -1198,4 +1190,38 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.yaml > ret_coco_eval_itm_adapt_i2t_exp11.out 2>&1 &
-        59 running pid=3121677
+        59 finish;
+        report i2t metrics offline, epoch 0 : {"txt_r1": 85.22, "txt_r5": 96.82, "txt_r10": 98.44, "txt_r_mean": 93.49333333333334, "txt_mAP": 70.96,
+### 59 bash 
+#### exp 11.0.1
+1. parameters:
+    - lr=5e-4, wd=0.0
+2. i2t:
+#### exp 11.0.2
+1. parameters:
+    - lr=5e-5, wd=0.0
+2. i2t:
+#### exp 11.0.3
+1. parameters:
+    - top1_match_coeffi = True
+    - lr=5e-5, wd=0.0
+2. i2t:
+#### exp 11.0.4
+1. parameters:
+    - score_temper=5.0
+    - top1_match_coeffi = True
+    - lr=5e-5, wd=0.0
+2. i2t:
+#### exp 11.0.5
+1. parameters:
+    - score_temper=10.0
+    - top1_match_coeffi = True
+    - lr=5e-5, wd=0.0
+2. i2t:
+#### exp 11.0.6
+1. parameters:
+    - score_temper=10.0
+    - top1_match_coeffi = True
+    - lr=5e-5, wd=0.0
+    - sample selection = top1
+2. i2t:

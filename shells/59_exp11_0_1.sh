@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置基础参数
-num_gpus=2
+num_gpus=3
 log_dir="./logs"
 mkdir -p $log_dir
 
@@ -27,22 +27,22 @@ scripts=(
 
 # 定义日志文件名
 log_files=(
-    "ret_coco_eval_itm_adapt_i2t_exp9.2.4.out"
-    "ret_coco_eval_itm_adapt_i2t_exp9.2.5.out"
-    "ret_coco_eval_itm_adapt_i2t_exp9.2.6.out"
-    "ret_coco_eval_itm_adapt_i2t_exp9.2.7.out"
-    "ret_coco_eval_itm_adapt_i2t_exp9.2.8.out"
-    "ret_coco_eval_itm_adapt_i2t_exp9.2.9.out"
+    "ret_coco_eval_itm_adapt_i2t_exp11.0.1.out"
+    "ret_coco_eval_itm_adapt_i2t_exp11.0.2.out"
+    "ret_coco_eval_itm_adapt_i2t_exp11.0.3.out"
+    "ret_coco_eval_itm_adapt_i2t_exp11.0.4.out"
+    "ret_coco_eval_itm_adapt_i2t_exp11.0.5.out"
+    "ret_coco_eval_itm_adapt_i2t_exp11.0.6.out"
 )
 
 # 定义参数文件名
 args_files=(
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.4.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.5.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.6.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.7.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.8.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp9.2.9.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.1.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.2.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.4.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.5.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.6.yaml"
 )
 
 # 按顺序执行每个训练任务

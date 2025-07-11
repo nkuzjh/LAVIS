@@ -985,14 +985,15 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
 
     ## compute embeddings & cosine similarity matrix
     logging.info("compute cosine similarity matrix")
-    # sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
-    # np.save("debugs/debug_sim_matrix_i2t.npy",sim_matrix_i2t.numpy())
-    # np.save("debugs/debug_sim_matrix_t2i.npy",sim_matrix_t2i.numpy())
-    # np.save("debugs/debug_image_embeds.npy",image_embeds.numpy())
-    # np.save("debugs/debug_vit_feats.npy",vit_feats.numpy())
-    # np.save("debugs/debug_text_embeds.npy",text_embeds.numpy())
-    # np.save("debugs/debug_text_ids.npy",text_ids.numpy())
-    # np.save("debugs/debug_text_atts.npy",text_atts.numpy())
+    # if is_main_process():
+    #     sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
+    #     np.save("debugs/debug_sim_matrix_i2t.npy",sim_matrix_i2t.numpy())
+    #     np.save("debugs/debug_sim_matrix_t2i.npy",sim_matrix_t2i.numpy())
+    #     np.save("debugs/debug_image_embeds.npy",image_embeds.numpy())
+    #     np.save("debugs/debug_vit_feats.npy",vit_feats.numpy())
+    #     np.save("debugs/debug_text_embeds.npy",text_embeds.numpy())
+    #     np.save("debugs/debug_text_ids.npy",text_ids.numpy())
+    #     np.save("debugs/debug_text_atts.npy",text_atts.numpy())
     sim_matrix_i2t = torch.from_numpy(np.load("debugs/debug_sim_matrix_i2t.npy"))
     sim_matrix_t2i = torch.from_numpy(np.load("debugs/debug_sim_matrix_t2i.npy"))
     image_embeds = torch.from_numpy(np.load("debugs/debug_image_embeds.npy"))
@@ -1018,6 +1019,7 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
 
         ## multi epochs
         itm_score_list = []
+        eval_itm_score_list = []
         for tta_epoch in range(tta_cfg.offline_multi_epochs):
             logging.info(f"start i2t tta epoch {tta_epoch}")
             ## tta
@@ -1034,11 +1036,16 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
                 plt_itm_score(np.concatenate(itm_score_list), task="i2t", mode="tta")
             ## eval
             logging.info("compute i2t itm score offline, epoch %d :", tta_epoch)
-            score_i2t, itm_score_i2t = compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
+            score_i2t, eval_itm_score_i2t = compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
+            eval_itm_score_list.append(eval_itm_score_i2t)
             if is_main_process():
                 results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics offline, epoch {tta_epoch} :")
                 logging.info(f"report i2t metrics offline, epoch {tta_epoch} :")
                 logging.info(results)
+                ## plt & save npy
+                npy_path = os.path.join(registry.get_path("output_dir"), f"result/eval_epochs_score_distribution.npy")
+                np.save(npy_path, np.concatenate(eval_itm_score_list))
+                plt_itm_score(np.concatenate(eval_itm_score_list), task="i2t", mode="eval")
 
 
     # ## reset model to original state before t2i task
@@ -1072,7 +1079,7 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
                 plt_itm_score(np.concatenate(itm_score_list), task="t2i", mode="tta")
             ## eval
             logging.info("compute t2i itm score offline, epoch %d :", tta_epoch)
-            score_t2i, itm_score_t2i = compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
+            score_t2i, eval_itm_score_t2i = compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
             if is_main_process():
                 results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, epoch {tta_epoch} :")
                 logging.info(f"report t2i metrics offline, epoch {tta_epoch} :")

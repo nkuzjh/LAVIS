@@ -9,4 +9,5 @@ env:
   # For internal use with persistent storage
   # cache_root: "/export/home/.cache/lavis"
   # cache_root: "/home/zhh/ssd/excute/deeplearning/projects/datasets"
-    cache_root: "/home/jiahao/data"
+    # cache_root: "/home/jiahao/data"
+    cache_root: "/data/jiahao"
