@@ -1138,18 +1138,21 @@
     - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=1.0**
     - **top1_match_coeffi=False**, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
 2. i2t:
+    report i2t metrics offline, epoch 0 : {"txt_r1": 85.18, "txt_r5": 96.74, "txt_r10": 98.44, "txt_r_mean": 93.45333333333333, "txt_mAP": 70.96,
 #### exp9.2.8 ~exp9.2
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=1.0**
     - **top1_match_coeffi=False**, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
     - **lr=1e-3**, wd=0.0
 2. i2t:
+    report i2t metrics offline, epoch 1 : {"txt_r1": 82.12, "txt_r5": 95.64, "txt_r10": 97.92, "txt_r_mean": 91.89333333333333, "txt_mAP": 65.91,
 #### exp9.2.9 ~exp9.2
 1. parameters:
     - loss = softmax_entropy ( itm_score * score_temper ), **score_temper=1.0**
     - **top1_match_coeffi=False**, top1_match_coeffi_src=softmax with temperature(i2t=100 t2i=20)
     - **lr=1e-5**, wd=0.0
 2. i2t:
+    report i2t metrics offline, epoch 3 : {"txt_r1": 85.52, "txt_r5": 96.94, "txt_r10": 98.42, "txt_r_mean": 93.62666666666667, "txt_mAP": 71.28,
 
 ### exp 10 !不需要aug或者dl加权的方法
 1. 多卡训练直接增加batchsize
