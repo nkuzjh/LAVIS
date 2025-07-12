@@ -745,7 +745,7 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
         plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/eval_epoch{epoch}_score_distribution.jpg"))
 
     logging.info("compute_i2t_itm_score: end")
-    return score_matrix_i2t.cpu().detach().numpy(), scores_mat[:,0].cpu().detach().numpy()
+    return score_matrix_i2t.cpu().detach().numpy(), scores_mat.cpu().detach().numpy()
 
 ## top1 sample selection + 负样本采样计算softmax_entropy
 def adapt_t2i_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims_matrix_t2i, vit_feats, text_ids, text_atts, epoch=-1):
@@ -1039,7 +1039,7 @@ def compute_t2i_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_t
         plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/eval_epoch{epoch}_score_distribution.jpg"))
 
     logging.info("compute_t2i_itm_score: end")
-    return score_matrix_t2i.cpu().detach().numpy(), scores_mat[:,0].cpu().detach().numpy()
+    return score_matrix_t2i.cpu().detach().numpy(), scores_mat.cpu().detach().numpy()
 
 
 def plt_itm_score(scores, task="i2t", mode="tta"):
@@ -1050,7 +1050,7 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
             plt.plot(scores[:,1:].mean(axis=1), alpha=0.7)
             plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_score_distribution.jpg"))
 
-            # 计算每100个iter的score均值，输出500维向量
+            # 计算每100个iter的score均值，输出25010/100维向量
             plt.figure(figsize=(32,8))
             avg_scores_pos = scores[:,0].reshape(-1, 100).mean(axis=1)
             avg_scores_neg = scores[:,1:].mean(axis=1).reshape(-1, 100).mean(axis=1)
@@ -1061,7 +1061,22 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
             plt.ylabel("Average Score")
             plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg100_score_distribution.jpg"))
         elif mode == "eval":
-            pass ## ipynb script
+            # pass ## ipynb script
+            plt.figure(figsize=(32,8))
+            plt.plot(scores[:,0:5].mean(axis=1), alpha=0.7)
+            plt.plot(scores[:,5:8].mean(axis=1), alpha=0.7)
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_score_distribution.jpg"))
+
+            # 计算每100个iter的score均值，输出25010/100维向量
+            plt.figure(figsize=(32,8))
+            avg_scores_pos = scores[:,:5].mean(axis=1).reshape(-1, 100).mean(axis=1)
+            avg_scores_neg = scores[:,5:8].mean(axis=1).reshape(-1, 100).mean(axis=1)
+            plt.plot(avg_scores_pos, marker='o')
+            plt.plot(avg_scores_neg, marker='*')
+            plt.title("Averaged ITM Score (every 100 samples)")
+            plt.xlabel("Batch (100 samples per batch)")
+            plt.ylabel("Average Score")
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg100_score_distribution.jpg"))
     elif task == "t2i":
         if mode == "tta":
             plt.figure(figsize=(32,8))
@@ -1069,18 +1084,33 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
             plt.plot(scores[:,1:].mean(axis=1), alpha=0.7)
             plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_score_distribution.jpg"))
 
-            # 计算每500个iter的score均值，输出25010/500维向量
+            # 计算每100个iter的score均值，输出 5000/100维向量
             plt.figure(figsize=(32,8))
-            avg_scores_pos = scores[:,0].reshape(-1, 500).mean(axis=1)
-            avg_scores_neg = scores[:,1:].mean(axis=1).reshape(-1, 500).mean(axis=1)
+            avg_scores_pos = scores[:,0].reshape(-1, 100).mean(axis=1)
+            avg_scores_neg = scores[:,1:].mean(axis=1).reshape(-1, 100).mean(axis=1)
             plt.plot(avg_scores_pos, marker='o')
             plt.plot(avg_scores_neg, marker='*')
-            plt.title("Averaged ITM Score (every 500 samples)")
-            plt.xlabel("Batch (500 samples per batch)")
+            plt.title("Averaged ITM Score (every 100 samples)")
+            plt.xlabel("Batch (100 samples per batch)")
             plt.ylabel("Average Score")
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg500_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg100_score_distribution.jpg"))
         elif mode == "eval":
-            pass ## ipynb script
+            # pass ## ipynb script
+            plt.figure(figsize=(32,8))
+            plt.plot(scores[:,0], alpha=0.7)
+            plt.plot(scores[:,1:4].mean(axis=1), alpha=0.7)
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_score_distribution.jpg"))
+
+            # 计算每100个iter的score均值，输出 5000/100维向量
+            plt.figure(figsize=(32,8))
+            avg_scores_pos = scores[:,0].reshape(-1, 100).mean(axis=1)
+            avg_scores_neg = scores[:,1:4].mean(axis=1).reshape(-1, 100).mean(axis=1)
+            plt.plot(avg_scores_pos, marker='o')
+            plt.plot(avg_scores_neg, marker='*')
+            plt.title("Averaged ITM Score (every 100 samples)")
+            plt.xlabel("Batch (100 samples per batch)")
+            plt.ylabel("Average Score")
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg100_score_distribution.jpg"))
 
 ## use DistributedSampler; shuffle=True
 ## top1 sample selection + 负样本采样计算softmax_entropy
