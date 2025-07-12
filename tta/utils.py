@@ -1086,8 +1086,8 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
 
             # 计算每100个iter的score均值，输出 5000/100维向量
             plt.figure(figsize=(32,8))
-            avg_scores_pos = scores[:,0].reshape(-1, 100).mean(axis=1)
-            avg_scores_neg = scores[:,1:].mean(axis=1).reshape(-1, 100).mean(axis=1)
+            avg_scores_pos = scores[:25000,0].reshape(-1, 100).mean(axis=1)
+            avg_scores_neg = scores[:25000,1:].mean(axis=1).reshape(-1, 100).mean(axis=1)
             plt.plot(avg_scores_pos, marker='o')
             plt.plot(avg_scores_neg, marker='*')
             plt.title("Averaged ITM Score (every 100 samples)")
@@ -1103,8 +1103,8 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
 
             # 计算每100个iter的score均值，输出 5000/100维向量
             plt.figure(figsize=(32,8))
-            avg_scores_pos = scores[:,0].reshape(-1, 100).mean(axis=1)
-            avg_scores_neg = scores[:,1:4].mean(axis=1).reshape(-1, 100).mean(axis=1)
+            avg_scores_pos = scores[:25000,0].reshape(-1, 100).mean(axis=1)
+            avg_scores_neg = scores[:25000,1:4].mean(axis=1).reshape(-1, 100).mean(axis=1)
             plt.plot(avg_scores_pos, marker='o')
             plt.plot(avg_scores_neg, marker='*')
             plt.title("Averaged ITM Score (every 100 samples)")

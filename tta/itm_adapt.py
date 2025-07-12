@@ -25,6 +25,7 @@ from .utils import (
     compute_t2i_itm_score_v2,
     plt_itm_score,
     adapt_i2t_itm_score_v3,
+    adapt_t2i_itm_score_v3,
 )
 
 class ITM_ADAPT(nn.Module):

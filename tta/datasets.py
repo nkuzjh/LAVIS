@@ -115,7 +115,8 @@ class TTA_T2I_Dataset(Dataset):
         text_atts_inputs = self.text_atts[index]
         text_atts_inputs = text_atts_inputs.unsqueeze(0).repeat(self.tta_cfg.k_tta, 1) # 1*k_tta, 35
         ### vis feature
-        image_inputs = self.vit_feats[idxs].reshape(-1, image_inputs.size(-2), image_inputs.size(-1))# vit_feats[i].shape=k_tta,677,1408; image_inputs.shape=1*k_tta,677,1408
+        image_inputs = self.vit_feats[idxs]
+        image_inputs = image_inputs.reshape(-1, image_inputs.size(-2), image_inputs.size(-1))# vit_feats[i].shape=k_tta,677,1408; image_inputs.shape=1*k_tta,677,1408
         ### entropy coeffi
         tta_coeffi = self.tta_coeffis[index] # shape=1
         ### label
