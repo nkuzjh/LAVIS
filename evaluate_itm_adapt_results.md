@@ -1225,10 +1225,13 @@
     - top1_match_coeffi = True
     - lr=5e-5, wd=0.0
 2. i2t:
-#### exp 11.0.6
+### exp 11.0.6
 1. parameters:
     - score_temper=10.0
     - top1_match_coeffi = True
     - lr=5e-5, wd=0.0
     - sample selection = top1
 2. i2t:
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.6.yaml > ret_coco_eval_itm_adapt_i2t_exp11.0.6.out 2>&1 &
+    CUDA_VISIBLE_DEVICES=0,1,2 python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.6.yaml
+        58 running pid=2490654

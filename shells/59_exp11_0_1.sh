@@ -8,9 +8,9 @@ mkdir -p $log_dir
 # 定义主端口列表（每个任务使用不同的端口）
 ports=(
     29500
-    29501
-    29502
-    29503
+    # 29501
+    # 29502
+    # 29503
     # 29504
     # 29505
 )
@@ -19,9 +19,9 @@ ports=(
 scripts=(
     # "evaluate_tta.py"
     # "evaluate_tta.py"
-    "evaluate_tta.py"
-    "evaluate_tta.py"
-    "evaluate_tta.py"
+    # "evaluate_tta.py"
+    # "evaluate_tta.py"
+    # "evaluate_tta.py"
     "evaluate_tta.py"
 )
 
@@ -29,9 +29,9 @@ scripts=(
 log_files=(
     # "ret_coco_eval_itm_adapt_i2t_exp11.0.1.out"
     # "ret_coco_eval_itm_adapt_i2t_exp11.0.2.out"
-    "ret_coco_eval_itm_adapt_i2t_exp11.0.3.out"
-    "ret_coco_eval_itm_adapt_i2t_exp11.0.4.out"
-    "ret_coco_eval_itm_adapt_i2t_exp11.0.5.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.4.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.5.out"
     "ret_coco_eval_itm_adapt_i2t_exp11.0.6.out"
 )
 
@@ -39,9 +39,9 @@ log_files=(
 args_files=(
     # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.1.yaml"
     # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.2.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.4.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.5.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.4.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.5.yaml"
     "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.6.yaml"
 )
 
