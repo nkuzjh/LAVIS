@@ -1216,7 +1216,7 @@
 2. i2t:
     report i2t metrics offline, epoch 0 : {"txt_r1": 85.6, "txt_r5": 96.88, "txt_r10": 98.42, "txt_r_mean": 93.63333333333333, "txt_mAP": 71.26,
 3. t2i:
-    CUDA_VISIBLE_DEVICES=2 nohup python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp11.0.2.yaml > ret_coco_eval_itm_adapt_t2i_exp11.0.2.out 2>&1 &
+    - CUDA_VISIBLE_DEVICES=2 nohup python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp11.0.2.yaml > ret_coco_eval_itm_adapt_t2i_exp11.0.2.out 2>&1 &
 ### 58 bash
 #### exp 11.0.3
 1. parameters:
