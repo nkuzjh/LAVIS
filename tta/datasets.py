@@ -8,9 +8,10 @@ from torch.utils.data._utils.collate import default_collate
 
 class TTA_I2T_Dataset(Dataset):
     def __init__(
-        self, tta_cfg, sims_matrix, sims_idxs, labels, recall_types, vit_feats, text_ids, text_atts, tta_coeffis
+        self, tta_cfg, sims_matrix_all, sims_matrix, sims_idxs, labels, recall_types, vit_feats, text_ids, text_atts, tta_coeffis
     ):
         self.tta_cfg = tta_cfg
+        self.sims_matrix_all = sims_matrix_all
         self.sims_matrix = sims_matrix
         self.sims_idxs = sims_idxs
         self.labels = labels
@@ -24,6 +25,8 @@ class TTA_I2T_Dataset(Dataset):
         return len(self.labels)
 
     def __getitem__(self, index):
+        ### sims_matrix_all
+        sims_matrix_all = self.sims_matrix_all[index]  # shape: (1, k_test)
         ### cos_sims_matrix
         sims = self.sims_matrix[index]
         idxs = self.sims_idxs[index]
@@ -43,6 +46,7 @@ class TTA_I2T_Dataset(Dataset):
 
         return {
             "index": torch.Tensor([index]),
+            "sims_all": sims_matrix_all,
             "sims": sims,
             "idxs": idxs,
             "image_inputs": image_inputs,

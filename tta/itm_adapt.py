@@ -14,6 +14,13 @@ import numpy as np
 import os
 import json
 
+from lavis.common.dist_utils import (
+    download_cached_file,
+    get_rank,
+    get_world_size,
+    is_main_process,
+    main_process,
+)
 from .utils import (
     compute_embeds,
     compute_kl_coeffis,
@@ -26,7 +33,10 @@ from .utils import (
     plt_itm_score,
     adapt_i2t_itm_score_v3,
     adapt_t2i_itm_score_v3,
+    plt_logging_list,
 )
+import transformers
+
 
 class ITM_ADAPT(nn.Module):
     """Tent adapts a model by entropy minimization during testing.
@@ -980,6 +990,44 @@ def forward_and_itm_adapt_v2(tta_model, optimizer, dataloader, task_cfg, tta_cfg
     return score_i2t, score_t2i
 
 
+import math
+from functools import partial
+from typing import Optional
+from torch.optim import Optimizer
+from torch.optim.lr_scheduler import LambdaLR
+def _get_cosine_schedule_with_warmup_lr_lambda(
+    current_step: int, *, num_warmup_steps: int, num_training_steps: int, num_cycles: float, min_lr_rate: float = 0.0
+):
+    if current_step < num_warmup_steps:
+        return float(current_step) / float(max(1, num_warmup_steps))
+    progress = float(current_step - num_warmup_steps) / float(max(1, num_training_steps - num_warmup_steps))
+    factor = 0.5 * (1.0 + math.cos(math.pi * float(num_cycles) * 2.0 * progress))
+    factor = factor * (1 - min_lr_rate) + min_lr_rate
+    return max(0, factor)
+def get_cosine_with_min_lr_schedule_with_warmup(
+    optimizer: Optimizer,
+    num_warmup_steps: int,
+    num_training_steps: int,
+    num_cycles: float = 0.5,
+    last_epoch: int = -1,
+    min_lr: Optional[float] = None,
+    min_lr_rate: Optional[float] = None,
+):
+    if min_lr is not None and min_lr_rate is not None:
+        raise ValueError("Only one of min_lr or min_lr_rate should be set")
+    elif min_lr is not None:
+        min_lr_rate = min_lr / optimizer.defaults["lr"]
+    elif min_lr_rate is None:
+        raise ValueError("One of min_lr or min_lr_rate should be set through the `lr_scheduler_kwargs`")
+    lr_lambda = partial(
+        _get_cosine_schedule_with_warmup_lr_lambda,
+        num_warmup_steps=num_warmup_steps,
+        num_training_steps=num_training_steps,
+        num_cycles=num_cycles,
+        min_lr_rate=min_lr_rate,
+    )
+    return LambdaLR(optimizer, lr_lambda, last_epoch)
+
 
 def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tta_cfg):
     score_i2t, score_t2i = None, None
@@ -1012,38 +1060,72 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
         ## zero_shot
         if tta_cfg.zero_shot_eval:
             logging.info("compute i2t itm score, zero-shot")
-            score_i2t_zeroshot, itm_score_i2t_zeroshot = compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts)
+            score_i2t_zeroshot, itm_score_i2t_zeroshot, eval_logging_list_i2t_ze = compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts)
             if is_main_process():
                 result = report_metrics(scores_i2t=score_i2t_zeroshot, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics, zero-shot :")
                 logging.info(f"report i2t metrics, zero-shot :")
                 logging.info(result)
 
+        # lr_scheduler
+        lr_scheduler = None
+        if getattr(tta_cfg, "tta_scheduler", None) == "cosine":
+            num_training_steps = len(sim_matrix_i2t) // tta_cfg.tta_bs * tta_cfg.offline_multi_epochs
+            lr_scheduler = get_cosine_with_min_lr_schedule_with_warmup(
+                optimizer,
+                num_warmup_steps=tta_cfg.tta_warmup_ratio * num_training_steps,
+                num_training_steps=num_training_steps,
+                min_lr = tta_cfg.init_lr * 0.1, # 最小学习率
+            )
+                
+        logging.info(f"lr_scheduler {lr_scheduler}")
+
         ## multi epochs
         itm_score_list = []
         eval_itm_score_list = []
+        logging_list_i2t_list = []
+        eval_logging_list_i2t_list = []
         for tta_epoch in range(tta_cfg.offline_multi_epochs):
             logging.info(f"start i2t tta epoch {tta_epoch}")
             ## tta
             logging.info("adapt i2t itm score online, epoch %d :", tta_epoch)
-            score_i2t, itm_score_i2t = adapt_i2t_itm_score_v3(cfg, tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
+            score_i2t, itm_score_i2t, logging_list_i2t = adapt_i2t_itm_score_v3(cfg, tta_model.model, dataloader, task_cfg, optimizer, lr_scheduler, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
             itm_score_list.append(itm_score_i2t)
+            logging_list_i2t_list.extend(logging_list_i2t)
+            ### plt logging list
+            plt_logging_list(logging_list_i2t_list, task="i2t", mode="tta")
+            ### save epoch logging
+            logging_list_json = json.dumps(logging_list_i2t_list)
+            json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/tta_until_epochs_logging_list.json")
+            with open(json_path, "w") as f:
+                json.dump(logging_list_json, f)
             if is_main_process():
+                ### report metrics
                 results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=None, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics online, epoch {tta_epoch} :")
                 logging.info(f"report i2t metrics online, epoch {tta_epoch} :")
                 logging.info(results)
-                ## plt & save npy
+                ### plt & save npy
                 npy_path = os.path.join(registry.get_path("output_dir"), f"result/tta_epochs_score_distribution.npy")
                 np.save(npy_path, np.concatenate(itm_score_list))
                 plt_itm_score(np.concatenate(itm_score_list), task="i2t", mode="tta")
+
             ## eval
             logging.info("compute i2t itm score offline, epoch %d :", tta_epoch)
-            score_i2t, eval_itm_score_i2t = compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
+            score_i2t, eval_itm_score_i2t, eval_logging_list_i2t = compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
             eval_itm_score_list.append(eval_itm_score_i2t)
+            eval_logging_list_i2t_list.extend(eval_logging_list_i2t)
+            ### plt logging list
+            plt_logging_list(eval_logging_list_i2t_list, task="i2t", mode="eval")
+            ### save epoch logging
+            logging_list_json = json.dumps(eval_logging_list_i2t_list)
+            json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/eval_until_epochs_logging_list.json")
+            with open(json_path, "w") as f:
+                json.dump(logging_list_json, f)
             if is_main_process():
+                ### report metrics
                 results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics offline, epoch {tta_epoch} :")
                 logging.info(f"report i2t metrics offline, epoch {tta_epoch} :")
                 logging.info(results)
-                ## plt & save npy
+                ### plt & save npy
                 npy_path = os.path.join(registry.get_path("output_dir"), f"result/eval_epochs_score_distribution.npy")
                 np.save(npy_path, np.concatenate(eval_itm_score_list))
                 plt_itm_score(np.concatenate(eval_itm_score_list), task="i2t", mode="eval")
@@ -1065,29 +1147,50 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
         ## multi epochs
         itm_score_list = []
         eval_itm_score_list = []
+        logging_list_t2i_list = []
+        eval_logging_list_t2i_list = []
         for tta_epoch in range(tta_cfg.offline_multi_epochs):
             logging.info(f"start t2i tta epoch {tta_epoch}")
             ## tta
             logging.info("adapt t2i itm score online, epoch %d :", tta_epoch)
-            score_t2i, itm_score_t2i = adapt_t2i_itm_score_v3(cfg, tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
+            score_t2i, itm_score_t2i, logging_list_t2i = adapt_t2i_itm_score_v3(cfg, tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
             itm_score_list.append(itm_score_t2i)
+            logging_list_t2i_list.extend(logging_list_t2i)
+            ### plt logging list
+            plt_logging_list(logging_list_t2i_list, task="t2i", mode="tta")
+            ### save epoch logging
+            logging_list_json = json.dumps(logging_list_t2i_list)
+            json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/tta_until_epochs_logging_list.json")
+            with open(json_path, "w") as f:
+                json.dump(logging_list_json, f)
             if is_main_process():
+                ### report_metrics
                 results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics online, epoch {tta_epoch} :")
                 logging.info(f"report t2i metrics online, epoch {tta_epoch} :")
                 logging.info(results)
-                ## plt & save npy
+                # ### plt & save npy
                 npy_path = os.path.join(registry.get_path("output_dir"), f"result/tta_epochs_score_distribution.npy")
                 np.save(npy_path, np.concatenate(itm_score_list))
                 plt_itm_score(np.concatenate(itm_score_list), task="t2i", mode="tta")
+                
             ## eval
             logging.info("compute t2i itm score offline, epoch %d :", tta_epoch)
-            score_t2i, eval_itm_score_t2i = compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
+            score_t2i, eval_itm_score_t2i, eval_logging_list_t2i = compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
             eval_itm_score_list.append(eval_itm_score_t2i)
+            eval_logging_list_t2i_list.extend(eval_logging_list_t2i)
+            ### plt logging list
+            plt_logging_list(eval_logging_list_t2i_list, task="t2i", mode="eval")
+            ### save epoch logging
+            logging_list_json = json.dumps(eval_logging_list_t2i_list)
+            json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/eval_until_epochs_logging_list.json")
+            with open(json_path, "w") as f:
+                json.dump(logging_list_json, f)
             if is_main_process():
+                ### report_metrics
                 results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, epoch {tta_epoch} :")
                 logging.info(f"report t2i metrics offline, epoch {tta_epoch} :")
                 logging.info(results)
-                ## plt & save npy
+                ### plt & save npy
                 npy_path = os.path.join(registry.get_path("output_dir"), f"result/eval_epochs_score_distribution.npy")
                 np.save(npy_path, np.concatenate(eval_itm_score_list))
                 plt_itm_score(np.concatenate(eval_itm_score_list), task="t2i", mode="eval")
