@@ -8,7 +8,7 @@ from torch.utils.data._utils.collate import default_collate
 
 class TTA_I2T_Dataset(Dataset):
     def __init__(
-        self, tta_cfg, sims_matrix_all, sims_matrix, sims_idxs, labels, recall_types, vit_feats, text_ids, text_atts, tta_coeffis
+        self, tta_cfg, sims_matrix_all, sims_matrix, sims_idxs, labels, recall_types, recall_types_2, vit_feats, text_ids, text_atts, tta_coeffis
     ):
         self.tta_cfg = tta_cfg
         self.sims_matrix_all = sims_matrix_all
@@ -16,6 +16,7 @@ class TTA_I2T_Dataset(Dataset):
         self.sims_idxs = sims_idxs
         self.labels = labels
         self.recall_types = recall_types
+        self.recall_types_2 = recall_types_2
         self.vit_feats = vit_feats
         self.text_ids = text_ids
         self.text_atts = text_atts
@@ -43,6 +44,7 @@ class TTA_I2T_Dataset(Dataset):
         ### label
         label = self.labels[index]
         recall_type = self.recall_types[index] # 字符串
+        recall_type_2 = self.recall_types_2[index]
 
         return {
             "index": torch.Tensor([index]),
@@ -55,6 +57,7 @@ class TTA_I2T_Dataset(Dataset):
             "tta_coeffi": tta_coeffi,
             "label": label,
             "recall_type": recall_type,
+            "recall_type_2": recall_type_2,
         }
 
     def collater(self, batch):
@@ -62,7 +65,7 @@ class TTA_I2T_Dataset(Dataset):
         Args:
             batch: list of dicts with keys:
                 'idx', 'image_inputs', 'text_ids', 'text_atts',
-                'tta_coeffi', 'label', 'recall_type'
+                'tta_coeffi', 'label', 'recall_type', 'recall_type_2'
 
         Returns:
             dict of batched tensors and lists
@@ -71,12 +74,13 @@ class TTA_I2T_Dataset(Dataset):
         # 特殊处理 label (变长list of int)，保留为 list
         collated['label'] = [item['label'] for item in batch]
 
-        # 特殊处理 recall_type（字符串），保留为 list
+        # 特殊处理 recall_type, recall_type_2（字符串），保留为（字符串），保留为 list
         collated['recall_type'] = [item['recall_type'] for item in batch]
+        collated['recall_type_2'] = [item['recall_type_2'] for item in batch]
 
         # 其他张量字段使用 default_collate
         for key in batch[0]:
-            if key in ['recall_type', 'label']:
+            if key in ['recall_type', 'recall_type_2', 'label']:
                 continue  # 已经处理过了
 
             values = [item[key] for item in batch]

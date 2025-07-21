@@ -1089,7 +1089,7 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
             ## tta
             logging.info("adapt i2t itm score online, epoch %d :", tta_epoch)
             score_i2t, itm_score_i2t, logging_list_i2t = adapt_i2t_itm_score_v3(cfg, tta_model.model, dataloader, task_cfg, optimizer, lr_scheduler, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
-            itm_score_list.append(itm_score_i2t)
+            # itm_score_list.append(itm_score_i2t)
             logging_list_i2t_list.extend(logging_list_i2t)
             ### plt logging list
             plt_logging_list(logging_list_i2t_list, task="i2t", mode="tta")
@@ -1103,15 +1103,15 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
                 results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=None, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics online, epoch {tta_epoch} :")
                 logging.info(f"report i2t metrics online, epoch {tta_epoch} :")
                 logging.info(results)
-                ### plt & save npy
-                npy_path = os.path.join(registry.get_path("output_dir"), f"result/tta_epochs_score_distribution.npy")
-                np.save(npy_path, np.concatenate(itm_score_list))
-                plt_itm_score(np.concatenate(itm_score_list), task="i2t", mode="tta")
+                # ### plt & save npy
+                # npy_path = os.path.join(registry.get_path("output_dir"), f"result/tta_epochs_score_distribution.npy")
+                # np.save(npy_path, np.concatenate(itm_score_list))
+                # plt_itm_score(np.concatenate(itm_score_list), task="i2t", mode="tta")
 
             ## eval
             logging.info("compute i2t itm score offline, epoch %d :", tta_epoch)
             score_i2t, eval_itm_score_i2t, eval_logging_list_i2t = compute_i2t_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
-            eval_itm_score_list.append(eval_itm_score_i2t)
+            # eval_itm_score_list.append(eval_itm_score_i2t)
             eval_logging_list_i2t_list.extend(eval_logging_list_i2t)
             ### plt logging list
             plt_logging_list(eval_logging_list_i2t_list, task="i2t", mode="eval")
@@ -1125,10 +1125,10 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
                 results = report_metrics(scores_i2t=score_i2t, scores_t2i=None, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report i2t metrics offline, epoch {tta_epoch} :")
                 logging.info(f"report i2t metrics offline, epoch {tta_epoch} :")
                 logging.info(results)
-                ### plt & save npy
-                npy_path = os.path.join(registry.get_path("output_dir"), f"result/eval_epochs_score_distribution.npy")
-                np.save(npy_path, np.concatenate(eval_itm_score_list))
-                plt_itm_score(np.concatenate(eval_itm_score_list), task="i2t", mode="eval")
+                # ### plt & save npy
+                # npy_path = os.path.join(registry.get_path("output_dir"), f"result/eval_epochs_score_distribution.npy")
+                # np.save(npy_path, np.concatenate(eval_itm_score_list))
+                # plt_itm_score(np.concatenate(eval_itm_score_list), task="i2t", mode="eval")
 
 
     # ## reset model to original state before t2i task
@@ -1154,7 +1154,7 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
             ## tta
             logging.info("adapt t2i itm score online, epoch %d :", tta_epoch)
             score_t2i, itm_score_t2i, logging_list_t2i = adapt_t2i_itm_score_v3(cfg, tta_model.model, dataloader, task_cfg, optimizer, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
-            itm_score_list.append(itm_score_t2i)
+            # itm_score_list.append(itm_score_t2i)
             logging_list_t2i_list.extend(logging_list_t2i)
             ### plt logging list
             plt_logging_list(logging_list_t2i_list, task="t2i", mode="tta")
@@ -1168,15 +1168,15 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
                 results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics online, epoch {tta_epoch} :")
                 logging.info(f"report t2i metrics online, epoch {tta_epoch} :")
                 logging.info(results)
-                # ### plt & save npy
-                npy_path = os.path.join(registry.get_path("output_dir"), f"result/tta_epochs_score_distribution.npy")
-                np.save(npy_path, np.concatenate(itm_score_list))
-                plt_itm_score(np.concatenate(itm_score_list), task="t2i", mode="tta")
+                # # ### plt & save npy
+                # npy_path = os.path.join(registry.get_path("output_dir"), f"result/tta_epochs_score_distribution.npy")
+                # np.save(npy_path, np.concatenate(itm_score_list))
+                # plt_itm_score(np.concatenate(itm_score_list), task="t2i", mode="tta")
                 
             ## eval
             logging.info("compute t2i itm score offline, epoch %d :", tta_epoch)
             score_t2i, eval_itm_score_t2i, eval_logging_list_t2i = compute_t2i_itm_score_v2(tta_model.model, dataloader, task_cfg, tta_cfg, sim_matrix_t2i, vit_feats, text_ids, text_atts, tta_epoch)
-            eval_itm_score_list.append(eval_itm_score_t2i)
+            # eval_itm_score_list.append(eval_itm_score_t2i)
             eval_logging_list_t2i_list.extend(eval_logging_list_t2i)
             ### plt logging list
             plt_logging_list(eval_logging_list_t2i_list, task="t2i", mode="eval")
@@ -1190,10 +1190,10 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
                 results = report_metrics(scores_i2t=None, scores_t2i=score_t2i, txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report t2i metrics offline, epoch {tta_epoch} :")
                 logging.info(f"report t2i metrics offline, epoch {tta_epoch} :")
                 logging.info(results)
-                ### plt & save npy
-                npy_path = os.path.join(registry.get_path("output_dir"), f"result/eval_epochs_score_distribution.npy")
-                np.save(npy_path, np.concatenate(eval_itm_score_list))
-                plt_itm_score(np.concatenate(eval_itm_score_list), task="t2i", mode="eval")
+                # ### plt & save npy
+                # npy_path = os.path.join(registry.get_path("output_dir"), f"result/eval_epochs_score_distribution.npy")
+                # np.save(npy_path, np.concatenate(eval_itm_score_list))
+                # plt_itm_score(np.concatenate(eval_itm_score_list), task="t2i", mode="eval")
 
 
     return score_i2t, score_t2i

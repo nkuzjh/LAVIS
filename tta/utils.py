@@ -665,6 +665,8 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
 
     labels = dataloader.dataset.img2txt
     recall_types = find_recall_types(labels, sims_matrix_i2t, k_test)
+    top128_sims, top128_idxs = sims_matrix_i2t.topk(k=k_test, dim=1)
+    (recall1, recall5, recall10), recall_types_2 = calculate_recall(top128_idxs, labels)
     text_ids.to(model.device)
     text_atts.to(model.device)
     logging.info("    number of dataloader: {}".format(len(dataloader)))
@@ -682,6 +684,8 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
     step = sims_matrix_i2t.size(0) // num_tasks + 1
     start = rank * step
     end = min(sims_matrix_i2t.size(0), start + step)
+    recall_types = recall_types[start:end]
+    recall_types_2 = recall_types_2[start:end]
 
     start_time = time.time()
     logging.info("    start i2t itm eval... ")
@@ -702,17 +706,28 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
                 score_matrix_i2t[start + i, topk_idx_i2t] = score + topk_sim_i2t.to(model.device)
                 scores_mat[start + i, ...] = score
 
+                 ## uncertainty
+                uncertainty = torch.Tensor([1.]*score.size(0)).to(model.device) # shape = bs,
+                if getattr(tta_cfg, "is_uncertainty", False) == True:
+                    if getattr(tta_cfg, "uncertainty_type", None) == "kl_itm_itc":
+                        uncertainty = nn.functional.kl_div(F.log_softmax(score, dim=-1), F.softmax(topk_sim_i2t.reshape(-1, k_test).to(model.device), dim=-1), reduction="none").sum(dim=-1) # shape = bs,
+                    elif getattr(tta_cfg, "uncertainty_type", None) == "kl_itc_itm":
+                        uncertainty = nn.functional.kl_div(F.softmax(topk_sim_i2t.reshape(-1, k_test).to(model.device), dim=-1), F.log_softmax(score, dim=-1), reduction="none").sum(dim=-1) # shape = bs,
+
                 ## entropy
                 entropy = -(F.softmax(score, dim=-1) * F.log_softmax(score, dim=-1)).sum(-1).mean()
                 ## logging
                 recall_type = recall_types[i]
+                recall_type_2 = recall_types_2[i]
                 logging_list.append({
                     "recall_type" : recall_type,
+                    "recall_type_2" : recall_type_2,
                     "label" : labels[i],
                     "topk_sim" : topk_sim_i2t.detach().cpu().numpy().tolist(),
                     "topk_idx" : topk_idx_i2t.detach().cpu().numpy().tolist(),
                     "score" : score.detach().cpu().numpy().tolist(),
                     "entropy" : entropy.detach().cpu().numpy().tolist(),
+                    "uncertainty": uncertainty.detach().cpu().numpy().tolist(),
                 })
                 ## log_iters logging
                 if (i+1) % tta_cfg.log_iters == 0 or i+1>sims_matrix_i2t[start:end].size(0):
@@ -734,11 +749,11 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
             scores_mat, op=torch.distributed.ReduceOp.SUM
         )
 
-    # ## save logging json
-    # logging_list_json = json.dumps(logging_list)
-    # json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/eval_epoch{epoch}_logging_list.json")
-    # with open(json_path, "w") as f:
-    #     json.dump(logging_list_json, f)
+    ## save logging json
+    logging_list_json = json.dumps(logging_list)
+    json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/eval_epoch{epoch}_logging_list.json")
+    with open(json_path, "w") as f:
+        json.dump(logging_list_json, f)
     # ## plt score
     # if is_main_process():
     #     plt.figure(figsize=(32,8))
@@ -1056,15 +1071,15 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
 
             # 计算每100个iter的score均值，输出25010/100维向量
             plt.figure(figsize=(32,8))
-            avg_scores_pos = scores[:,0].reshape(-1, 100).mean(axis=1)
-            avg_scores_neg = scores[:,1:].mean(axis=1).reshape(-1, 100).mean(axis=1)
+            avg_scores_pos = scores[:,0].reshape(-1, 10).mean(axis=1)
+            avg_scores_neg = scores[:,1:].mean(axis=1).reshape(-1, 10).mean(axis=1)
             plt.plot(avg_scores_pos, marker='o')
             plt.plot(avg_scores_neg, marker='*')
-            plt.title("Averaged ITM Score (every 100 samples)")
-            plt.xlabel("Batch (100 samples per batch)")
+            plt.title("Averaged ITM Score (every 10 samples)")
+            plt.xlabel("Batch (10 samples per batch)")
             plt.ylabel("Average Score")
             plt.legend(["Positive top1 Score", "Negative Score top6-8 Mean"])
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg100_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg10_score_distribution.jpg"))
         elif mode == "eval":
             # pass ## ipynb script
             plt.figure(figsize=(32,8))
@@ -1075,15 +1090,15 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
 
             # 计算每100个iter的score均值，输出25010/100维向量
             plt.figure(figsize=(32,8))
-            avg_scores_pos = scores[:,:5].mean(axis=1).reshape(-1, 100).mean(axis=1)
-            avg_scores_neg = scores[:,5:8].mean(axis=1).reshape(-1, 100).mean(axis=1)
+            avg_scores_pos = scores[:,:5].mean(axis=1).reshape(-1, 10).mean(axis=1)
+            avg_scores_neg = scores[:,5:8].mean(axis=1).reshape(-1, 10).mean(axis=1)
             plt.plot(avg_scores_pos, marker='o')
             plt.plot(avg_scores_neg, marker='*')
-            plt.title("Averaged ITM Score (every 100 samples)")
-            plt.xlabel("Batch (100 samples per batch)")
+            plt.title("Averaged ITM Score (every 10 samples)")
+            plt.xlabel("Batch (10 samples per batch)")
             plt.ylabel("Average Score")
             plt.legend(["Positive Score top1-5 Mean", "Negative Score Top6-8 Mean"])
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg100_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg10_score_distribution.jpg"))
     elif task == "t2i":
         if mode == "tta":
             plt.figure(figsize=(32,8))
@@ -1094,15 +1109,15 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
 
             # 计算每100个iter的score均值，输出 5000/100维向量
             plt.figure(figsize=(32,8))
-            avg_scores_pos = scores[:25000,0].reshape(-1, 100).mean(axis=1)
-            avg_scores_neg = scores[:25000,1:].mean(axis=1).reshape(-1, 100).mean(axis=1)
+            avg_scores_pos = scores[:25000,0].reshape(-1, 10).mean(axis=1)
+            avg_scores_neg = scores[:25000,1:].mean(axis=1).reshape(-1, 10).mean(axis=1)
             plt.plot(avg_scores_pos, marker='o')
             plt.plot(avg_scores_neg, marker='*')
-            plt.title("Averaged ITM Score (every 100 samples)")
-            plt.xlabel("Batch (100 samples per batch)")
+            plt.title("Averaged ITM Score (every 10 samples)")
+            plt.xlabel("Batch (10 samples per batch)")
             plt.ylabel("Average Score")
             plt.legend(["Positive top1 Score", "Negative Score top2-4 Mean"])
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg100_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg10_score_distribution.jpg"))
         elif mode == "eval":
             # pass ## ipynb script
             plt.figure(figsize=(32,8))
@@ -1113,15 +1128,15 @@ def plt_itm_score(scores, task="i2t", mode="tta"):
 
             # 计算每100个iter的score均值，输出 5000/100维向量
             plt.figure(figsize=(32,8))
-            avg_scores_pos = scores[:25000,0].reshape(-1, 100).mean(axis=1)
-            avg_scores_neg = scores[:25000,1:4].mean(axis=1).reshape(-1, 100).mean(axis=1)
+            avg_scores_pos = scores[:25000,0].reshape(-1, 10).mean(axis=1)
+            avg_scores_neg = scores[:25000,1:4].mean(axis=1).reshape(-1, 10).mean(axis=1)
             plt.plot(avg_scores_pos, marker='o')
             plt.plot(avg_scores_neg, marker='*')
-            plt.title("Averaged ITM Score (every 100 samples)")
-            plt.xlabel("Batch (100 samples per batch)")
+            plt.title("Averaged ITM Score (every 10 samples)")
+            plt.xlabel("Batch (10 samples per batch)")
             plt.ylabel("Average Score")
             plt.legend(["Positive top1 Score", "Negative Score Top2-4 Mean"])
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg100_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_epochs_avg10_score_distribution.jpg"))
 
 
 def plt_logging_list(logging_list, task="i2t", mode="tta"):
@@ -1130,17 +1145,23 @@ def plt_logging_list(logging_list, task="i2t", mode="tta"):
     scores = np.array([item["score"] for item in logging_list])
     scores = scores.reshape(-1, scores.shape[-1]) # tta=(5000/25010, 4) eval=(5000/25010, 128)
     entropys = np.array([item["entropy"] for item in logging_list]).mean(axis=-1) #每个batch的entropy均值
-    losses = np.array([item["loss"] for item in logging_list])
+   
     
     if task == "i2t":
         if mode == "tta":
+            losses = np.array([item["loss"] for item in logging_list])
+            plt.figure(figsize=(32,8))
+            plt.plot(losses, alpha=0.7)
+            plt.legend(["loss per iteration"])
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/{mode}_until_epochs_loss.jpg"))
+            
             plt.figure(figsize=(32,8))
             plt.plot(scores[:,0], alpha=0.7)
             plt.plot(scores[:,1:].mean(axis=1), alpha=0.7)
             plt.legend(["Positive top1 Score", "Negative Score top6-8 Mean"])
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_until_epochs_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/{mode}_until_epochs_score_distribution.jpg"))
 
-            # 计算每100个iter的score均值，输出5000/100维向量
+            # 计算每10个iter的score均值，输出5000/10维向量
             plt.figure(figsize=(32,8))
             avg_scores_pos = scores[:10*(scores.shape[0]//10),0].reshape(-1, 10).mean(axis=1)
             avg_scores_neg = scores[:10*(scores.shape[0]//10),1:].mean(axis=1).reshape(-1, 10).mean(axis=1)
@@ -1150,16 +1171,33 @@ def plt_logging_list(logging_list, task="i2t", mode="tta"):
             plt.xlabel("X (10 samples per X)")
             plt.ylabel("Average Score")
             plt.legend(["Positive top1 Score", "Negative Score top6-8 Mean"])
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_until_epochs_avg10_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/{mode}_until_epochs_avg10_score_distribution.jpg"))
         elif mode == "eval":
-            assert False, "i2t eval mode not implemented yet, please use tta mode instead"
+            # assert False, "i2t eval mode not implemented yet, please use tta mode instead"
+            plt.figure(figsize=(32,8))
+            plt.plot(scores[:,0:5].mean(axis=1), alpha=0.7)
+            plt.plot(scores[:,5:8].mean(axis=1), alpha=0.7)
+            plt.legend(["Positive Score top1-5 Mean", "Negative Score top6-8 Mean"])
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/{mode}_until_epochs_score_distribution.jpg"))
+
+            # 计算每10个iter的score均值，输出5000/10维向量
+            plt.figure(figsize=(32,8))
+            avg_scores_pos = scores[:10*(scores.shape[0]//10),0:5].mean(axis=1).reshape(-1, 10).mean(axis=1)
+            avg_scores_neg = scores[:10*(scores.shape[0]//10),5:8].mean(axis=1).reshape(-1, 10).mean(axis=1)
+            plt.plot(avg_scores_pos, marker='o')
+            plt.plot(avg_scores_neg, marker='*')
+            plt.title("Averaged ITM Score (every 10 samples)")
+            plt.xlabel("X (10 samples per X)")
+            plt.ylabel("Average Score")
+            plt.legend(["Positive Score top1-5 Mean", "Negative Score top6-8 Mean"])
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/{mode}_until_epochs_avg10_score_distribution.jpg"))
     elif task == "t2i":
         if mode == "tta":
             plt.figure(figsize=(32,8))
             plt.plot(scores[:,0], alpha=0.7)
             plt.plot(scores[:,1:].mean(axis=1), alpha=0.7)
             plt.legend(["Positive top1 Score", "Negative Score top2-4 Mean"])
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_until_epochs_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/{mode}_until_epochs_score_distribution.jpg"))
 
             # 计算每100个iter的score均值，输出 5000/100维向量
             plt.figure(figsize=(32,8))
@@ -1171,7 +1209,7 @@ def plt_logging_list(logging_list, task="i2t", mode="tta"):
             plt.xlabel("X (10 samples per X)")
             plt.ylabel("Average Score")
             plt.legend(["Positive top1 Score", "Negative Score top2-4 Mean"])
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/{mode}_until_epochs_avg10_score_distribution.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/{mode}_until_epochs_avg10_score_distribution.jpg"))
         elif mode == "eval":
             assert False, "t2i eval mode not implemented yet, please use tta mode instead"
 
@@ -1240,7 +1278,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
     labels = dataloader.dataset.img2txt
     ## 获取metric标签用于可视化
     recall_types = find_recall_types(labels, sims_matrix_i2t, k_test=10)
-    top128_sims, top128_idxs = sims_matrix_i2t.topk(k=cfg.run_cfg.k_test, dim=1)
+    top128_sims, top128_idxs = sims_matrix_i2t.topk(k=k_test, dim=1)
     (recall1, recall5, recall10), recall_types_2 = calculate_recall(top128_idxs, labels)
     ## 采样正样本
     # pos_sample_range =  tta_cfg.pos_sample_range if hasattr(tta_cfg, "pos_sample_range") else [0, 1] # 正样本采样范围
@@ -1281,6 +1319,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
         # text_atts = text_atts[ss_idxs]
         labels = [labels[i] for i in ss_idxs]
         recall_types = [recall_types[i] for i in ss_idxs]
+        recall_types_2 = [recall_types_2[i] for i in ss_idxs]
         logging.info("    labels recall_types")
         # top1_sims, top1_idxs = top1_sims[ss_idxs], top1_idxs[ss_idxs]
         # neg_sims, neg_idxs = neg_sims[ss_idxs], neg_idxs[ss_idxs]
@@ -1305,7 +1344,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
     tta_dataset = TTA_I2T_Dataset(
         tta_cfg,
         sims_matrix_i2t, sampled_sims_matrix_i2t, sampled_sims_idx_i2t,
-        labels, recall_types,
+        labels, recall_types, recall_types_2,
         vit_feats[ss_idxs], text_ids, text_atts,
         tta_coeffis
     )
@@ -1364,6 +1403,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
             tta_coeffi = batch["tta_coeffi"] # shape = bs,
             label = batch["label"] # shape = bs,
             recall_type = batch["recall_type"] # list of str  # shape = bs,
+            recall_type_2 = batch["recall_type_2"] # list of str  # shape = bs,
 
             logits = model.compute_itm_logits(
                 image_inputs=image_inputs.to(model.device), #bs*k_tta,677,1408
@@ -1384,9 +1424,10 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
             ## uncertainty
             uncertainty = torch.Tensor([1.]*score.size(0)).to(model.device) # shape = bs,
             if getattr(tta_cfg, "is_uncertainty", False) == True:
-                # uncertainty = torch.Tensor([1.]*score.size(0)).to(model.device)
-                # uncertainty = nn.functional.kl_div(sims.reshape(-1, tta_cfg.k_tta).to(model.device), score)
-                uncertainty = nn.functional.kl_div(score, sims.reshape(-1, tta_cfg.k_tta).to(model.device)) # shape = bs,
+                if getattr(tta_cfg, "uncertainty_type", None) == "kl_itm_itc":
+                    uncertainty = nn.functional.kl_div(F.log_softmax(score, dim=-1), F.softmax(sims.reshape(-1, tta_cfg.k_tta).to(model.device), dim=-1), reduction="none").sum(dim=-1) # shape = bs,
+                elif getattr(tta_cfg, "uncertainty_type", None) == "kl_itc_itm":
+                    uncertainty = nn.functional.kl_div(F.softmax(sims.reshape(-1, tta_cfg.k_tta).to(model.device), dim=-1), F.log_softmax(score, dim=-1), reduction="none").sum(dim=-1) # shape = bs,
                 
             ## coeffi
             tta_coeffi = tta_coeffi.to(model.device)
@@ -1397,7 +1438,11 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
             entropy = -(F.softmax(score * score_temper, dim=-1) * F.log_softmax(score * score_temper, dim=-1)).sum(-1) # score * temper
             ### itm proba sigmoid entropy
             # entropy = (-(F.sigmoid(score * score_temper) * F.log(F.sigmoid(score * score_temper)))).sum(-1)
-            loss = uncertainty * entropy / tta_coeffi
+            loss = entropy
+            if getattr(tta_cfg, "is_uncertainty", False) == True:
+                loss = uncertainty * loss
+            if getattr(tta_cfg, "top1_match_coeffi", False) == True:
+                loss = loss / tta_coeffi
             loss = loss.mean()
             loss = loss / tta_cfg.grad_accum_bs
             loss.backward()
@@ -1423,6 +1468,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
                 "index" : index.detach().cpu().numpy().tolist(), # index=ss_idxs[index]
                 "label" : label,
                 "recall_type" : recall_type,
+                "recall_type_2" : recall_type_2,
                 "sims" : sims.reshape(-1, tta_cfg.k_tta).detach().cpu().numpy().tolist(),
                 "idxs_i2t" : idxs_i2t.reshape(-1, tta_cfg.k_tta).detach().cpu().numpy().tolist(),
                 "score" : score.detach().cpu().numpy().tolist(),
@@ -1458,11 +1504,11 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
     # scores_mat = torch.cat(scores_mat, dim=0).numpy()
     # labels_mat = torch.cat(labels_mat, dim=0).numpy()
 
-    # ## save epoch logging
-    # logging_list_json = json.dumps(logging_list)
-    # json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/tta_epoch{epoch}_logging_list.json")
-    # with open(json_path, "w") as f:
-    #     json.dump(logging_list_json, f)
+    ## save epoch logging
+    logging_list_json = json.dumps(logging_list)
+    json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/tta_epoch{epoch}_logging_list.json")
+    with open(json_path, "w") as f:
+        json.dump(logging_list_json, f)
     # ## plt entropy
     # plt.figure()
     # plt.plot(epoch_entropy_list)
