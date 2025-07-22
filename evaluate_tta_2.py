@@ -29,6 +29,7 @@ from lavis.datasets.builders import *
 from lavis.models import *
 from lavis.processors import *
 from lavis.runners.runner_base import RunnerBase
+from lavis.runners.runner_tta import RunnerTTA
 from lavis.tasks import *
 
 
@@ -86,11 +87,14 @@ def main():
     datasets = task.build_datasets(cfg)#{'train': <lavis.datasets.datasets.base_dataset.ConcatDataset object at 0x7f55a0b90b90>, 'val': <lavis.datasets.datasets.retrieval_datasets.RetrievalEvalDataset object at 0x7f5548832d90>, 'test': <lavis.datasets.datasets.retrieval_datasets.RetrievalEvalDataset object at 0x7f5547cddbd0>}
     model = task.build_model(cfg)
 
-    runner = RunnerBase(
+    # runner = RunnerBase(
+    #     cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets,
+    # )
+    runner = RunnerTTA(
         cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets,
     )
     # runner.evaluate(skip_reload=True)
-    runner.evaluate_tta(skip_reload=True, tta_cfg=cfg.config.tta)
+    runner.evaluate_tta(tta_cfg=cfg.config.tta)
 
 
 if __name__ == "__main__":
