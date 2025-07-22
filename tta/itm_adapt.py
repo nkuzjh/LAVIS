@@ -1046,7 +1046,7 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
     sim_matrix_i2t = torch.from_numpy(np.load("debugs/debug_sim_matrix_i2t.npy"))
     sim_matrix_t2i = torch.from_numpy(np.load("debugs/debug_sim_matrix_t2i.npy"))
     image_embeds = torch.from_numpy(np.load("debugs/debug_image_embeds.npy"))
-    vit_feats = torch.from_numpy(np.load("debugs/debug_vit_feats.npy"))
+    vit_feats = torch.from_numpy(np.load("/data/jiahao/blip2_embeddings/debug_vit_feats.npy"))
     text_embeds = torch.from_numpy(np.load("debugs/debug_text_embeds.npy"))
     text_ids = torch.from_numpy(np.load("debugs/debug_text_ids.npy"))
     text_atts = torch.from_numpy(np.load("debugs/debug_text_atts.npy"))

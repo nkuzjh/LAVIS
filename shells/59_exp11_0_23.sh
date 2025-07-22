@@ -12,12 +12,12 @@ ports=(
     29502
     29503
     29504
-    29505
+    # 29505
 )
 
 # 定义训练脚本路径（根据实际情况修改）
 scripts=(
-    "evaluate_tta.py"
+    # "evaluate_tta.py"
     "evaluate_tta.py"
     "evaluate_tta.py"
     "evaluate_tta.py"
@@ -27,7 +27,7 @@ scripts=(
 
 # 定义日志文件名
 log_files=(
-    "ret_coco_eval_itm_adapt_i2t_exp12.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp12.out"
     "ret_coco_eval_itm_adapt_i2t_exp11.0.2.1.out"
     "ret_coco_eval_itm_adapt_i2t_exp11.0.3.1.out"
     "ret_coco_eval_itm_adapt_i2t_exp12.0.1.out"
@@ -38,7 +38,7 @@ log_files=(
 
 # 定义参数文件名
 args_files=(
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.yaml"
     "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.2.1.yaml"
     "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.1.yaml"
     "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.0.1.yaml"
