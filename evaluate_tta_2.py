@@ -33,6 +33,9 @@ from lavis.runners.runner_tta import RunnerTTA
 from lavis.tasks import *
 
 
+from tta.datasets import create_tta_dataset, create_eval_dataset
+
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Training")
@@ -83,9 +86,29 @@ def main():
 
     cfg.pretty_print()
 
+    
+    from lavis.models.blip2_models.blip2_qformer import Blip2Qformer
+    model = Blip2Qformer() # .from_config(cfg=cfg.model)
+    model = task.build_model(cfg)
+    
+    eval_dataset = create_eval_dataset(cfg)
+    eval_dataloader = create_eval_dataloader(eval_dataset)
+    sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(model, eval_dataloader, task_cfg, tta_cfg)
+    # np.save("debugs/debug_sim_matrix_i2t.npy",sim_matrix_i2t.numpy())
+    # np.save("debugs/debug_sim_matrix_t2i.npy",sim_matrix_t2i.numpy())
+    # np.save("debugs/debug_image_embeds.npy",image_embeds.numpy())
+    # np.save("/data/jiahao/blip2_embeddings/debug_vit_feats.npy",vit_feats.numpy())
+    # np.save("debugs/debug_text_embeds.npy",text_embeds.numpy())
+    # np.save("debugs/debug_text_ids.npy",text_ids.numpy())
+    # np.save("debugs/debug_text_atts.npy",text_atts.numpy())
+
+    tta_dataset = create_tta_dataset(cfg)
+
+
+
     task = tasks.setup_task(cfg)
     datasets = task.build_datasets(cfg)#{'train': <lavis.datasets.datasets.base_dataset.ConcatDataset object at 0x7f55a0b90b90>, 'val': <lavis.datasets.datasets.retrieval_datasets.RetrievalEvalDataset object at 0x7f5548832d90>, 'test': <lavis.datasets.datasets.retrieval_datasets.RetrievalEvalDataset object at 0x7f5547cddbd0>}
-    model = task.build_model(cfg)
+    
 
     # runner = RunnerBase(
     #     cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets,

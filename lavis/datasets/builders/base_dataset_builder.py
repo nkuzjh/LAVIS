@@ -35,7 +35,7 @@ class BaseDatasetBuilder:
             # when called from task.build_dataset()
             self.config = cfg
 
-        self.data_type = self.config.data_type
+        self.data_type = self.config.data_type# data_type = images from "default": "configs/datasets/coco/defaults_ret.yaml"
 
         self.vis_processors = {"train": BaseProcessor(), "eval": BaseProcessor()}
         self.text_processors = {"train": BaseProcessor(), "eval": BaseProcessor()}
@@ -68,14 +68,14 @@ class BaseDatasetBuilder:
             vis_eval_cfg = vis_proc_cfg.get("eval")
 
             self.vis_processors["train"] = self._build_proc_from_cfg(vis_train_cfg)
-            self.vis_processors["eval"] = self._build_proc_from_cfg(vis_eval_cfg)
+            self.vis_processors["eval"] = self._build_proc_from_cfg(vis_eval_cfg)#BlipImageEvalProcessor
 
         if txt_proc_cfg is not None:
             txt_train_cfg = txt_proc_cfg.get("train")
             txt_eval_cfg = txt_proc_cfg.get("eval")
 
             self.text_processors["train"] = self._build_proc_from_cfg(txt_train_cfg)
-            self.text_processors["eval"] = self._build_proc_from_cfg(txt_eval_cfg)
+            self.text_processors["eval"] = self._build_proc_from_cfg(txt_eval_cfg)# BlipCaptionProcessor
 
         kw_proc_cfg = self.config.get("kw_processor")
         if kw_proc_cfg is not None:
@@ -92,7 +92,7 @@ class BaseDatasetBuilder:
 
     @classmethod
     def default_config_path(cls, type="default"):
-        return utils.get_abs_path(cls.DATASET_CONFIG_DICT[type])
+        return utils.get_abs_path(cls.DATASET_CONFIG_DICT[type])#'configs/datasets/coco/defaults_ret.yaml' #cls=COCORetrievalBuilder, type = default
 
     def _download_data(self):
         self._download_ann()
@@ -233,8 +233,8 @@ class BaseDatasetBuilder:
             datasets[split] = dataset_cls(
                 vis_processor=vis_processor,
                 text_processor=text_processor,
-                ann_paths=ann_paths,
-                vis_root=vis_path,
+                ann_paths=ann_paths,#['/data/jiahao/coco/annotations/coco_karpathy_test.json']
+                vis_root=vis_path,#'/data/jiahao/coco/images/'
             )
 
         return datasets
