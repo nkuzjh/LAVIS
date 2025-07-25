@@ -79,7 +79,7 @@ tta:
   init_lr: 5e-4
   weight_decay: 0.0
   tta_bs: 32
-  grad_accum_bs: 1
+  grad_accum_bs: 3
   offline_multi_epochs: 10
   tta_scheduler: "cosine"
   tta_warmup_ratio: 0.1

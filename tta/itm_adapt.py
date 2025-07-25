@@ -1035,7 +1035,7 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
     ## compute embeddings & cosine similarity matrix
     logging.info("compute cosine similarity matrix")
     # if is_main_process():
-    #     sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
+    # sim_matrix_i2t, sim_matrix_t2i, image_embeds, vit_feats, text_embeds, text_ids, text_atts = compute_embeds(tta_model.model, dataloader, task_cfg, tta_cfg)
     #     np.save("debugs/debug_sim_matrix_i2t.npy",sim_matrix_i2t.numpy())
     #     np.save("debugs/debug_sim_matrix_t2i.npy",sim_matrix_t2i.numpy())
     #     np.save("debugs/debug_image_embeds.npy",image_embeds.numpy())
@@ -1046,14 +1046,19 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
     sim_matrix_i2t = torch.from_numpy(np.load("debugs/debug_sim_matrix_i2t.npy"))
     sim_matrix_t2i = torch.from_numpy(np.load("debugs/debug_sim_matrix_t2i.npy"))
     image_embeds = torch.from_numpy(np.load("debugs/debug_image_embeds.npy"))
+
+    logging.info(f"debug_vit_feats start")
     vit_feats = torch.from_numpy(np.load("/data/jiahao/blip2_embeddings/debug_vit_feats.npy"))
+    logging.info(f"debug_vit_feats  end")
     text_embeds = torch.from_numpy(np.load("debugs/debug_text_embeds.npy"))
     text_ids = torch.from_numpy(np.load("debugs/debug_text_ids.npy"))
     text_atts = torch.from_numpy(np.load("debugs/debug_text_atts.npy"))
-    if is_main_process():
-        result = report_metrics(scores_i2t=sim_matrix_i2t.numpy(), scores_t2i=sim_matrix_t2i.numpy(), txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report recall metrics, zero-shot :")
-        logging.info(f"report recall metrics, zero-shot :")
-        logging.info(result)
+    logging.info(f"all itc features  end")
+    torch.distributed.barrier()  # ensure all processes have computed the embeddings
+    # if is_main_process():
+    #     result = report_metrics(scores_i2t=sim_matrix_i2t.numpy(), scores_t2i=sim_matrix_t2i.numpy(), txt2img=dataloader.dataset.txt2img, img2txt=dataloader.dataset.img2txt, prefix_info=f"report recall metrics, zero-shot :")
+    #     logging.info(f"report recall metrics, zero-shot :")
+    #     logging.info(result)
 
     ## i2t tta
     if tta_cfg.tta_task == "i2t":
@@ -1075,8 +1080,7 @@ def forward_and_itm_adapt_v3(cfg, tta_model, optimizer, dataloader, task_cfg, tt
                 num_warmup_steps=tta_cfg.tta_warmup_ratio * num_training_steps,
                 num_training_steps=num_training_steps,
                 min_lr = tta_cfg.init_lr * 0.1, # 最小学习率
-            )
-                
+            )     
         logging.info(f"lr_scheduler {lr_scheduler}")
 
         ## multi epochs
