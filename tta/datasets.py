@@ -11,11 +11,11 @@ class TTA_I2T_Dataset(Dataset):
         self, tta_cfg, sims_matrix_all, sims_matrix, sims_idxs, labels, recall_types, recall_types_2, vit_feats, text_ids, text_atts, tta_coeffis
     ):
         self.tta_cfg = tta_cfg
-        self.sims_matrix_all = sims_matrix_all
+        # self.sims_matrix_all = sims_matrix_all
         self.sims_matrix = sims_matrix
         self.sims_idxs = sims_idxs
         self.labels = labels
-        self.recall_types = recall_types
+        # self.recall_types = recall_types
         self.recall_types_2 = recall_types_2
         self.vit_feats = vit_feats
         self.text_ids = text_ids
@@ -26,29 +26,35 @@ class TTA_I2T_Dataset(Dataset):
         return len(self.labels)
 
     def __getitem__(self, index):
+        print("TTA_I2T_Dataset __getitem__ start")
         ### sims_matrix_all
-        sims_matrix_all = self.sims_matrix_all[index]  # shape: (1, k_test)
+        # sims_matrix_all = self.sims_matrix_all[index]  # shape: (1, k_test)
+        print("TTA_I2T_Dataset __getitem__ start1")
         ### cos_sims_matrix
         sims = self.sims_matrix[index]
         idxs = self.sims_idxs[index]
+        print("TTA_I2T_Dataset __getitem__ start2")
         ### vis feature
         image_inputs = self.vit_feats[index].unsqueeze(0).repeat(1, self.tta_cfg.k_tta, 1, 1)# vit_feats[i].shape=1,677,1408; image_inputs.shape=1,k_tta,677,1408
         image_inputs = image_inputs.reshape(-1, image_inputs.size(-2), image_inputs.size(-1)) # 1*k_tta,677,1408
+        print("TTA_I2T_Dataset __getitem__ start3")
         ### txt feature
         text_ids_inputs = self.text_ids[idxs]
         text_ids_inputs = text_ids_inputs.reshape(-1, text_ids_inputs.size(-1)) # 1*k_tta,35
         text_atts_inputs = self.text_atts[idxs]
         text_atts_inputs = text_atts_inputs.reshape(-1, text_atts_inputs.size(-1)) # 1*k_tta,35
+        print("TTA_I2T_Dataset __getitem__ start4")
         ### entropy coeffi
         tta_coeffi = self.tta_coeffis[index] # shape=1
         ### label
         label = self.labels[index]
-        recall_type = self.recall_types[index] # 字符串
+        # recall_type = self.recall_types[index] # 字符串
         recall_type_2 = self.recall_types_2[index]
+        print("TTA_I2T_Dataset __getitem__ start5")
 
         return {
             "index": torch.Tensor([index]),
-            "sims_all": sims_matrix_all,
+            # "sims_all": sims_matrix_all,
             "sims": sims,
             "idxs": idxs,
             "image_inputs": image_inputs,
@@ -56,7 +62,7 @@ class TTA_I2T_Dataset(Dataset):
             "text_atts": text_atts_inputs,
             "tta_coeffi": tta_coeffi,
             "label": label,
-            "recall_type": recall_type,
+            # "recall_type": recall_type,
             "recall_type_2": recall_type_2,
         }
 
