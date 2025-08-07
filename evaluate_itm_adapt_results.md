@@ -1199,6 +1199,9 @@
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp11.yaml > ret_coco_eval_itm_adapt_t2i_exp11.out 2>&1 &
         59 finish
         report t2i metrics online, epoch 0 : "img_r1": 67.42902838864454, "img_r5": 83.5905637744902, "img_r10": 83.61855257896842, "img_r_mean": 78.2127149140344, "img_mAP": 74.35, "r_mean": -999}
+    - CUDA_VISIBLE_DEVICES=2 nohup python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp11.yaml > ret_coco_eval_itm_adapt_t2i_exp11.out 2>&1 &
+        grad_accum = 3
+        report t2i metrics online, epoch 0 : { "img_r1": 66.92522990803678, "img_r5": 83.70251899240304, "img_r10": 83.73050779688124, "img_r_mean": 78.11941889910702, "img_mAP": 74.09, "r_mean": -999}
 ### 59 bash 
 #### exp 11.0.1
 1. parameters:
@@ -1216,15 +1219,17 @@
 2. i2t:
     report i2t metrics offline, epoch 0 : {"txt_r1": 85.6, "txt_r5": 96.88, "txt_r10": 98.42, "txt_r_mean": 93.63333333333333, "txt_mAP": 71.26,
 3. t2i:
-    - CUDA_VISIBLE_DEVICES=2 nohup python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp11.0.2.yaml > ret_coco_eval_itm_adapt_t2i_exp11.0.2.out 2>&1 &
+    - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp11.0.2.yaml > ret_coco_eval_itm_adapt_t2i_exp11.0.2.out 2>&1 &
         report t2i metrics online, epoch 0 :  "img_r1": 67.41303478608556, "img_r5": 83.70251899240304, "img_r10": 83.73050779688124, "img_r_mean": 78.28202052512329, "img_mAP": 74.38,
+    - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29501 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp11.0.2.yaml > ret_coco_eval_itm_adapt_t2i_exp11.0.2.out 2>&1 &
+        report t2i metrics online, epoch 0 : {"img_r1": 67.41303478608556, "img_r5": 83.70251899240304, "img_r10": 83.73050779688124, "img_r_mean": 78.28202052512329, "img_mAP": 74.38, "r_mean": -999}
 ### exp 11.0.2.1
 1. parameters:
     - lr=5e-5, wd=0.0
     - **lr_scheduler=cosine, min_lr_ratio=0.1, warmup_ratio=0.1**
 2. i2t:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.2.1.yaml > ret_coco_eval_itm_adapt_i2t_exp11.0.2.1.out 2>&1 &
-        running
+        report i2t metrics offline, epoch 1 : {"txt_r1": 85.44, "txt_r5": 96.94, "txt_r10": 98.42, "txt_r_mean": 93.60000000000001, "txt_mAP": 71.29, 
 
 ### 58 bash
 #### exp 11.0.3
@@ -1232,9 +1237,13 @@
     - top1_match_coeffi = True
     - lr=5e-5, wd=0.0
 2. i2t:
-    report i2t metrics offline, epoch 0 : {"txt_r1": 85.6, "txt_r5": 96.86, "txt_r10": 98.42, "txt_r_mean": 93.62666666666667, "txt_mAP": 71.26,
+    - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.yaml > ret_coco_eval_itm_adapt_i2t_exp11.0.3.out 2>&1 &
+        report i2t metrics offline, epoch 0 : {"txt_r1": 85.6, "txt_r5": 96.86, "txt_r10": 98.42, "txt_r_mean": 93.62666666666667, "txt_mAP": 71.26,
+    grad_accum = 3
+    - CUDA_VISIBLE_DEVICES=2 nohup python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.yaml > ret_coco_eval_itm_adapt_i2t_exp11.0.3.out 2>&1 &
+        runnnig
 3. t2i:
-        running
+    report t2i metrics online, epoch 0 : {"img_r1": 67.42103158736505, "img_r5": 83.70251899240304, "img_r10": 83.73050779688124, "img_r_mean": 78.28468612554978, "img_mAP": 74.38, "r_mean": -999}
 
 ### exp 11.0.3.1
 1. parameters:
@@ -1243,7 +1252,36 @@
     - **lr_scheduler=cosine, min_lr_ratio=0.1, warmup_ratio=0.1**
 2. i2t:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.1.yaml > ret_coco_eval_itm_adapt_i2t_exp11.0.3.1.out 2>&1 &
-        running
+        report i2t metrics offline, epoch 1 : {"txt_r1": 85.44, "txt_r5": 96.94, "txt_r10": 98.42, "txt_r_mean": 93.60000000000001, "txt_mAP": 71.29, 
+
+### exp 11.0.3.2
+1. parameters:
+    - top1_match_coeffi = True
+    - lr=5e-5, wd=0.0
+    - **coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, coeffi_exp_temper: 1.0**
+2. i2t:
+    grad_accum = 3
+    - CUDA_VISIBLE_DEVICES=0 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29500 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.2.yaml > ret_coco_eval_itm_adapt_i2t_exp11.0.3.2.out 2>&1 &
+        runnnig
+
+### exp 11.0.3.3
+1. parameters:
+    - top1_match_coeffi = True
+    - lr=5e-5, wd=0.0
+    - **coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, coeffi_exp_temper: 2.0**
+2. i2t:
+    grad_accum = 3
+    - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29501 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.3.yaml > ret_coco_eval_itm_adapt_i2t_exp11.0.3.3.out 2>&1 &
+        report i2t metrics offline, epoch 0 : {"txt_r1": 85.42, "txt_r5": 96.84, "txt_r10": 98.44, "txt_r_mean": 93.56666666666666, "txt_mAP": 71.21,
+### exp 11.0.3.4
+1. parameters:
+    - top1_match_coeffi = True
+    - lr=5e-5, wd=0.0
+    - **coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, coeffi_exp_temper: 5.0**
+2. i2t:
+    grad_accum = 3
+    - CUDA_VISIBLE_DEVICES=2 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29502 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.4.yaml > ret_coco_eval_itm_adapt_i2t_exp11.0.3.4.out 2>&1 &
+        report i2t metrics offline, epoch 0 : {"txt_r1": 85.42, "txt_r5": 96.84, "txt_r10": 98.44, "txt_r_mean": 93.56666666666666, "txt_mAP": 71.21, 
 
 #### exp 11.0.4
 1. parameters:
@@ -1252,6 +1290,10 @@
     - lr=5e-5, wd=0.0
 2. i2t:
     report i2t metrics offline, epoch 0 : {"txt_r1": 85.46, "txt_r5": 96.9, "txt_r10": 98.42, "txt_r_mean": 93.59333333333335, "txt_mAP": 71.34,
+3. t2i:
+    CUDA_VISIBLE_DEVICES=0 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29502 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp11.0.4.yaml > ret_coco_eval_itm_adapt_t2i_exp11.0.4.out 2>&1 &
+        grad_accum=3
+        report t2i metrics online, epoch 0 : "img_r1": 67.5609756097561, "img_r5": 83.70251899240304, "img_r10": 83.73050779688124, "img_r_mean": 78.33133413301346, "img_mAP": 74.49, "r_mean": -999}
 #### exp 11.0.5
 1. parameters:
     - score_temper=10.0
@@ -1294,6 +1336,9 @@
     - sample selection = top1
 2. i2t:
     - CUDA_VISIBLE_DEVICES=0,1,2 python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.9.yaml
+    - CUDA_VISIBLE_DEVICES=2 python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.9.yaml
+        grad_accum=3
+        report i2t metrics offline, epoch 7 : {"txt_r1": 85.48, "txt_r5": 97.0, "txt_r10": 98.46, "txt_r_mean": 93.64666666666666, "txt_mAP": 71.35, 
         
 ### exp 12
 1. 多卡训练直接增加batchsize
@@ -1316,9 +1361,10 @@
     - log_iters=50
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.yaml > ret_coco_eval_itm_adapt_i2t_exp12.out 2>&1 &
+        report i2t metrics offline, epoch 0/5 : {"txt_r1": 85.36, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.62, "txt_mAP": 71.35,
     - python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.yaml
     - CUDA_VISIBLE_DEVICES=0 python -m torch.distributed.run --nproc_per_node=1 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.yaml
-        running
+        report i2t metrics offline, epoch 0 : {"txt_r1": 85.34, "txt_r5": 97.02, "txt_r10": 98.48, "txt_r_mean": 93.61333333333334, "txt_mAP": 71.35, 
 3. t2i:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp12.yaml > ret_coco_eval_itm_adapt_t2i_exp12.out 2>&1 &
         coding
@@ -1328,15 +1374,22 @@
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.0.1.yaml > ret_coco_eval_itm_adapt_i2t_exp12.0.1.out 2>&1 &
     - CUDA_VISIBLE_DEVICES=1 python -m torch.distributed.run --nproc_per_node=1 --master_port=29501 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.0.1.yaml
+        grad_accum=3
+        report i2t metrics offline, epoch 0 : {"txt_r1": 85.32, "txt_r5": 97.02, "txt_r10": 98.5, "txt_r_mean": 93.61333333333333, "txt_mAP": 71.37,
 ### exp 12.0.2
 1. parameters:
     - lr=5e-4, wd=0.0
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.0.2.yaml > ret_coco_eval_itm_adapt_i2t_exp12.0.2.out 2>&1 &
     - CUDA_VISIBLE_DEVICES=2 python -m torch.distributed.run --nproc_per_node=1 --master_port=29502 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.0.2.yaml
+    - CUDA_VISIBLE_DEVICES=2 python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.0.2.yaml
+        grad_accum=3
+        report i2t metrics offline, epoch 0 : {"txt_r1": 85.06, "txt_r5": 96.84, "txt_r10": 98.38, "txt_r_mean": 93.42666666666666, "txt_mAP": 71.25, 
 ### exp 12.0.3
 1. parameters:
     - lr=1e-5, wd=0.0
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.0.3.yaml > ret_coco_eval_itm_adapt_i2t_exp12.0.3.out 2>&1 &
     - CUDA_VISIBLE_DEVICES=1 python -m torch.distributed.run --nproc_per_node=1 --master_port=29500 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.0.3.yaml
+        grad_accum=3
+        report i2t metrics offline, epoch 2 : {"txt_r1": 85.38, "txt_r5": 97.0, "txt_r10": 98.48, "txt_r_mean": 93.62, "txt_mAP": 71.37,

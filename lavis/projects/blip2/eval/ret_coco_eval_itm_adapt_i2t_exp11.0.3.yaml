@@ -73,7 +73,7 @@ tta:
   init_lr: 5e-5
   weight_decay: 0.0
   tta_bs: 32
-  grad_accum_bs: 1
+  grad_accum_bs: 3
   offline_multi_epochs: 10
 
   tta_task: "i2t" # "i2t" or "t2i"
