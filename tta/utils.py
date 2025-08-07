@@ -1272,7 +1272,8 @@ def plt_logging_list(logging_list, task="i2t", mode="tta"):
             plt.legend(["Positive top1 Score", "Negative Score top2-4 Mean"])
             plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/{mode}_until_epochs_avg10_score_distribution.jpg"))
         elif mode == "eval":
-            assert False, "t2i eval mode not implemented yet, please use tta mode instead"
+            # assert False, "t2i eval mode not implemented yet, please use tta mode instead"
+            pass
 
 ## use DistributedSampler; shuffle=True
 ## top1 sample selection + 负样本采样计算softmax_entropy
@@ -1314,7 +1315,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
     sampled_sims_idx_i2t = torch.stack(sampled_sims_idx_i2t) # shape=(5000, k_tta)
     ## entropy coeffis
     if tta_cfg.top1_match_coeffi == True:
-        tta_coeffis = compute_tta_coeffis(sims_matrix_i2t, sims_matrix_i2t.t(), k_test, tta_cfg.coeffi_i2t_temper, tta_cfg.coeffi_t2i_temper)
+        tta_coeffis = compute_tta_coeffis(sims_matrix_i2t, sims_matrix_i2t.t(), k_test, tta_cfg.coeffi_i2t_temper, tta_cfg.coeffi_t2i_temper, tta_cfg)
     else:
         tta_coeffis = [ torch.ones(1) for _ in range(sims_matrix_i2t.size(0)) ]
     ## score temperature
@@ -1419,7 +1420,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
             label = batch["label"] # shape = bs,
             # recall_type = batch["recall_type"] # list of str  # shape = bs,
             recall_type_2 = batch["recall_type_2"] # list of str  # shape = bs,
-            logging.info("    batch feature end ")
+            # logging.info("    batch feature end ")
 
             logits = model.compute_itm_logits(
                 image_inputs=image_inputs.to(model.device), #bs*k_tta,677,1408
@@ -1428,7 +1429,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
             ).float() # logits.shape=bs*k_tta, 2
             logits = logits.reshape(-1, tta_cfg.k_tta, 2) # logits.shape=bs, k_tta, 2
             score = logits[..., 1] # score.shape=bs, k_tta
-            logging.info("    compute_itm_logits end ")  
+            # logging.info("    compute_itm_logits end ")  
 
             ## score = itm_score + cos_sim
             for i, idx in enumerate(index):
@@ -1445,7 +1446,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
                     uncertainty = nn.functional.kl_div(F.log_softmax(score, dim=-1), F.softmax(sims.reshape(-1, tta_cfg.k_tta).to(model.device), dim=-1), reduction="none").sum(dim=-1) # shape = bs,
                 elif getattr(tta_cfg, "uncertainty_type", None) == "kl_itc_itm":
                     uncertainty = nn.functional.kl_div(F.softmax(sims.reshape(-1, tta_cfg.k_tta).to(model.device), dim=-1), F.log_softmax(score, dim=-1), reduction="none").sum(dim=-1) # shape = bs,
-            logging.info("    uncertainty end ")  
+            # logging.info("    uncertainty end ")  
 
             ## coeffi
             tta_coeffi = tta_coeffi.to(model.device)
@@ -1464,7 +1465,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
             loss = loss.mean()
             loss = loss / tta_cfg.grad_accum_bs
             loss.backward()
-            logging.info("    backward end ")  
+            # logging.info("    backward end ")  
             grad_accum_num += 1
             if grad_accum_num >= tta_cfg.grad_accum_bs or iter+1 >= len(tta_dataloader):
                 optimizer.step()
