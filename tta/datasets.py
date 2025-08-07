@@ -26,31 +26,31 @@ class TTA_I2T_Dataset(Dataset):
         return len(self.labels)
 
     def __getitem__(self, index):
-        print("TTA_I2T_Dataset __getitem__ start")
+        # print("TTA_I2T_Dataset __getitem__ start")
         ### sims_matrix_all
         # sims_matrix_all = self.sims_matrix_all[index]  # shape: (1, k_test)
-        print("TTA_I2T_Dataset __getitem__ start1")
+        # print("TTA_I2T_Dataset __getitem__ start1")
         ### cos_sims_matrix
         sims = self.sims_matrix[index]
         idxs = self.sims_idxs[index]
-        print("TTA_I2T_Dataset __getitem__ start2")
+        # print("TTA_I2T_Dataset __getitem__ start2")
         ### vis feature
         image_inputs = self.vit_feats[index].unsqueeze(0).repeat(1, self.tta_cfg.k_tta, 1, 1)# vit_feats[i].shape=1,677,1408; image_inputs.shape=1,k_tta,677,1408
         image_inputs = image_inputs.reshape(-1, image_inputs.size(-2), image_inputs.size(-1)) # 1*k_tta,677,1408
-        print("TTA_I2T_Dataset __getitem__ start3")
+        # print("TTA_I2T_Dataset __getitem__ start3")
         ### txt feature
         text_ids_inputs = self.text_ids[idxs]
         text_ids_inputs = text_ids_inputs.reshape(-1, text_ids_inputs.size(-1)) # 1*k_tta,35
         text_atts_inputs = self.text_atts[idxs]
         text_atts_inputs = text_atts_inputs.reshape(-1, text_atts_inputs.size(-1)) # 1*k_tta,35
-        print("TTA_I2T_Dataset __getitem__ start4")
+        # print("TTA_I2T_Dataset __getitem__ start4")
         ### entropy coeffi
         tta_coeffi = self.tta_coeffis[index] # shape=1
         ### label
         label = self.labels[index]
         # recall_type = self.recall_types[index] # 字符串
         recall_type_2 = self.recall_types_2[index]
-        print("TTA_I2T_Dataset __getitem__ start5")
+        # print("TTA_I2T_Dataset __getitem__ start5")
 
         return {
             "index": torch.Tensor([index]),
@@ -81,7 +81,7 @@ class TTA_I2T_Dataset(Dataset):
         collated['label'] = [item['label'] for item in batch]
 
         # 特殊处理 recall_type, recall_type_2（字符串），保留为（字符串），保留为 list
-        collated['recall_type'] = [item['recall_type'] for item in batch]
+        # collated['recall_type'] = [item['recall_type'] for item in batch]
         collated['recall_type_2'] = [item['recall_type_2'] for item in batch]
 
         # 其他张量字段使用 default_collate
