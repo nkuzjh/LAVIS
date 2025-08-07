@@ -111,6 +111,8 @@ class Blip2Qformer(Blip2Base):
 
         self.max_txt_len = max_txt_len
 
+        self.coeffi_exp_temper = torch.ones(1)
+
     def forward(self, samples):
         image = samples["image"] #14,3,364,364
         text = samples["text_input"] #list.len=14

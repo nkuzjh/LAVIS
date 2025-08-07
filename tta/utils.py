@@ -426,8 +426,14 @@ def sample_neg_idxs(sims_matrix_i2t, k_tta, k_test, neg_sample_range=[32, 128]):
         neg_idxs.append(topk_idx_i2t[random_idx])
     return torch.stack(neg_sims, dim=0), torch.stack(neg_idxs, dim=0)
 
-def compute_tta_coeffis(sims_matrix_i2t, sims_matrix_t2i, k_test, i2t_temper=100, t2i_temper=20):
+def compute_tta_coeffis(sims_matrix_i2t, sims_matrix_t2i, k_test, i2t_temper=100, t2i_temper=20, tta_cfg=None):
+    if hasattr(tta_cfg, "coeffi_exp_temper"):
+        exp_temper = tta_cfg.coeffi_exp_temper
+    else:
+        exp_temper = 1.0
     coeffis = []
+    proba_top1_sim_list = []
+    proba_sim_at_top1_idx_list = []
     for i, sims_i2t in enumerate(sims_matrix_i2t):
         topk_sim_i2t, topk_idx_i2t = sims_i2t.topk(k=k_test, dim=0)
 
@@ -438,9 +444,14 @@ def compute_tta_coeffis(sims_matrix_i2t, sims_matrix_t2i, k_test, i2t_temper=100
         if i in topk_idx_t2i_top1_idx_i2t:
             idx_i_in_topk_idx_t2i_top1_idx_i2t = torch.where(topk_idx_t2i_top1_idx_i2t == i)
             proba_sim_t2i_top1_idx_i2t = F.softmax(topk_sim_t2i_top1_idx_i2t * t2i_temper, dim=0)[idx_i_in_topk_idx_t2i_top1_idx_i2t]
-        coeffi = torch.exp( 1 - (proba_top1_sim_i2t + proba_sim_t2i_top1_idx_i2t) / 2 )
+        coeffi = torch.exp( (1 - (proba_top1_sim_i2t + proba_sim_t2i_top1_idx_i2t) / 2) * exp_temper )
         coeffis.append(coeffi)
-    return coeffis
+        proba_top1_sim_list.append(proba_top1_sim_i2t)
+        proba_sim_at_top1_idx_list.append(proba_sim_t2i_top1_idx_i2t)
+    if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) == True:
+        return coeffis, proba_top1_sim_list, proba_sim_at_top1_idx_list
+    else:
+        return coeffis
 
 def find_inter_top1_sample_selection(sims_matrix_i2t, sims_matrix_t2i):
     ss_idxs = []
@@ -452,6 +463,53 @@ def find_inter_top1_sample_selection(sims_matrix_i2t, sims_matrix_t2i):
         # else:
         #     logging.info(f"i2t and t2i not inter top1 sample: i2t_idx={i}, t2i_idx={top1_idx_t2i}, top1_sim_i2t={top1_sim_i2t}, top1_sim_t2i={top1_sim_t2i}")
     return ss_idxs #4286个互为top1的样本
+
+
+
+def calculate_recall(topk_idx_sims, i2t_label):
+    total_samples = len(i2t_label)
+    recall_at_1 = 0
+    recall_at_5 = 0
+    recall_at_10 = 0
+    recall_types = []
+
+    for i in range(total_samples):
+        true_label = i2t_label[i]
+        topk_indices = topk_idx_sims[i]
+        r1_flag = False
+        r5_flag = False
+        r10_flag = False
+
+        for label in true_label:
+            if label in topk_indices[:1].tolist():
+                r1_flag = True
+            if label in topk_indices[:5].tolist():
+                r5_flag = True
+            if label in topk_indices[:10].tolist():
+                r10_flag = True
+
+        if r1_flag:
+            recall_at_1 += 1
+        if r5_flag:
+            recall_at_5 += 1
+        if r10_flag:
+            recall_at_10 += 1
+
+        if r1_flag:
+            recall_types.append("recall@1")
+        elif r5_flag:
+            recall_types.append("recall@5")
+        elif r10_flag:
+            recall_types.append("recall@10")
+        elif r1_flag==False and r5_flag==False and r10_flag==False:
+            recall_types.append("negative sample")
+
+    recall_at_1 /= total_samples
+    recall_at_5 /= total_samples
+    recall_at_10 /= total_samples
+
+    return (recall_at_1, recall_at_5, recall_at_10), recall_types
+
 
 ## top1 sample selection + 负样本采样计算softmax_entropy
 def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims_matrix_i2t, vit_feats, text_ids, text_atts, epoch=-1):
@@ -658,7 +716,7 @@ def adapt_i2t_itm_score_v2(model, dataloader, task_cfg, optimizer, tta_cfg, sims
     return score_matrix_i2t.cpu().detach().numpy(), scores_mat.cpu().detach().numpy()
 
 
-def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i2t, vit_feats, text_ids, text_atts, epoch=-1):
+def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i2t, vit_feats, text_ids, text_atts, epoch=-1, result_rank_dir="."):
     logging.info("compute_i2t_itm_score: start")
 
     k_test = task_cfg.k_test
@@ -667,8 +725,8 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
     recall_types = find_recall_types(labels, sims_matrix_i2t, k_test)
     top128_sims, top128_idxs = sims_matrix_i2t.topk(k=k_test, dim=1)
     (recall1, recall5, recall10), recall_types_2 = calculate_recall(top128_idxs, labels)
-    text_ids.to(model.device)
-    text_atts.to(model.device)
+    # text_ids.to(model.device)
+    # text_atts.to(model.device)
     logging.info("    number of dataloader: {}".format(len(dataloader)))
 
     score_matrix_i2t = torch.full(
@@ -751,7 +809,10 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
 
     ## save logging json
     logging_list_json = json.dumps(logging_list)
-    json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/eval_epoch{epoch}_logging_list.json")
+    try:
+        json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/eval_epoch{epoch}_logging_list.json")
+    except:
+        json_path = f"{result_rank_dir}/eval_epoch{epoch}_logging_list.json"
     with open(json_path, "w") as f:
         json.dump(logging_list_json, f)
     # ## plt score
@@ -1153,7 +1214,7 @@ def plt_logging_list(logging_list, task="i2t", mode="tta"):
             plt.figure(figsize=(32,8))
             plt.plot(losses, alpha=0.7)
             plt.legend(["loss per iteration"])
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/{mode}_until_epochs_loss.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"), f"{resualt_rank_dir}/{mode}_until_epochs_loss.jpg"))
             
             plt.figure(figsize=(32,8))
             plt.plot(scores[:,0], alpha=0.7)
@@ -1212,52 +1273,6 @@ def plt_logging_list(logging_list, task="i2t", mode="tta"):
             plt.savefig(os.path.join(registry.get_path("output_dir"), f"result/rank{get_rank()}/{mode}_until_epochs_avg10_score_distribution.jpg"))
         elif mode == "eval":
             assert False, "t2i eval mode not implemented yet, please use tta mode instead"
-
-
-def calculate_recall(topk_idx_sims, i2t_label):
-    total_samples = len(i2t_label)
-    recall_at_1 = 0
-    recall_at_5 = 0
-    recall_at_10 = 0
-    recall_types = []
-
-    for i in range(total_samples):
-        true_label = i2t_label[i]
-        topk_indices = topk_idx_sims[i]
-        r1_flag = False
-        r5_flag = False
-        r10_flag = False
-
-        for label in true_label:
-            if label in topk_indices[:1].tolist():
-                r1_flag = True
-            if label in topk_indices[:5].tolist():
-                r5_flag = True
-            if label in topk_indices[:10].tolist():
-                r10_flag = True
-
-        if r1_flag:
-            recall_at_1 += 1
-        if r5_flag:
-            recall_at_5 += 1
-        if r10_flag:
-            recall_at_10 += 1
-
-        if r1_flag:
-            recall_types.append("recall@1")
-        elif r5_flag:
-            recall_types.append("recall@5")
-        elif r10_flag:
-            recall_types.append("recall@10")
-        elif r1_flag==False and r5_flag==False and r10_flag==False:
-            recall_types.append("negative sample")
-
-    recall_at_1 /= total_samples
-    recall_at_5 /= total_samples
-    recall_at_10 /= total_samples
-
-    return (recall_at_1, recall_at_5, recall_at_10), recall_types
-
 
 ## use DistributedSampler; shuffle=True
 ## top1 sample selection + 负样本采样计算softmax_entropy
