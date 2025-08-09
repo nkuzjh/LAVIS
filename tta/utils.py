@@ -1214,7 +1214,7 @@ def plt_logging_list(logging_list, task="i2t", mode="tta"):
             plt.figure(figsize=(32,8))
             plt.plot(losses, alpha=0.7)
             plt.legend(["loss per iteration"])
-            plt.savefig(os.path.join(registry.get_path("output_dir"), f"{resualt_rank_dir}/{mode}_until_epochs_loss.jpg"))
+            plt.savefig(os.path.join(registry.get_path("output_dir"),  f"result/rank{get_rank()}/{mode}_until_epochs_loss.jpg"))
             
             plt.figure(figsize=(32,8))
             plt.plot(scores[:,0], alpha=0.7)
