@@ -58,8 +58,16 @@ run:
 tta:
   name: "itm_adapt_v3"
   adapt_module: "qformer"
+
+  tta_task: "i2t" # "i2t" or "t2i"
+  # wo_rerank: False
+  # online: False
+  zero_shot_eval: False
+
   # entropy_type: "softmax"
   score_temper: 1.0
+
+  shards_dataset_dir: "/data/jiahao/blip2_embeddings/"
   k_tta: 4 #16
   # pos_sample_range: [0, 5]
   neg_sample_range: [5, 8] #[10, 32] # (32,128)
@@ -75,12 +83,8 @@ tta:
   init_lr: 5e-5
   weight_decay: 0.0
   tta_bs: 32
-  grad_accum_bs: 1
+  grad_accum_bs: 3
   offline_multi_epochs: 10
 
-  tta_task: "i2t" # "i2t" or "t2i"
-  # wo_rerank: False
-  # online: False
-  zero_shot_eval: False
   debug_visual: True
   log_iters: 10

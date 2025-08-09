@@ -722,7 +722,7 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
     k_test = task_cfg.k_test
 
     labels = dataloader.dataset.img2txt
-    recall_types = find_recall_types(labels, sims_matrix_i2t, k_test)
+    # recall_types = find_recall_types(labels, sims_matrix_i2t, k_test)
     top128_sims, top128_idxs = sims_matrix_i2t.topk(k=k_test, dim=1)
     (recall1, recall5, recall10), recall_types_2 = calculate_recall(top128_idxs, labels)
     # text_ids.to(model.device)
@@ -742,7 +742,7 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
     step = sims_matrix_i2t.size(0) // num_tasks + 1
     start = rank * step
     end = min(sims_matrix_i2t.size(0), start + step)
-    recall_types = recall_types[start:end]
+    # recall_types = recall_types[start:end]
     recall_types_2 = recall_types_2[start:end]
 
     start_time = time.time()
@@ -775,10 +775,10 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
                 ## entropy
                 entropy = -(F.softmax(score, dim=-1) * F.log_softmax(score, dim=-1)).sum(-1).mean()
                 ## logging
-                recall_type = recall_types[i]
+                # recall_type = recall_types[i]
                 recall_type_2 = recall_types_2[i]
                 logging_list.append({
-                    "recall_type" : recall_type,
+                    # "recall_type" : recall_type,
                     "recall_type_2" : recall_type_2,
                     "label" : labels[i],
                     "topk_sim" : topk_sim_i2t.detach().cpu().numpy().tolist(),
@@ -807,14 +807,14 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
             scores_mat, op=torch.distributed.ReduceOp.SUM
         )
 
-    ## save logging json
-    logging_list_json = json.dumps(logging_list)
-    try:
-        json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/eval_epoch{epoch}_logging_list.json")
-    except:
-        json_path = f"{result_rank_dir}/eval_epoch{epoch}_logging_list.json"
-    with open(json_path, "w") as f:
-        json.dump(logging_list_json, f)
+    # ## save logging json
+    # logging_list_json = json.dumps(logging_list)
+    # try:
+    #     json_path = os.path.join(registry.get_path("output_dir"), f"result/rank{rank}/eval_epoch{epoch}_logging_list.json")
+    # except:
+    #     json_path = f"{result_rank_dir}/eval_epoch{epoch}_logging_list.json"
+    # with open(json_path, "w") as f:
+    #     json.dump(logging_list_json, f)
     # ## plt score
     # if is_main_process():
     #     plt.figure(figsize=(32,8))

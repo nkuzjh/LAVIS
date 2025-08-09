@@ -97,3 +97,8 @@ if __name__ == "__main__":
 
 # !python ../evaluate.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval.yaml
 
+
+# !python ../evaluate.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval.yaml
+
+#  CUDA_VISIBLE_DEVICES=0,1,2 python -m torch.distributed.run --nproc_per_node=3 evaluate.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval.yaml
+

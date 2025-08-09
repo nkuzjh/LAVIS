@@ -1,8 +1,10 @@
 import json
 from typing import Iterable
 import pandas as pd
-import torch
+import os
+from tqdm import tqdm
 
+import torch
 from torch.utils.data import Dataset
 from torch.utils.data._utils.collate import default_collate
 
@@ -197,6 +199,97 @@ class TTA_T2I_Dataset(Dataset):
 
 
 
+class TTA_I2T_Shards_Dataset(Dataset):
+    def __init__(self, dataset_dir):
+        self.dataset_dir = dataset_dir
+        # 只扫描目录下的 .pt 文件，不加载任何数据
+        self.file_list = sorted(
+            [f for f in os.listdir(dataset_dir) if f.endswith('.pt')],
+            key=lambda x: int(x.split('.')[0])
+        )
+        logging.info(f"    find {len(self.file_list)} samples in {dataset_dir}")
+        assert len(self.file_list) > 0, f"No .pt files found in {dataset_dir}"
+
+    def __len__(self):
+        return len(self.file_list)
+
+    def __getitem__(self, index):
+        # 按需加载单个样本
+        data_path = os.path.join(self.dataset_dir, self.file_list[index])
+        data = torch.load(data_path)
+
+        # 重构原始 __getitem__ 的逻辑
+        k_tta = data['tta_cfg_k_tta']
+
+        # vis feature
+        image_inputs = data['vit_feats'].unsqueeze(0).repeat(1, k_tta, 1, 1)
+        image_inputs = image_inputs.reshape(-1, image_inputs.size(-2), image_inputs.size(-1))
+
+        # txt feature
+        text_ids_inputs = data['text_ids'].reshape(-1, data['text_ids'].size(-1))
+        text_atts_inputs = data['text_atts'].reshape(-1, data['text_atts'].size(-1))
+
+        # coeffi
+        tta_coeffi = data['tta_coeffi']
+        tta_coeffi_proba1 = data['proba_top1_sim']
+        tta_coeffi_proba2 = data['proba_sim_at_top1_idx']
+
+        # label & meta
+        label = data['label']
+        recall_type_2 = data['recall_type_2']
+
+        return {
+            "index": torch.tensor([index]),
+            "sims": data['sims'],
+            "idxs": data['idxs'],
+            "image_inputs": image_inputs,
+            "text_ids": text_ids_inputs,
+            "text_atts": text_atts_inputs,
+            "tta_coeffi": tta_coeffi,
+            "tta_coeffi_proba1": tta_coeffi_proba1,
+            "tta_coeffi_proba2": tta_coeffi_proba2,
+            "label": label,
+            "recall_type_2": recall_type_2,
+        }
+    
+    def collater(self, batch):
+        """
+        Args:
+            batch: list of dicts with keys:
+                'idx', 'image_inputs', 'text_ids', 'text_atts',
+                'tta_coeffi', 'label', 'recall_type', 'recall_type_2'
+
+        Returns:
+            dict of batched tensors and lists
+        """
+        collated = {}
+        # 特殊处理 label (变长list of int)，保留为 list
+        collated['label'] = [item['label'] for item in batch]
+
+        # 特殊处理 recall_type, recall_type_2（字符串），保留为（字符串），保留为 list
+        # collated['recall_type'] = [item['recall_type'] for item in batch]
+        collated['recall_type_2'] = [item['recall_type_2'] for item in batch]
+
+        # 其他张量字段使用 default_collate
+        for key in batch[0]:
+            if key in [ 'recall_type_2', 'label']:
+                continue  # 已经处理过了
+
+            values = [item[key] for item in batch]
+            if isinstance(values[0], torch.Tensor):
+                try:
+                    collated[key] = default_collate(values)
+                except:
+                    print()
+                    print(key)
+                    print(values)
+            else:
+                collated[key] = values  # 如果是非 tensor 字段（如 label 是 int）
+
+        return collated
+
+
+
 import logging
 import numpy as np
 from lavis.common.dist_utils import get_rank, get_world_size
@@ -251,8 +344,32 @@ def create_eval_dataloader(cfg, dataset):
     return dataloader
 
 
-def create_tta_dataset(cfg, labels, sims_matrix_i2t, vit_feats, text_ids, text_atts):
-    logging.info(f"create_tta_dataset  start")
+def save_dataset_shards(dataset_dir, tta_cfg, sims_matrix, sims_idxs, labels, recall_types_2, vit_feats, text_ids, text_atts, tta_coeffis, proba_top1_sim_list, proba_sim_at_top1_idx_list):
+    """
+    将每个样本的数据保存为单独的 .pt 文件
+    文件名: {index}.pt
+    """
+    os.makedirs(dataset_dir, exist_ok=True)
+    print(f"saving dataset shards to {dataset_dir}")
+
+    for idx in tqdm(range(len(labels))):
+        data = {
+            'tta_cfg_k_tta': tta_cfg.k_tta,  # 只保存必要的配置
+            'sims': torch.tensor(sims_matrix[idx]),
+            'idxs': torch.tensor(sims_idxs[idx]),
+            'vit_feats': torch.tensor(vit_feats[idx]) if isinstance(vit_feats, (list, tuple)) else vit_feats[idx].clone(),
+            'text_ids': torch.tensor(text_ids[sims_idxs[idx]]),
+            'text_atts': torch.tensor(text_atts[sims_idxs[idx]]),
+            'tta_coeffi': torch.tensor(tta_coeffis[idx]),
+            'proba_top1_sim': torch.tensor(proba_top1_sim_list[idx]) if isinstance(proba_top1_sim_list, (list, tuple)) else torch.ones(1),
+            'proba_sim_at_top1_idx': torch.tensor(proba_sim_at_top1_idx_list[idx]) if isinstance(proba_sim_at_top1_idx_list, (list, tuple)) else torch.ones(1),
+            'label': labels[idx],
+            'recall_type_2': recall_types_2[idx]
+        }
+        torch.save(data, os.path.join(dataset_dir, f"{idx}.pt"))
+
+def preprocess_tta_dataset(cfg, labels, sims_matrix_i2t, vit_feats, text_ids, text_atts):
+    logging.info(f"preprocess_tta_dataset  start")
     tta_cfg = cfg.config.tta
    
     ## 获取metric标签用于可视化
@@ -330,22 +447,44 @@ def create_tta_dataset(cfg, labels, sims_matrix_i2t, vit_feats, text_ids, text_a
 
     ## tta_dataset & tta_dataloader
     logging.info(f"tta_dataset ...")
-    if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) == True:
-        tta_dataset = TTA_I2T_Dataset(
-            tta_cfg,
-            None, sampled_sims_matrix_i2t, sampled_sims_idx_i2t,
-            labels, None, recall_types_2,
-            vit_feats, text_ids, text_atts,
-            tta_coeffis, proba_top1_sim_list, proba_sim_at_top1_idx_list
-        )
-    else:
-        tta_dataset = TTA_I2T_Dataset(
-            tta_cfg,
-            None, sampled_sims_matrix_i2t, sampled_sims_idx_i2t,
-            labels, None, recall_types_2,
-            vit_feats, text_ids, text_atts,
-            tta_coeffis, None, None
-        )
+    # if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) == True:
+    #     tta_dataset = TTA_I2T_Dataset(
+    #         tta_cfg,
+    #         None, sampled_sims_matrix_i2t, sampled_sims_idx_i2t,
+    #         labels, None, recall_types_2,
+    #         vit_feats, text_ids, text_atts,
+    #         tta_coeffis, proba_top1_sim_list, proba_sim_at_top1_idx_list
+    #     )
+    # else:
+    #     tta_dataset = TTA_I2T_Dataset(
+    #         tta_cfg,
+    #         None, sampled_sims_matrix_i2t, sampled_sims_idx_i2t,
+    #         labels, None, recall_types_2,
+    #         vit_feats, text_ids, text_atts,
+    #         tta_coeffis, None, None
+    #     )
+    ## to avoid cpu oom, split np.array into separate files
+    save_dataset_shards(
+        dataset_dir=tta_cfg.shards_dataset_dir,
+        tta_cfg=tta_cfg,
+        sims_matrix=sampled_sims_matrix_i2t,
+        sims_idxs=sampled_sims_idx_i2t,
+        labels=labels,
+        recall_types_2=recall_types_2,
+        vit_feats=vit_feats,
+        text_ids=text_ids,
+        text_atts=text_atts,
+        tta_coeffis=tta_coeffis,
+        proba_top1_sim_list=proba_top1_sim_list if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) else None,
+        proba_sim_at_top1_idx_list=proba_sim_at_top1_idx_list if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False)  else None
+    )
+    logging.info(f"preprocess_tta_dataset  end")
+
+def create_tta_dataset(cfg):
+    logging.info(f"create_tta_dataset  start")
+
+    tta_cfg = cfg.config.tta
+    tta_dataset = TTA_I2T_Shards_Dataset(tta_cfg.shards_dataset_dir)
     logging.info("number of tta_dataset: {}".format(len(tta_dataset)))
 
     logging.info(f"create_tta_dataset  end")
@@ -379,4 +518,4 @@ def create_tta_dataloader(cfg, dataset):
     logging.info("number of tta_dataloader: {}".format(len(dataloader)))
 
     logging.info(f"create_tta_dataloader  end")
-    return dataloader
+    return dataloader, sampler

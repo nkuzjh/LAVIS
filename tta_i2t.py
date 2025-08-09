@@ -5,7 +5,7 @@
  For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 import argparse
 import random
@@ -33,16 +33,19 @@ from lavis.runners.runner_tta import RunnerTTA
 from lavis.tasks import *
 
 
-from lavis.common.dist_utils import is_main_process
+
+from lavis.common.dist_utils import get_rank, get_world_size, is_main_process, is_dist_avail_and_initialized
 from lavis.common.registry import registry
 from lavis.models.blip2_models.blip2_qformer import Blip2Qformer
-from tta.tta_datasets import create_tta_dataset, create_eval_dataset, create_eval_dataloader, create_tta_dataloader
+from tta.tta_datasets import preprocess_tta_dataset, create_tta_dataset, create_eval_dataset, create_eval_dataloader, create_tta_dataloader
 from tta.utils import compute_embeds, compute_i2t_itm_score_v2, plt_logging_list
 from tta.tta_utils import create_optimizer_scheduler, report_metrics, plt_logging_list_v2#, test_time_adapt
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
 
 import logging
 import time
@@ -107,6 +110,7 @@ def main():
     #### Path 
     lib_root = os.path.dirname(os.path.abspath(__file__))
     output_dir = lib_root +"/"+ cfg.run_cfg.output_dir +"/"+  job_id
+    logging.info(f"\nCreate output_dir: {output_dir} ...")
     result_dir = output_dir +"/"+  "result"
     result_rank_dir = result_dir +"/"+  f"rank{get_rank()}"
     os.makedirs(output_dir, exist_ok=True)
@@ -134,26 +138,64 @@ def main():
     # np.save("debugs/debug_text_embeds.npy",text_embeds.numpy())
     # np.save("debugs/debug_text_ids.npy",text_ids.numpy())
     # np.save("debugs/debug_text_atts.npy",text_atts.numpy())
-    sims_matrix_i2t = torch.from_numpy(np.load("debugs/debug_sim_matrix_i2t.npy"))
-    # sims_matrix_t2i = torch.from_numpy(np.load("debugs/debug_sim_matrix_t2i.npy"))
-    # image_embeds = torch.from_numpy(np.load("debugs/debug_image_embeds.npy"))
-    vit_feats = torch.from_numpy(np.load("/data/jiahao/blip2_embeddings/debug_vit_feats.npy"))
-    # text_embeds = torch.from_numpy(np.load("debugs/debug_text_embeds.npy"))
-    text_ids = torch.from_numpy(np.load("debugs/debug_text_ids.npy"))
-    text_atts = torch.from_numpy(np.load("debugs/debug_text_atts.npy"))
+    if is_main_process():
+        logging.warning(f"get_rank:{get_rank()} load debug_sim_matrix_i2t.npy")
+        sims_matrix_i2t = torch.from_numpy(np.load("debugs/debug_sim_matrix_i2t.npy"))
+        
+        # sims_matrix_t2i = torch.from_numpy(np.load("debugs/debug_sim_matrix_t2i.npy"))
+        # image_embeds = torch.from_numpy(np.load("debugs/debug_image_embeds.npy"))
 
-    ## zero_shot eval
-    if cfg.config.tta.zero_shot_eval:
-        logging.info("compute i2t itm score, zero-shot")
-        score_i2t_zeroshot, itm_score_i2t_zeroshot, eval_logging_list_i2t_ze = compute_i2t_itm_score_v2(model, eval_dataloader, cfg.run_cfg, cfg.tta_cfg, sims_matrix_i2t, vit_feats, text_ids, text_atts,  epoch=-1, result_rank_dir=result_rank_dir)
-        if is_main_process():
-            result = report_metrics(scores_i2t=score_i2t_zeroshot, scores_t2i=None, txt2img=eval_dataloader.dataset.txt2img, img2txt=eval_dataloader.dataset.img2txt, prefix_info=f"rank{get_rank()} report i2t metrics, zero-shot :")
-            logging.info(f"report i2t metrics, zero-shot :")
-            logging.info(result)
+        logging.warning(f"get_rank:{get_rank()} load debug_vit_feats.npy")
+        vit_feats = torch.from_numpy(np.load("/data/jiahao/blip2_embeddings/debug_vit_feats.npy"))
+       
+        # text_embeds = torch.from_numpy(np.load("debugs/debug_text_embeds.npy"))
+        
+        logging.warning(f"get_rank:{get_rank()} load debug_text_ids.npy")
+        text_ids = torch.from_numpy(np.load("debugs/debug_text_ids.npy"))
+        
+
+        logging.warning(f"get_rank:{get_rank()} load debug_text_atts.npy")
+        text_atts = torch.from_numpy(np.load("debugs/debug_text_atts.npy"))
+        
+        logging.warning(f"get_rank:{get_rank()} preprocess_tta_dataset")
+        preprocess_tta_dataset(cfg, eval_dataloader.dataset.img2txt, sims_matrix_i2t, vit_feats, text_ids, text_atts)
+
+    # # ## broadcast features to all process
+    # if is_dist_avail_and_initialized():
+        
+    #     if is_main_process():
+    #         sims_matrix_i2t = sims_matrix_i2t.cuda()
+    #     else:
+    #         sims_matrix_i2t = torch.empty([5000, 25010], dtype=torch.float32,device='cuda')
+    #     dist.broadcast(sims_matrix_i2t, src=0)
+    #     sims_matrix_i2t = sims_matrix_i2t.cpu()
+
+    #     if is_main_process():
+    #         vit_feats = vit_feats.cuda()
+    #     else:
+    #         vit_feats = torch.empty([5000, 677, 1408], dtype=torch.float32,device='cuda')
+    #     dist.broadcast(vit_feats, src=0)
+    #     vit_feats = vit_feats.cpu()
+            
+    #     if is_main_process():
+    #         text_ids = text_ids.cuda()
+    #     else:
+    #         text_ids = torch.empty([25010, 35], dtype=torch.int64,device='cuda')
+    #     dist.broadcast(text_ids, src=0)
+    #     text_ids = text_ids.cpu()
+            
+    #     if is_main_process():
+    #         text_atts = text_atts.cuda()
+    #     else:
+    #         text_atts = torch.empty([25010, 35], dtype=torch.int64,device='cuda')
+    #     dist.broadcast(text_atts, src=0)
+    #     text_atts = text_atts.cpu()
+        
+    # sims_matrix_i2t, vit_feats, text_ids, text_atts = sims_matrix_i2t.cpu(), vit_feats.cpu(), text_ids.cpu(), text_atts.cpu()
 
     logging.info("\nInitialize tta dataset ...")
-    tta_dataset = create_tta_dataset(cfg, eval_dataloader.dataset.img2txt, sims_matrix_i2t, vit_feats, text_ids, text_atts)
-    tta_dataloader = create_tta_dataloader(cfg, tta_dataset)
+    tta_dataset = create_tta_dataset(cfg)
+    tta_dataloader, tta_sampler = create_tta_dataloader(cfg, tta_dataset)
     
     logging.info("\nInitialize optimizer ...")
     num_training_steps = len((tta_dataloader)) * cfg.config.tta.offline_multi_epochs
@@ -161,9 +203,28 @@ def main():
 
     logging.info("\nStart test_time_adapt ...")
     # test_time_adapt(job_id, cfg, model, tta_dataloader, eval_dataloader, optimizer, scheduler)
+
+     ## model.to(device)
+    if is_dist_avail_and_initialized():
+        local_rank = get_rank()
+        device = torch.device(cfg.run_cfg.device, local_rank)
+    else:
+        device =  torch.device(cfg.run_cfg.device)
+    model = model.to(device)
+    if is_dist_avail_and_initialized():
+        model = DDP(model, device_ids=[local_rank]).module
+
+    ## zero_shot eval
+    if cfg.config.tta.zero_shot_eval:
+        logging.info("compute i2t itm score, zero-shot")
+        score_i2t_zeroshot, itm_score_i2t_zeroshot, eval_logging_list_i2t_ze = compute_i2t_itm_score_v2(model, eval_dataloader, cfg.run_cfg, cfg.tta_cfg, sims_matrix_i2t, vit_feats, text_ids, text_atts,  epoch=-1, result_rank_dir=result_rank_dir)
+        result = report_metrics(scores_i2t=score_i2t_zeroshot, scores_t2i=None, txt2img=eval_dataloader.dataset.txt2img, img2txt=eval_dataloader.dataset.img2txt, prefix_info=f"rank{get_rank()} report i2t metrics, zero-shot :")
+        logging.info(f"report i2t metrics, zero-shot :")
+        logging.info(result)
     
     logging.info("============= test_time_adapt start =============")
     tta_cfg = cfg.config.tta
+    score_temper_ = tta_cfg.score_temper if hasattr(tta_cfg, "score_temper") else 1.0
 
     ## tta epochs
     logging_list_epochs = []
@@ -172,14 +233,14 @@ def main():
         logging.info(f"start i2t tta epoch {tta_epoch}")
         # score_i2t, itm_score_i2t, logging_list_i2t = adapt_i2t_itm_score_v3(cfg, tta_model.model, dataloader, task_cfg, optimizer, lr_scheduler, tta_cfg, sim_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch)
 
-        score_temper_ = tta_cfg.score_temper if hasattr(tta_cfg, "score_temper") else 1.0
-
         ## training loop
         logging_list = []
         grad_accum_num = 0
 
         start_time = time.time()
         model.eval()
+        if is_dist_avail_and_initialized() and tta_sampler is not None:
+            tta_sampler.set_epoch(tta_epoch)
         with torch.enable_grad():
             for iter, batch in enumerate(tta_dataloader):
 
@@ -219,7 +280,7 @@ def main():
 
                 ## coeffi
                 if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) == True:
-                    tta_coeffi = torch.exp( model.coeffi_exp_temper * (1-(tta_coeffi_proba1+tta_coeffi_proba2)/2) ) 
+                    tta_coeffi = torch.exp( model.coeffi_exp_temper * (1-(tta_coeffi_proba1.to(model.device)+tta_coeffi_proba2.to(model.device))/2) ).to(model.device) 
                 else:
                     tta_coeffi = tta_coeffi.to(model.device)
                 ## temperature
@@ -308,8 +369,29 @@ def main():
         #     # np.save(npy_path, np.concatenate(itm_score_list))
         #     # plt_itm_score(np.concatenate(itm_score_list), task="i2t", mode="tta")
 
+        # torch.cuda.empty_cache()
+        # gc.collect()
         ## eval
         logging.info("compute i2t itm score offline, epoch %d :", tta_epoch)
+
+        # logging.warning(f"get_rank:{get_rank()} load debug_sim_matrix_i2t.npy")
+        # sims_matrix_i2t = torch.from_numpy(np.load("debugs/debug_sim_matrix_i2t.npy"))
+        
+        # # sims_matrix_t2i = torch.from_numpy(np.load("debugs/debug_sim_matrix_t2i.npy"))
+        # # image_embeds = torch.from_numpy(np.load("debugs/debug_image_embeds.npy"))
+
+        # logging.warning(f"get_rank:{get_rank()} load debug_vit_feats.npy")
+        # vit_feats = torch.from_numpy(np.load("/data/jiahao/blip2_embeddings/debug_vit_feats.npy"))
+       
+        # # text_embeds = torch.from_numpy(np.load("debugs/debug_text_embeds.npy"))
+        
+        # logging.warning(f"get_rank:{get_rank()} load debug_text_ids.npy")
+        # text_ids = torch.from_numpy(np.load("debugs/debug_text_ids.npy"))
+        
+
+        # logging.warning(f"get_rank:{get_rank()} load debug_text_atts.npy")
+        # text_atts = torch.from_numpy(np.load("debugs/debug_text_atts.npy"))
+
         eval_score_i2t, eval_itm_score_i2t, eval_logging_list = compute_i2t_itm_score_v2(model, eval_dataloader, cfg.run_cfg, tta_cfg, sims_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch, result_rank_dir)
         # eval_itm_score_list.append(eval_itm_score_i2t)
         eval_logging_list_epochs.extend(eval_logging_list)
@@ -337,8 +419,19 @@ if __name__ == "__main__":
     main()
 
 
+
+# command
+# CUDA_VISIBLE_DEVICES=1 nohup python tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=1,2 nohup python -m torch.distributed.run --nproc_per_node=2 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=0,1,2 python -m torch.distributed.run --nproc_per_node=3 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True
+
 # debug
 # --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp_debug.yaml --is_tta True
+# --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True
+
+
+
 
 
 # TTA itm_adapt
