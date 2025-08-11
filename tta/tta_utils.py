@@ -180,9 +180,13 @@ def create_optimizer_scheduler(cfg, model, num_training_steps):
     model = configure_model_blip2_qformer(model)
     if getattr(cfg.config.tta, "coeffi_exp_temper_is_learnable", False) == True:
         model.coeffi_exp_temper.requires_grad_(True)
+    if getattr(cfg.config.tta, "is_prompt_learning", False) == True:
+        model.learnable_empty_embedding.requires_grad_(True)
     params, param_names = collect_params_blip2_qformer(model)
     if getattr(cfg.config.tta, "coeffi_exp_temper_is_learnable", False) == True:
         params.append(model.coeffi_exp_temper)
+    if getattr(cfg.config.tta, "is_prompt_learning", False) == True:
+        params.append(model.learnable_empty_embedding)
 
     optimizer = torch.optim.AdamW(params=params, lr=cfg.config.tta.init_lr, weight_decay=cfg.config.tta.weight_decay)
     logging.info(f"optimizer {optimizer}")
@@ -194,7 +198,7 @@ def create_optimizer_scheduler(cfg, model, num_training_steps):
             num_warmup_steps=cfg.config.tta.tta_warmup_ratio * num_training_steps,
             num_training_steps=num_training_steps,
             min_lr = cfg.config.tta.init_lr * 0.1, # 最小学习率
-        )     
+        )
     logging.info(f"lr_scheduler {lr_scheduler}")
 
     logging.info(f"create_optimizer_scheduler end")
@@ -319,7 +323,7 @@ def plt_logging_list_v2(logging_list, resualt_dir=".", resualt_rank_dir=".", tas
     scores = np.array([item["score"] for item in logging_list])
     scores = scores.reshape(-1, scores.shape[-1]) # tta=(5000/25010, 4) eval=(5000/25010, 128)
     entropys = np.array([item["entropy"] for item in logging_list]).mean(axis=-1) #每个batch的entropy均值
-   
+
     if task == "i2t":
         if mode == "tta":
             losses = np.array([item["loss"] for item in logging_list])
@@ -333,7 +337,7 @@ def plt_logging_list_v2(logging_list, resualt_dir=".", resualt_rank_dir=".", tas
             plt.plot(coeffi_exp_temper_s, alpha=0.7)
             plt.legend(["coeffi_exp_temper per iteration"])
             plt.savefig(f"{resualt_rank_dir}/{mode}_until_epochs_coeffi_exp_temper.jpg")
-            
+
             plt.figure(figsize=(32,8))
             plt.plot(scores[:,0], alpha=0.7)
             plt.plot(scores[:,1:].mean(axis=1), alpha=0.7)
@@ -410,7 +414,7 @@ def test_time_adapt(job_id, cfg, model, tta_dataloader, eval_dataloader, optimiz
     logging.info("test_time_adapt start")
     tta_cfg = cfg.config.tta
 
-    ## path 
+    ## path
     lib_root = os.path.dirname(os.path.abspath(__file__))
     output_dir = lib_root +"/"+ cfg.run_cfg.output_dir +"/"+  job_id
     result_dir = output_dir +"/"+  "result"
@@ -457,7 +461,7 @@ def test_time_adapt(job_id, cfg, model, tta_dataloader, eval_dataloader, optimiz
                 ).float() # logits.shape=bs*k_tta, 2
                 logits = logits.reshape(-1, tta_cfg.k_tta, 2) # logits.shape=bs, k_tta, 2
                 score = logits[..., 1] # score.shape=bs, k_tta
-                if 0:logging.info("    compute_itm_logits end ")  
+                if 0:logging.info("    compute_itm_logits end ")
 
                 ## score = itm_score + cos_sim
                 sum_score = score.detach().cpu() + sims.reshape(-1, tta_cfg.k_tta).detach().cpu()
@@ -469,11 +473,11 @@ def test_time_adapt(job_id, cfg, model, tta_dataloader, eval_dataloader, optimiz
                         uncertainty = nn.functional.kl_div(F.log_softmax(score, dim=-1), F.softmax(sims.reshape(-1, tta_cfg.k_tta).to(model.device), dim=-1), reduction="none").sum(dim=-1) # shape = bs,
                     elif getattr(tta_cfg, "uncertainty_type", None) == "kl_itc_itm":
                         uncertainty = nn.functional.kl_div(F.softmax(sims.reshape(-1, tta_cfg.k_tta).to(model.device), dim=-1), F.log_softmax(score, dim=-1), reduction="none").sum(dim=-1) # shape = bs,
-                if 0:logging.info("    uncertainty end ")  
+                if 0:logging.info("    uncertainty end ")
 
                 ## coeffi
                 if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) == True:
-                    tta_coeffi = torch.exp( model.coeffi_exp_temper * (1-(tta_coeffi_proba1+tta_coeffi_proba2)/2) ) 
+                    tta_coeffi = torch.exp( model.coeffi_exp_temper * (1-(tta_coeffi_proba1+tta_coeffi_proba2)/2) )
                 else:
                     tta_coeffi = tta_coeffi.to(model.device)
                 ## temperature
@@ -494,7 +498,7 @@ def test_time_adapt(job_id, cfg, model, tta_dataloader, eval_dataloader, optimiz
                 loss = loss.mean()
                 loss = loss / tta_cfg.grad_accum_bs
                 loss.backward()
-                if 0:logging.info("    backward end ")  
+                if 0:logging.info("    backward end ")
                 grad_accum_num += 1
                 if grad_accum_num >= tta_cfg.grad_accum_bs or iter+1 >= len(tta_dataloader):
                     optimizer.step()
@@ -512,7 +516,7 @@ def test_time_adapt(job_id, cfg, model, tta_dataloader, eval_dataloader, optimiz
                     else:
                         lr = optimizer.param_groups[0]['lr']
                     logging.info(f"[ITM ADAPT rank{get_rank()}] Iteration: {iter}, Iter Entropy Mean: {entropy.mean().detach().cpu().numpy()}, Iter Loss: {loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs}, Learning Rate: {lr}")
-               
+
                 ## logging json
                 logging_list.append({
                     "index" : index.detach().cpu().numpy().tolist(), # index=ss_idxs[index]
@@ -583,7 +587,7 @@ def test_time_adapt(job_id, cfg, model, tta_dataloader, eval_dataloader, optimiz
             # npy_path = os.path.join(registry.get_path("output_dir"), f"result/eval_epochs_score_distribution.npy")
             # np.save(npy_path, np.concatenate(eval_itm_score_list))
             # plt_itm_score(np.concatenate(eval_itm_score_list), task="i2t", mode="eval")
-    
+
     logging.info("test_time_adapt end")
 '''
 

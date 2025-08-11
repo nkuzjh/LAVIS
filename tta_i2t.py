@@ -107,7 +107,7 @@ def main():
 
     cfg.pretty_print()
 
-    #### Path 
+    #### Path
     lib_root = os.path.dirname(os.path.abspath(__file__))
     output_dir = lib_root +"/"+ cfg.run_cfg.output_dir +"/"+  job_id
     logging.info(f"\nCreate output_dir: {output_dir} ...")
@@ -138,31 +138,32 @@ def main():
     # np.save("debugs/debug_text_embeds.npy",text_embeds.numpy())
     # np.save("debugs/debug_text_ids.npy",text_ids.numpy())
     # np.save("debugs/debug_text_atts.npy",text_atts.numpy())
-    if is_main_process():
+    # if is_main_process():
+    if 1:
         logging.warning(f"get_rank:{get_rank()} load debug_sim_matrix_i2t.npy")
         sims_matrix_i2t = torch.from_numpy(np.load("debugs/debug_sim_matrix_i2t.npy"))
-        
+
         # sims_matrix_t2i = torch.from_numpy(np.load("debugs/debug_sim_matrix_t2i.npy"))
         # image_embeds = torch.from_numpy(np.load("debugs/debug_image_embeds.npy"))
 
         logging.warning(f"get_rank:{get_rank()} load debug_vit_feats.npy")
         vit_feats = torch.from_numpy(np.load("/data/jiahao/blip2_embeddings/debug_vit_feats.npy"))
-       
+
         # text_embeds = torch.from_numpy(np.load("debugs/debug_text_embeds.npy"))
-        
+
         logging.warning(f"get_rank:{get_rank()} load debug_text_ids.npy")
         text_ids = torch.from_numpy(np.load("debugs/debug_text_ids.npy"))
-        
+
 
         logging.warning(f"get_rank:{get_rank()} load debug_text_atts.npy")
         text_atts = torch.from_numpy(np.load("debugs/debug_text_atts.npy"))
-        
+
         logging.warning(f"get_rank:{get_rank()} preprocess_tta_dataset")
         ss_idxs = preprocess_tta_dataset(cfg, eval_dataloader.dataset.img2txt, sims_matrix_i2t, vit_feats, text_ids, text_atts)
 
     # # ## broadcast features to all process
     # if is_dist_avail_and_initialized():
-        
+
     #     if is_main_process():
     #         sims_matrix_i2t = sims_matrix_i2t.cuda()
     #     else:
@@ -176,27 +177,27 @@ def main():
     #         vit_feats = torch.empty([5000, 677, 1408], dtype=torch.float32,device='cuda')
     #     dist.broadcast(vit_feats, src=0)
     #     vit_feats = vit_feats.cpu()
-            
+
     #     if is_main_process():
     #         text_ids = text_ids.cuda()
     #     else:
     #         text_ids = torch.empty([25010, 35], dtype=torch.int64,device='cuda')
     #     dist.broadcast(text_ids, src=0)
     #     text_ids = text_ids.cpu()
-            
+
     #     if is_main_process():
     #         text_atts = text_atts.cuda()
     #     else:
     #         text_atts = torch.empty([25010, 35], dtype=torch.int64,device='cuda')
     #     dist.broadcast(text_atts, src=0)
     #     text_atts = text_atts.cpu()
-        
+
     # sims_matrix_i2t, vit_feats, text_ids, text_atts = sims_matrix_i2t.cpu(), vit_feats.cpu(), text_ids.cpu(), text_atts.cpu()
 
     logging.info("\nInitialize tta dataset ...")
     tta_dataset = create_tta_dataset(cfg, ss_idxs)
     tta_dataloader, tta_sampler = create_tta_dataloader(cfg, tta_dataset)
-    
+
     logging.info("\nInitialize optimizer ...")
     num_training_steps = len((tta_dataloader)) * cfg.config.tta.offline_multi_epochs
     optimizer, scheduler = create_optimizer_scheduler(cfg, model, num_training_steps)
@@ -221,7 +222,7 @@ def main():
         result = report_metrics(scores_i2t=score_i2t_zeroshot, scores_t2i=None, txt2img=eval_dataloader.dataset.txt2img, img2txt=eval_dataloader.dataset.img2txt, prefix_info=f"rank{get_rank()} report i2t metrics, zero-shot :")
         logging.info(f"report i2t metrics, zero-shot :")
         logging.info(result)
-    
+
     logging.info("============= test_time_adapt start =============")
     tta_cfg = cfg.config.tta
     score_temper_ = tta_cfg.score_temper if hasattr(tta_cfg, "score_temper") else 1.0
@@ -264,7 +265,7 @@ def main():
                 ).float() # logits.shape=bs*k_tta, 2
                 logits = logits.reshape(-1, tta_cfg.k_tta, 2) # logits.shape=bs, k_tta, 2
                 score = logits[..., 1] # score.shape=bs, k_tta
-                if 0:logging.info("    compute_itm_logits end ")  
+                if 0:logging.info("    compute_itm_logits end ")
 
                 ## score = itm_score + cos_sim
                 sum_score = score.detach().cpu() + sims.reshape(-1, tta_cfg.k_tta).detach().cpu()
@@ -276,11 +277,11 @@ def main():
                         uncertainty = nn.functional.kl_div(F.log_softmax(score, dim=-1), F.softmax(sims.reshape(-1, tta_cfg.k_tta).to(model.device), dim=-1), reduction="none").sum(dim=-1) # shape = bs,
                     elif getattr(tta_cfg, "uncertainty_type", None) == "kl_itc_itm":
                         uncertainty = nn.functional.kl_div(F.softmax(sims.reshape(-1, tta_cfg.k_tta).to(model.device), dim=-1), F.log_softmax(score, dim=-1), reduction="none").sum(dim=-1) # shape = bs,
-                if 0:logging.info("    uncertainty end ")  
+                if 0:logging.info("    uncertainty end ")
 
                 ## coeffi
                 if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) == True:
-                    tta_coeffi = torch.exp( model.coeffi_exp_temper * (1-(tta_coeffi_proba1.to(model.device)+tta_coeffi_proba2.to(model.device))/2) ).to(model.device) 
+                    tta_coeffi = torch.exp( model.coeffi_exp_temper * (1-(tta_coeffi_proba1.to(model.device)+tta_coeffi_proba2.to(model.device))/2) ).to(model.device)
                 else:
                     tta_coeffi = tta_coeffi.to(model.device)
                 ## temperature
@@ -301,7 +302,7 @@ def main():
                 loss = loss.mean()
                 loss = loss / tta_cfg.grad_accum_bs
                 loss.backward()
-                if 0:logging.info("    backward end ")  
+                if 0:logging.info("    backward end ")
                 grad_accum_num += 1
                 if grad_accum_num >= tta_cfg.grad_accum_bs or iter+1 >= len(tta_dataloader):
                     optimizer.step()
@@ -319,7 +320,7 @@ def main():
                     else:
                         lr = optimizer.param_groups[0]['lr']
                     logging.info(f"[ITM ADAPT rank{get_rank()}] Iteration: {iter}, Iter Entropy Mean: {entropy.mean().detach().cpu().numpy()}, Iter Loss: {loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs}, Learning Rate: {lr}, model.coeffi_exp_temper: {model.coeffi_exp_temper}")
-               
+
                 ## logging json
                 logging_list.append({
                     "index" : index.detach().cpu().numpy().tolist(), # index=ss_idxs[index]
@@ -378,18 +379,18 @@ def main():
 
         # logging.warning(f"get_rank:{get_rank()} load debug_sim_matrix_i2t.npy")
         # sims_matrix_i2t = torch.from_numpy(np.load("debugs/debug_sim_matrix_i2t.npy"))
-        
+
         # # sims_matrix_t2i = torch.from_numpy(np.load("debugs/debug_sim_matrix_t2i.npy"))
         # # image_embeds = torch.from_numpy(np.load("debugs/debug_image_embeds.npy"))
 
         # logging.warning(f"get_rank:{get_rank()} load debug_vit_feats.npy")
         # vit_feats = torch.from_numpy(np.load("/data/jiahao/blip2_embeddings/debug_vit_feats.npy"))
-       
+
         # # text_embeds = torch.from_numpy(np.load("debugs/debug_text_embeds.npy"))
-        
+
         # logging.warning(f"get_rank:{get_rank()} load debug_text_ids.npy")
         # text_ids = torch.from_numpy(np.load("debugs/debug_text_ids.npy"))
-        
+
 
         # logging.warning(f"get_rank:{get_rank()} load debug_text_atts.npy")
         # text_atts = torch.from_numpy(np.load("debugs/debug_text_atts.npy"))
@@ -413,7 +414,7 @@ def main():
             # npy_path = os.path.join(registry.get_path("output_dir"), f"result/eval_epochs_score_distribution.npy")
             # np.save(npy_path, np.concatenate(eval_itm_score_list))
             # plt_itm_score(np.concatenate(eval_itm_score_list), task="i2t", mode="eval")
-    
+
     logging.info("============= test_time_adapt end =============")
 
 
@@ -438,7 +439,7 @@ if __name__ == "__main__":
 
 # TTA itm_adapt
 # --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.yaml --is_tta True
-# --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp11.yaml 
+# --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp11.yaml
 # - CUDA_VISIBLE_DEVICES=1 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t.yaml > ret_coco_eval_itm_adapt_i2t.out 2>&1 &
 # - CUDA_VISIBLE_DEVICES=2 nohup python evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i.yaml > ret_coco_eval_itm_adapt_t2i.out 2>&1 &
 
