@@ -111,7 +111,11 @@ class Blip2Qformer(Blip2Base):
 
         self.max_txt_len = max_txt_len
 
+        # new parameter adding
+        ## Coeffi Exp Temperature
         self.coeffi_exp_temper = torch.nn.Parameter(torch.ones(1))#torch.ones(1)
+        ## Learnable Empty Embedding for Prompt Learning
+        self.learnable_empty_embedding = torch.nn.Parameter(torch.zeros(1, 1, self.Qformer.config.hidden_size))
 
     def forward(self, samples):
         image = samples["image"] #14,3,364,364
@@ -457,6 +461,9 @@ class Blip2Qformer(Blip2Base):
         attention_mask = torch.cat([query_atts, text_atts], dim=1).to(
             image_inputs.device
         ) #128,67
+        text_ids = torch.cat([text_ids, self.learnable_empty_embedding], dim=1).to(
+            image_inputs.device
+        )
         output_itm = self.Qformer.bert(
             text_ids, #128,35
             query_embeds=query_tokens, #128,32,768

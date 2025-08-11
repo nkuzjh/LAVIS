@@ -200,11 +200,11 @@ class TTA_T2I_Dataset(Dataset):
 
 
 class TTA_I2T_Shards_Dataset(Dataset):
-    def __init__(self, dataset_dir):
+    def __init__(self, dataset_dir, ss_idxs):
         self.dataset_dir = dataset_dir
         # 只扫描目录下的 .pt 文件，不加载任何数据
         self.file_list = sorted(
-            [f for f in os.listdir(dataset_dir) if f.endswith('.pt')],
+            [f for f in os.listdir(dataset_dir) if f.endswith('.pt') and int(f.split('.')[0]) in ss_idxs],
             key=lambda x: int(x.split('.')[0])
         )
         logging.info(f"    find {len(self.file_list)} samples in {dataset_dir}")
@@ -353,6 +353,7 @@ def save_dataset_shards(dataset_dir, tta_cfg, sims_matrix, sims_idxs, labels, re
     print(f"saving dataset shards to {dataset_dir}")
 
     for idx in tqdm(range(len(labels))):
+    # for idx in tqdm(ss_idxs):
         data = {
             'tta_cfg_k_tta': tta_cfg.k_tta,  # 只保存必要的配置
             'sims': torch.tensor(sims_matrix[idx]),
@@ -479,12 +480,13 @@ def preprocess_tta_dataset(cfg, labels, sims_matrix_i2t, vit_feats, text_ids, te
         proba_sim_at_top1_idx_list=proba_sim_at_top1_idx_list if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False)  else None
     )
     logging.info(f"preprocess_tta_dataset  end")
+    return ss_idxs
 
-def create_tta_dataset(cfg):
+def create_tta_dataset(cfg, ss_idxs):
     logging.info(f"create_tta_dataset  start")
 
     tta_cfg = cfg.config.tta
-    tta_dataset = TTA_I2T_Shards_Dataset(tta_cfg.shards_dataset_dir)
+    tta_dataset = TTA_I2T_Shards_Dataset(tta_cfg.shards_dataset_dir, ss_idxs)
     logging.info("number of tta_dataset: {}".format(len(tta_dataset)))
 
     logging.info(f"create_tta_dataset  end")

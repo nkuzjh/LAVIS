@@ -1282,7 +1282,8 @@
     grad_accum = 3
     - CUDA_VISIBLE_DEVICES=2 nohup python -m torch.distributed.run --nproc_per_node=1 --master_port=29502 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.4.yaml > ret_coco_eval_itm_adapt_i2t_exp11.0.3.4.out 2>&1 &
         report i2t metrics offline, epoch 0 : {"txt_r1": 85.42, "txt_r5": 96.84, "txt_r10": 98.44, "txt_r_mean": 93.56666666666666, "txt_mAP": 71.21, 
-### exp 11.0.3.5
+### bash running
+#### exp 11.0.3.5
 1. parameters:
     - top1_match_coeffi = True
     - lr=5e-5, wd=0.0
@@ -1291,6 +1292,46 @@
 2. i2t:
     grad_accum = 3
     - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
+#### exp 11.0.3.5.1
+1. parameters:
+    - **sample_selection = True**
+    - top1_match_coeffi = True
+    - lr=5e-5, wd=0.0
+    - coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, coeffi_exp_temper: 1.0
+    - coeffi_exp_temper_is_learnable = True
+2. i2t:
+    grad_accum = 3
+    - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.1.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.1.out 2>&1 &
+#### exp 11.0.3.5.2
+1. parameters:
+    - sample_selection = True
+    - top1_match_coeffi = True
+    - **lr=1e-4**, wd=0.0
+    - coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, coeffi_exp_temper: 1.0
+    - coeffi_exp_temper_is_learnable = True
+2. i2t:
+    grad_accum = 3
+    - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.2.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.2.out 2>&1 &
+#### exp 11.0.3.5.3
+1. parameters:
+    - sample_selection = True
+    - top1_match_coeffi = True
+    - **lr=5e-4**, wd=0.0
+    - coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, coeffi_exp_temper: 1.0
+    - coeffi_exp_temper_is_learnable = True
+2. i2t:
+    grad_accum = 3
+    - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.3.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.3.out 2>&1 &
+#### exp 11.0.3.5.4
+1. parameters:
+    - sample_selection = True
+    - top1_match_coeffi = True
+    - **lr=1e-5**, wd=0.0
+    - coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, coeffi_exp_temper: 1.0
+    - coeffi_exp_temper_is_learnable = True
+2. i2t:
+    grad_accum = 3
+    - CUDA_VISIBLE_DEVICES=1 nohup python -m torch.distributed.run --nproc_per_node=1 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.4.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.4.out 2>&1 &
 
 #### exp 11.0.4
 1. parameters:
@@ -1402,3 +1443,30 @@
     - CUDA_VISIBLE_DEVICES=1 python -m torch.distributed.run --nproc_per_node=1 --master_port=29500 evaluate_tta.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.0.3.yaml
         grad_accum=3
         report i2t metrics offline, epoch 2 : {"txt_r1": 85.38, "txt_r5": 97.0, "txt_r10": 98.48, "txt_r_mean": 93.62, "txt_mAP": 71.37,
+
+### exp 13
+1. parameters:
+    - itm_adapt_v3: dataset shuffle=True
+    - loss = softmax_entropy ( itm_score * score_temper ), score_temper=1.0
+    - sampling stretegy: pos/neg=1/3; i2t pos = top1; neg from top hard negs;
+    - **prompt leanrning: concat(learnable_embedding, text_ids)**
+    - **top1_match_coeffi=True**, top1_match_coeffi_src=softmax with temperature(**i2t=100 t2i=100**)
+    - **coeffi_exp_temper: 1.0, coeffi_exp_temper_is_learnable = True**
+    - **sample selection = top1**
+    - **is_prompt_learning = True**
+    - lr=1e-4, wd=0.0
+    - batchsize=32 =128/4
+    - **grad_accum_bs=3**
+    - multi_epochs=10
+    - offline eval topk=128
+    - rerank_score = itm_score +　cos_sim wo div temp
+    - model.eval() in adapt&evaluation
+    - log_iters=100
+2. results i2t best:
+    - CUDA_VISIBLE_DEVICES=1 nohup python tta_i2t.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp13.yaml > ret_coco_eval_itm_adapt_i2t_exp13.out 2>&1 &
+
+3. t2i:
+    - CUDA_VISIBLE_DEVICES=1 nohup python tta_i2t.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_t2i_exp13.yaml > ret_coco_eval_itm_adapt_t2i_exp13.out 2>&1 &
+
+
+

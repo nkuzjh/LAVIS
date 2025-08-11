@@ -51,7 +51,7 @@ run:
 
   # misc
   seed: 42
-  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp11.0.3.5/i2t"
+  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp13/i2t"
 
   evaluate: True
 
@@ -64,13 +64,11 @@ tta:
   # online: False
   zero_shot_eval: False
 
-  # entropy_type: "softmax"
-  score_temper: 1.0
-
   shards_dataset_dir: "/data/jiahao/blip2_embeddings/"
   k_tta: 4 #16
   # pos_sample_range: [0, 5]
   neg_sample_range: [5, 8] #[10, 32] # (32,128)
+
   # temper: 1.0
   top1_match_coeffi: True
   top1_match_coeffi_src: "softmax" #"sigmoid" # this param will be used when top1_match_coeffi=True
@@ -78,9 +76,14 @@ tta:
   coeffi_t2i_temper: 100.0
   coeffi_exp_temper: 1.0
   coeffi_exp_temper_is_learnable: True
-  sample_selection: "all"
+  sample_selection: "top1"
 
-  init_lr: 5e-5
+  # entropy_type: "softmax"
+  score_temper: 1.0
+
+  is_prompt_learning: True
+
+  init_lr: 1e-5
   weight_decay: 0.0
   tta_bs: 32
   grad_accum_bs: 3

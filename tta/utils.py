@@ -789,7 +789,7 @@ def compute_i2t_itm_score_v2(model, dataloader, task_cfg, tta_cfg, sims_matrix_i
                 })
                 ## log_iters logging
                 if (i+1) % tta_cfg.log_iters == 0 or i+1>sims_matrix_i2t[start:end].size(0):
-                    logging.info(f"[ITM ADAPT rank{rank}] Iteration: {i}, Recall Type: {recall_type}, Iteration Entropy: {entropy.detach().cpu().numpy()}")
+                    logging.info(f"[ITM ADAPT rank{rank}] Iteration: {i}, Recall Type: {recall_type_2}, Iteration Entropy: {entropy.detach().cpu().numpy()}")
                 # ## tqdm logging
                 # tbar.set_postfix(recall_type=recall_type, entropy=entropy.detach().cpu().numpy())
                 # tbar.update(1)

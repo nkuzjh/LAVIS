@@ -327,6 +327,12 @@ def plt_logging_list_v2(logging_list, resualt_dir=".", resualt_rank_dir=".", tas
             plt.plot(losses, alpha=0.7)
             plt.legend(["loss per iteration"])
             plt.savefig(f"{resualt_rank_dir}/{mode}_until_epochs_loss.jpg")
+
+            coeffi_exp_temper_s = np.array([item["coeffi_exp_temper"] for item in logging_list])
+            plt.figure(figsize=(32,8))
+            plt.plot(coeffi_exp_temper_s, alpha=0.7)
+            plt.legend(["coeffi_exp_temper per iteration"])
+            plt.savefig(f"{resualt_rank_dir}/{mode}_until_epochs_coeffi_exp_temper.jpg")
             
             plt.figure(figsize=(32,8))
             plt.plot(scores[:,0], alpha=0.7)

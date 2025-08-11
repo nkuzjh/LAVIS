@@ -158,7 +158,7 @@ def main():
         text_atts = torch.from_numpy(np.load("debugs/debug_text_atts.npy"))
         
         logging.warning(f"get_rank:{get_rank()} preprocess_tta_dataset")
-        preprocess_tta_dataset(cfg, eval_dataloader.dataset.img2txt, sims_matrix_i2t, vit_feats, text_ids, text_atts)
+        ss_idxs = preprocess_tta_dataset(cfg, eval_dataloader.dataset.img2txt, sims_matrix_i2t, vit_feats, text_ids, text_atts)
 
     # # ## broadcast features to all process
     # if is_dist_avail_and_initialized():
@@ -194,7 +194,7 @@ def main():
     # sims_matrix_i2t, vit_feats, text_ids, text_atts = sims_matrix_i2t.cpu(), vit_feats.cpu(), text_ids.cpu(), text_atts.cpu()
 
     logging.info("\nInitialize tta dataset ...")
-    tta_dataset = create_tta_dataset(cfg)
+    tta_dataset = create_tta_dataset(cfg, ss_idxs)
     tta_dataloader, tta_sampler = create_tta_dataloader(cfg, tta_dataset)
     
     logging.info("\nInitialize optimizer ...")
@@ -318,7 +318,7 @@ def main():
                         lr = scheduler.get_last_lr()[0]
                     else:
                         lr = optimizer.param_groups[0]['lr']
-                    logging.info(f"[ITM ADAPT rank{get_rank()}] Iteration: {iter}, Iter Entropy Mean: {entropy.mean().detach().cpu().numpy()}, Iter Loss: {loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs}, Learning Rate: {lr}")
+                    logging.info(f"[ITM ADAPT rank{get_rank()}] Iteration: {iter}, Iter Entropy Mean: {entropy.mean().detach().cpu().numpy()}, Iter Loss: {loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs}, Learning Rate: {lr}, model.coeffi_exp_temper: {model.coeffi_exp_temper}")
                
                 ## logging json
                 logging_list.append({
@@ -330,6 +330,8 @@ def main():
                     "score" : score.detach().cpu().numpy().tolist(),
                     "sum_score": sum_score.detach().cpu().numpy().tolist(),
                     "entropy" : entropy.detach().cpu().numpy().tolist(),
+                    "coeffi_exp_temper": model.coeffi_exp_temper.detach().cpu().numpy().tolist(),
+                    "learnable_empty_embedding": model.learnable_empty_embedding.detach().cpu().numpy().tolist(),
                     "tta_coeffi": tta_coeffi.detach().cpu().numpy().tolist(),
                     "uncertainty": uncertainty.detach().cpu().numpy().tolist(),
                     "loss" : loss.detach().cpu().numpy() * tta_cfg.grad_accum_bs,
@@ -404,7 +406,7 @@ def main():
             json.dump(eval_logging_list_epochs_json, f)
         if is_main_process():
             ### report metrics
-            results = report_metrics(scores_i2t=eval_score_i2t, scores_t2i=None, txt2img=tta_dataloader.dataset.txt2img, img2txt=tta_dataloader.dataset.img2txt, prefix_info=f"report i2t metrics offline, epoch {tta_epoch} :", output_dir=output_dir)
+            results = report_metrics(scores_i2t=eval_score_i2t, scores_t2i=None, txt2img=eval_dataloader.dataset.txt2img, img2txt=eval_dataloader.dataset.img2txt, prefix_info=f"report i2t metrics offline, epoch {tta_epoch} :", output_dir=output_dir)
             logging.info(f"report i2t metrics offline, epoch {tta_epoch} :")
             logging.info(results)
             # ### plt & save npy
