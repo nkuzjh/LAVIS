@@ -1474,8 +1474,8 @@
     - coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, **coeffi_exp_temper: 9.13492488861084**
     - coeffi_exp_temper_is_learnable = True
 2. i2t:
-    coeffi_exp_temper ->
-    running
+    coeffi_exp_temper -> 8.207632064819336
+    report i2t metrics offline, epoch 0 : {"txt_r1": 82.72, "txt_r5": 95.74, "txt_r10": 97.92, "txt_r_mean": 92.12666666666667, "txt_mAP": 66.75}
 ### exp11.1.1 from exp11.1
 1. objective
     增大learning_rate确保coeffi_exp_temper的训练是有效的，再逐步调整coeffi_exp_temper至收敛
@@ -1484,6 +1484,18 @@
     - top1_match_coeffi = True
     - **lr=1e-3**, wd=0.0
     - coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, **coeffi_exp_temper: 5**
+    - coeffi_exp_temper_is_learnable = True
+2. i2t:
+    coeffi_exp_temper -> 3.8656363487243652
+    report i2t metrics offline, epoch 9 : {"txt_r1": 80.88, "txt_r5": 95.6, "txt_r10": 97.84, "txt_r_mean": 91.44, "txt_mAP": 65.86}
+### exp11.1.2 from exp11.1
+1. objective
+    增大learning_rate确保coeffi_exp_temper的训练是有效的，再逐步调整coeffi_exp_temper至收敛
+1. parameters:
+    - sample_selection = True
+    - top1_match_coeffi = True
+    - **lr=1e-3**, wd=0.0
+    - coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, **coeffi_exp_temper: 2**
     - coeffi_exp_temper_is_learnable = True
 2. i2t:
     coeffi_exp_temper ->

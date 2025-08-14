@@ -425,7 +425,7 @@ if __name__ == "__main__":
 
 
 # command
-# CUDA_VISIBLE_DEVICES=1 nohup python tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.1.1.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.1.1.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=0 nohup python tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.1.2.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.1.2.out 2>&1 &
 # CUDA_VISIBLE_DEVICES=1,2 nohup python -m torch.distributed.run --nproc_per_node=2 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
 # CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
 # CUDA_VISIBLE_DEVICES=0,1,2 python -m torch.distributed.run --nproc_per_node=3 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True
