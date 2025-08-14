@@ -77,7 +77,7 @@ tta:
   top1_match_coeffi_src: "softmax" #"sigmoid" # this param will be used when top1_match_coeffi=True
   coeffi_i2t_temper: 100.0
   coeffi_t2i_temper: 100.0
-  coeffi_exp_temper: 3 #from 10
+  coeffi_exp_temper: 2 #from 10
   coeffi_exp_temper_is_learnable: True
   sample_selection: "top1"
 

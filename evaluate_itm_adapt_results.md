@@ -1476,6 +1476,18 @@
 2. i2t:
     coeffi_exp_temper ->
     running
+### exp11.1.1 from exp11.1
+1. objective
+    增大learning_rate确保coeffi_exp_temper的训练是有效的，再逐步调整coeffi_exp_temper至收敛
+1. parameters:
+    - sample_selection = True
+    - top1_match_coeffi = True
+    - **lr=1e-3**, wd=0.0
+    - coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, **coeffi_exp_temper: 5**
+    - coeffi_exp_temper_is_learnable = True
+2. i2t:
+    coeffi_exp_temper ->
+    running
 
 
 ### exp13+ bash finish
