@@ -327,6 +327,12 @@ def plt_logging_list_v2(logging_list, resualt_dir=".", resualt_rank_dir=".", tas
 
     if task == "i2t":
         if mode == "tta":
+            entropys = np.array([ np.array(item["entropy"]).mean() for item in logging_list ])
+            plt.figure(figsize=(32,8))
+            plt.plot(entropys, alpha=0.7)
+            plt.legend(["entropy per iteration"])
+            plt.savefig(f"{resualt_rank_dir}/{mode}_until_epochs_entropy.jpg")
+
             losses = np.array([item["loss"] for item in logging_list])
             plt.figure(figsize=(32,8))
             plt.plot(losses, alpha=0.7)
