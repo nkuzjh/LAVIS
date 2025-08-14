@@ -251,7 +251,7 @@ class TTA_I2T_Shards_Dataset(Dataset):
             "label": label,
             "recall_type_2": recall_type_2,
         }
-    
+
     def collater(self, batch):
         """
         Args:
@@ -317,7 +317,7 @@ def create_eval_dataset(cfg):
 
     return dataset
 
-def create_eval_dataloader(cfg, dataset):   
+def create_eval_dataloader(cfg, dataset):
 
     if cfg.run_cfg.distributed:
         sampler = DistributedSampler(
@@ -344,7 +344,7 @@ def create_eval_dataloader(cfg, dataset):
     return dataloader
 
 
-def save_dataset_shards(dataset_dir, tta_cfg, sims_matrix, sims_idxs, labels, recall_types_2, vit_feats, text_ids, text_atts, tta_coeffis, proba_top1_sim_list, proba_sim_at_top1_idx_list):
+def save_dataset_shards(dataset_dir, tta_cfg, sims_matrix, sims_idxs, labels, recall_types_2, vit_feats, text_ids, text_atts, tta_coeffis, proba_top1_sim_list, proba_sim_at_top1_idx_list, ss_idxs):
     """
     将每个样本的数据保存为单独的 .pt 文件
     文件名: {index}.pt
@@ -354,6 +354,7 @@ def save_dataset_shards(dataset_dir, tta_cfg, sims_matrix, sims_idxs, labels, re
 
     for idx in tqdm(range(len(labels))):
     # for idx in tqdm(ss_idxs):
+        save_ss_idx = ss_idxs[idx]
         data = {
             'tta_cfg_k_tta': tta_cfg.k_tta,  # 只保存必要的配置
             'sims': torch.tensor(sims_matrix[idx]),
@@ -367,12 +368,12 @@ def save_dataset_shards(dataset_dir, tta_cfg, sims_matrix, sims_idxs, labels, re
             'label': labels[idx],
             'recall_type_2': recall_types_2[idx]
         }
-        torch.save(data, os.path.join(dataset_dir, f"{idx}.pt"))
+        torch.save(data, os.path.join(dataset_dir, f"{save_ss_idx}.pt"))
 
 def preprocess_tta_dataset(cfg, labels, sims_matrix_i2t, vit_feats, text_ids, text_atts):
     logging.info(f"preprocess_tta_dataset  start")
     tta_cfg = cfg.config.tta
-   
+
     ## 获取metric标签用于可视化
     k_test = cfg.run_cfg.k_test
     top128_sims, top128_idxs = sims_matrix_i2t.topk(k=k_test, dim=1)
@@ -398,7 +399,7 @@ def preprocess_tta_dataset(cfg, labels, sims_matrix_i2t, vit_feats, text_ids, te
     sampled_sims_matrix_i2t = torch.stack(sampled_sims_matrix_i2t) # shape=(5000, k_tta)
     sampled_sims_idx_i2t = torch.stack(sampled_sims_idx_i2t) # shape=(5000, k_tta)
     logging.info("number of sample after pos/neg sampling: {}".format(sampled_sims_matrix_i2t.size()))
-    
+
     logging.info(f"tta_coeffis & score_temper ...")
     ## tta coeffis
     if tta_cfg.top1_match_coeffi == True:
@@ -433,6 +434,9 @@ def preprocess_tta_dataset(cfg, labels, sims_matrix_i2t, vit_feats, text_ids, te
         sampled_sims_idx_i2t = sampled_sims_idx_i2t[ss_idxs]
         # logging.info("    sampled_sims_matrix_i2t")
         tta_coeffis = [tta_coeffis[i] for i in ss_idxs]
+        if tta_cfg.top1_match_coeffi == True and getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) == True:
+            proba_top1_sim_list = [proba_top1_sim_list[i] for i in ss_idxs]
+            proba_sim_at_top1_idx_list = [proba_sim_at_top1_idx_list[i] for i in ss_idxs]
         # logging.info("    tta_coeffis")
         # score_matrix_i2t_ = score_matrix_i2t[ss_idxs].cpu()
         # logging.info("    score_matrix_i2t_")
@@ -476,8 +480,9 @@ def preprocess_tta_dataset(cfg, labels, sims_matrix_i2t, vit_feats, text_ids, te
         text_ids=text_ids,
         text_atts=text_atts,
         tta_coeffis=tta_coeffis,
-        proba_top1_sim_list=proba_top1_sim_list if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) else None,
-        proba_sim_at_top1_idx_list=proba_sim_at_top1_idx_list if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False)  else None
+        proba_top1_sim_list=proba_top1_sim_list if tta_cfg.top1_match_coeffi and getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) else None,
+        proba_sim_at_top1_idx_list=proba_sim_at_top1_idx_list if tta_cfg.top1_match_coeffi and getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False)  else None,
+        ss_idxs=ss_idxs,
     )
     logging.info(f"preprocess_tta_dataset  end")
     return ss_idxs

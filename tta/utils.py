@@ -443,11 +443,11 @@ def compute_tta_coeffis(sims_matrix_i2t, sims_matrix_t2i, k_test, i2t_temper=100
         topk_sim_t2i_top1_idx_i2t, topk_idx_t2i_top1_idx_i2t = sims_matrix_t2i[topk_idx_i2t[0]].topk(k=k_test, dim=0)
         if i in topk_idx_t2i_top1_idx_i2t:
             idx_i_in_topk_idx_t2i_top1_idx_i2t = torch.where(topk_idx_t2i_top1_idx_i2t == i)
-            proba_sim_t2i_top1_idx_i2t = F.softmax(topk_sim_t2i_top1_idx_i2t * t2i_temper, dim=0)[idx_i_in_topk_idx_t2i_top1_idx_i2t]
+            proba_sim_t2i_top1_idx_i2t = F.softmax(topk_sim_t2i_top1_idx_i2t * t2i_temper, dim=0)[idx_i_in_topk_idx_t2i_top1_idx_i2t] # proba2为32,1和proba1相加后广播成32,32，shape出现错误！！！ DONE！
         coeffi = torch.exp( (1 - (proba_top1_sim_i2t + proba_sim_t2i_top1_idx_i2t) / 2) * exp_temper )
         coeffis.append(coeffi)
         proba_top1_sim_list.append(proba_top1_sim_i2t)
-        proba_sim_at_top1_idx_list.append(proba_sim_t2i_top1_idx_i2t)
+        proba_sim_at_top1_idx_list.append(proba_sim_t2i_top1_idx_i2t[0])
     if getattr(tta_cfg, "coeffi_exp_temper_is_learnable", False) == True:
         return coeffis, proba_top1_sim_list, proba_sim_at_top1_idx_list
     else:
@@ -1206,8 +1206,8 @@ def plt_logging_list(logging_list, task="i2t", mode="tta"):
     scores = np.array([item["score"] for item in logging_list])
     scores = scores.reshape(-1, scores.shape[-1]) # tta=(5000/25010, 4) eval=(5000/25010, 128)
     entropys = np.array([item["entropy"] for item in logging_list]).mean(axis=-1) #每个batch的entropy均值
-   
-    
+
+
     if task == "i2t":
         if mode == "tta":
             losses = np.array([item["loss"] for item in logging_list])
@@ -1215,7 +1215,7 @@ def plt_logging_list(logging_list, task="i2t", mode="tta"):
             plt.plot(losses, alpha=0.7)
             plt.legend(["loss per iteration"])
             plt.savefig(os.path.join(registry.get_path("output_dir"),  f"result/rank{get_rank()}/{mode}_until_epochs_loss.jpg"))
-            
+
             plt.figure(figsize=(32,8))
             plt.plot(scores[:,0], alpha=0.7)
             plt.plot(scores[:,1:].mean(axis=1), alpha=0.7)
@@ -1429,7 +1429,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
             ).float() # logits.shape=bs*k_tta, 2
             logits = logits.reshape(-1, tta_cfg.k_tta, 2) # logits.shape=bs, k_tta, 2
             score = logits[..., 1] # score.shape=bs, k_tta
-            # logging.info("    compute_itm_logits end ")  
+            # logging.info("    compute_itm_logits end ")
 
             ## score = itm_score + cos_sim
             for i, idx in enumerate(index):
@@ -1446,7 +1446,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
                     uncertainty = nn.functional.kl_div(F.log_softmax(score, dim=-1), F.softmax(sims.reshape(-1, tta_cfg.k_tta).to(model.device), dim=-1), reduction="none").sum(dim=-1) # shape = bs,
                 elif getattr(tta_cfg, "uncertainty_type", None) == "kl_itc_itm":
                     uncertainty = nn.functional.kl_div(F.softmax(sims.reshape(-1, tta_cfg.k_tta).to(model.device), dim=-1), F.log_softmax(score, dim=-1), reduction="none").sum(dim=-1) # shape = bs,
-            # logging.info("    uncertainty end ")  
+            # logging.info("    uncertainty end ")
 
             ## coeffi
             tta_coeffi = tta_coeffi.to(model.device)
@@ -1465,7 +1465,7 @@ def adapt_i2t_itm_score_v3(cfg, model, dataloader, task_cfg, optimizer, lr_sched
             loss = loss.mean()
             loss = loss / tta_cfg.grad_accum_bs
             loss.backward()
-            # logging.info("    backward end ")  
+            # logging.info("    backward end ")
             grad_accum_num += 1
             if grad_accum_num >= tta_cfg.grad_accum_bs or iter+1 >= len(tta_dataloader):
                 optimizer.step()

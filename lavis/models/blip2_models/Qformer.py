@@ -99,7 +99,7 @@ class BertEmbeddings(nn.Module):
                 embeddings = embeddings + position_embeddings
 
             if query_embeds is not None:
-                embeddings = torch.cat((query_embeds, embeddings), dim=1)
+                embeddings = torch.cat((query_embeds, embeddings), dim=1) #32,768+35,768=67,768
         else:
             embeddings = query_embeds
 
@@ -866,11 +866,13 @@ class BertModel(BertPreTrainedModel):
         query_length = query_embeds.shape[1] if query_embeds is not None else 0
 
         embedding_output = self.embeddings(
-            input_ids=input_ids,
-            position_ids=position_ids,
-            query_embeds=query_embeds,
-            past_key_values_length=past_key_values_length,
-        )
+            input_ids=input_ids, #128,35
+            position_ids=position_ids, #None
+            query_embeds=query_embeds,#128,32,768
+            past_key_values_length=past_key_values_length, #value=0
+        )# 128,67,768
+
+        # embedding_output = torch.cat([embedding_output[:, :32, :], learnable_empty_embedding.to(embedding_output.device), embedding_output[:, 32:, :]], dim=1)
 
         input_shape = embedding_output.size()[:-1]
         batch_size, seq_length = input_shape

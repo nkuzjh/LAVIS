@@ -51,7 +51,7 @@ run:
 
   # misc
   seed: 42
-  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp13/i2t"
+  output_dir: "output/BLIP2/Retrieval_COCO_itm_adapt_exp13.2/i2t"
 
   evaluate: True
 
@@ -83,7 +83,7 @@ tta:
 
   is_prompt_learning: True
 
-  init_lr: 1e-4
+  init_lr: 1e-5
   weight_decay: 0.0
   tta_bs: 32
   grad_accum_bs: 3

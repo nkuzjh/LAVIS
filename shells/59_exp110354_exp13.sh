@@ -22,28 +22,39 @@ scripts=(
     "tta_i2t.py"
     "tta_i2t.py"
     "tta_i2t.py"
-    # "evaluate_tta.py"
+    "tta_i2t.py"
+
 )
 
 # 定义日志文件名
 log_files=(
-    "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out"
-    "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.1.out"
-    "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.2.out"
-    "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.3.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.1.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.2.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.3.out"
+
+    "ret_coco_eval_itm_adapt_i2t_exp13"
     "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.4.out"
-    # "ret_coco_eval_itm_adapt_i2t_exp12.0.3.out"
-    
+    "ret_coco_eval_itm_adapt_i2t_exp13.1"
+    "ret_coco_eval_itm_adapt_i2t_exp13.2"
+    "ret_coco_eval_itm_adapt_i2t_exp13.3"
+    "ret_coco_eval_itm_adapt_i2t_exp13.4"
+
 )
 
 # 定义参数文件名
 args_files=(
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.1.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.2.yaml"
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.3.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.1.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.2.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.3.yaml"
+
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp13.yaml"
     "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.4.yaml"
-    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp12.0.3.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp13.1.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp13.2.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp13.3.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp13.4.yaml"
 
 )
 

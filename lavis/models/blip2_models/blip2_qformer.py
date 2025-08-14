@@ -78,6 +78,7 @@ class Blip2Qformer(Blip2Base):
         cross_attention_freq=2,
         embed_dim=256,
         max_txt_len=32,
+        tta_cfg=None,
     ):
         super().__init__()
 
@@ -113,8 +114,9 @@ class Blip2Qformer(Blip2Base):
 
         # new parameter adding
         ## Coeffi Exp Temperature
-        self.coeffi_exp_temper = torch.nn.Parameter(torch.ones(1))#torch.ones(1)
+        self.coeffi_exp_temper = torch.nn.Parameter(torch.ones(1) * tta_cfg.coeffi_exp_temper)#torch.ones(1)
         ## Learnable Empty Embedding for Prompt Learning
+        self.is_prompt_learning=False
         self.learnable_empty_embedding = torch.nn.Parameter(torch.zeros(1, 1, self.Qformer.config.hidden_size))
 
     def forward(self, samples):
@@ -452,18 +454,24 @@ class Blip2Qformer(Blip2Base):
         image_atts = torch.ones(image_inputs.size()[:-1], dtype=torch.long).to(
             image_inputs.device
         )#  image_inputs.shape=128,677,1408 -> image_atts.shape=128,677
-        query_tokens = self.query_tokens.expand(image_inputs.shape[0], -1, -1).to(
-            image_inputs.device
-        ) #self.query_tokens.shape=1,32,768 -> query_tokens.shap=128,32,768
+        if self.is_prompt_learning == True:
+            query_tokens = torch.cat([self.query_tokens, self.learnable_empty_embedding.to(image_inputs.device)], dim=1) #self.query_tokens.shape=128,32,768 -> query_tokens.shape=128,33,768
+            query_tokens = query_tokens.expand(image_inputs.shape[0], -1, -1).to(
+                image_inputs.device
+            ) #self.query_tokens.shape=1,32,768 -> query_tokens.shape=128,32,768
+        else:
+            query_tokens = self.query_tokens.expand(image_inputs.shape[0], -1, -1).to(
+                image_inputs.device
+            ) #self.query_tokens.shape=1,32,768 -> query_tokens.shape=128,32,768
         query_atts = torch.ones(query_tokens.size()[:-1], dtype=torch.long).to(
             image_inputs.device
         )# 128,32
         attention_mask = torch.cat([query_atts, text_atts], dim=1).to(
             image_inputs.device
         ) #128,67
-        text_ids = torch.cat([text_ids, self.learnable_empty_embedding], dim=1).to(
-            image_inputs.device
-        )
+        # text_ids = torch.cat([text_ids, self.learnable_empty_embedding], dim=1).to(
+        #     image_inputs.device
+        # )
         output_itm = self.Qformer.bert(
             text_ids, #128,35
             query_embeds=query_tokens, #128,32,768
@@ -478,7 +486,7 @@ class Blip2Qformer(Blip2Base):
         itm_logits = itm_logit.mean(dim=1)# # 128,32,2 -> 128.2
 
         return itm_logits
-    
+
     @torch.no_grad()
     def extract_features(self, samples, mode="multimodal"):
         """
@@ -594,7 +602,7 @@ class Blip2Qformer(Blip2Base):
         )
 
     @classmethod
-    def from_config(cls, cfg):
+    def from_config(cls, cfg, tta_cfg):
         vit_model = cfg.get("vit_model", "eva_clip_g") # 'clip_L'
         img_size = cfg.get("image_size")
         num_query_token = cfg.get("num_query_token")
@@ -617,6 +625,7 @@ class Blip2Qformer(Blip2Base):
             num_query_token=num_query_token,
             cross_attention_freq=cross_attention_freq,
             max_txt_len=max_txt_len,
+            tta_cfg=tta_cfg
         )
         model.load_checkpoint_from_config(cfg)
 
@@ -775,7 +784,7 @@ class Blip2Qformer(Blip2Base):
 
         score_t2i = compute_t2i_sim_matrix_adapt_itm_ss(model=self, data_loader=data_loader, optimizer=optimizer, k_test=k_test, tta_cfg=tta_cfg)
         return score_t2i
-    
+
     def compute_i2t_sim_matrix_adapt_itm_sigmoid(self, data_loader, task_cfg, optimizer, tta_cfg):
         """
         Compute similarity i2t, t2i matrix for the given data loader.

@@ -182,6 +182,7 @@ def create_optimizer_scheduler(cfg, model, num_training_steps):
         model.coeffi_exp_temper.requires_grad_(True)
     if getattr(cfg.config.tta, "is_prompt_learning", False) == True:
         model.learnable_empty_embedding.requires_grad_(True)
+        model.is_prompt_learning=True
     params, param_names = collect_params_blip2_qformer(model)
     if getattr(cfg.config.tta, "coeffi_exp_temper_is_learnable", False) == True:
         params.append(model.coeffi_exp_temper)

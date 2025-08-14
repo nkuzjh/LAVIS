@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# 设置基础参数
+# num_gpus=1
+log_dir="./logs"
+mkdir -p $log_dir
+
+# 定义主端口列表（每个任务使用不同的端口）
+# ports=(
+#     29500
+#     29501
+#     29502
+#     29503
+#     29504
+#     # 29505
+# )
+
+# # 定义训练脚本路径（根据实际情况修改）
+# scripts=(
+#     "tta_i2t.py"
+#     "tta_i2t.py"
+#     "tta_i2t.py"
+#     "tta_i2t.py"
+#     "tta_i2t.py"
+#     "tta_i2t.py"
+# )
+
+# 定义日志文件名
+log_files=(
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.1.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.2.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.3.out"
+
+    "ret_coco_eval_itm_adapt_i2t_exp14.out"
+    "ret_coco_eval_itm_adapt_i2t_exp14.1.out"
+    "ret_coco_eval_itm_adapt_i2t_exp14.2.out"
+    "ret_coco_eval_itm_adapt_i2t_exp14.3.out"
+    "ret_coco_eval_itm_adapt_i2t_exp14.4.out"
+
+)
+
+# 定义参数文件名
+args_files=(
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.1.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.2.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.3.yaml"
+
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp14.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp14.1.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp14.2.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp14.3.yaml"
+    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp14.4.yaml"
+
+)
+
+# 按顺序执行每个训练任务
+for i in "${!args_files[@]}"
+do
+    # script=${scripts[$i]}
+    log_file=$log_dir/${log_files[$i]}
+    arg_file=${args_files[$i]}
+    # port=${ports[$i]}
+
+    echo " "
+    echo "Starting Training: $script $arg_file ..." # on port $port
+    start_time=$(date +%s)
+    echo "Start Time: $(date +"%Y-%m-%d %T")"
+
+    # nohup torchrun --nproc_per_node=$num_gpus --master_port=$port $script > $log_file 2>&1 &
+    # nohup python -m torch.distributed.run --nproc_per_node=$num_gpus --master_port=$port $script --is_tta True --cfg-path $arg_file > $log_file 2>&1 &
+    CUDA_VISIBLE_DEVICES=1 nohup python tta_i2t.py --is_tta True --cfg-path $arg_file > $log_file 2>&1 &
+
+    # 等待当前任务完成
+    wait
+
+    # 记录结束时间
+    end_time=$(date +%s)
+    duration=$(( end_time - start_time ))
+    # 格式化时间（分钟和秒）
+    minutes=$(( duration / 60 ))
+    seconds=$(( duration % 60 ))
+    # 结束时间和运行时长
+    echo "End Time: $(date +"%Y-%m-%d %T")"
+    echo "Duration: ${minutes}m${seconds}s"
+    echo "Finsh Training $script $arg_file ."
+done
+
+echo "All training tasks completed."

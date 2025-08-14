@@ -119,7 +119,7 @@ def main():
 
     #### Blip2Qformer
     logging.info("\nInitialize model ...")
-    model = Blip2Qformer.from_config(cfg=cfg.model_cfg)
+    model = Blip2Qformer.from_config(cfg=cfg.model_cfg, tta_cfg=cfg.config.tta)
 
     #### eval_dataset
     logging.info("\nInitialize dataset ...")
@@ -319,7 +319,7 @@ def main():
                         lr = scheduler.get_last_lr()[0]
                     else:
                         lr = optimizer.param_groups[0]['lr']
-                    logging.info(f"[ITM ADAPT rank{get_rank()}] Iteration: {iter}, Iter Entropy Mean: {entropy.mean().detach().cpu().numpy()}, Iter Loss: {loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs}, Learning Rate: {lr}, model.coeffi_exp_temper: {model.coeffi_exp_temper}")
+                    logging.info(f"[ITM ADAPT rank{get_rank()}] Iteration: {iter}, Iter Entropy Mean: {entropy.mean().detach().cpu().numpy()}, Iter Loss: {loss.detach().cpu().numpy()*tta_cfg.grad_accum_bs}, Learning Rate: {lr}, model.coeffi_exp_temper: {model.coeffi_exp_temper.detach().cpu().numpy()}, learnable_empty_embedding.mean: {model.learnable_empty_embedding.detach().cpu().numpy().mean()}, learnable_empty_embedding.std: {model.learnable_empty_embedding.detach().cpu().numpy().std()}")
 
                 ## logging json
                 logging_list.append({
@@ -424,7 +424,7 @@ if __name__ == "__main__":
 
 
 # command
-# CUDA_VISIBLE_DEVICES=1 nohup python tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=1 nohup python tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.1.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.1.out 2>&1 &
 # CUDA_VISIBLE_DEVICES=1,2 nohup python -m torch.distributed.run --nproc_per_node=2 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
 # CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
 # CUDA_VISIBLE_DEVICES=0,1,2 python -m torch.distributed.run --nproc_per_node=3 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True
@@ -432,6 +432,8 @@ if __name__ == "__main__":
 # debug
 # --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp_debug.yaml --is_tta True
 # --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True
+# --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.5.yaml --is_tta True
+# --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.1.yaml --is_tta True
 
 
 
