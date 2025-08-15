@@ -32,7 +32,7 @@ log_files=(
     # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.2.out"
     # "ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.3.out"
 
-    "ret_coco_eval_itm_adapt_i2t_exp14.out"
+    # "ret_coco_eval_itm_adapt_i2t_exp14.out"
     "ret_coco_eval_itm_adapt_i2t_exp14.1.out"
     "ret_coco_eval_itm_adapt_i2t_exp14.2.out"
     "ret_coco_eval_itm_adapt_i2t_exp14.3.out"
@@ -47,7 +47,7 @@ args_files=(
     # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.2.yaml"
     # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.3.yaml"
 
-    "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp14.yaml"
+    # "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp14.yaml"
     "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp14.1.yaml"
     "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp14.2.yaml"
     "lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp14.3.yaml"

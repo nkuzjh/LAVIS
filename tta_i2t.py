@@ -395,7 +395,7 @@ def main():
         # logging.warning(f"get_rank:{get_rank()} load debug_text_atts.npy")
         # text_atts = torch.from_numpy(np.load("debugs/debug_text_atts.npy"))
 
-    if tta_epoch==9:
+    # if tta_epoch==9:
         eval_score_i2t, eval_itm_score_i2t, eval_logging_list = compute_i2t_itm_score_v2(model, eval_dataloader, cfg.run_cfg, tta_cfg, sims_matrix_i2t, vit_feats, text_ids, text_atts, tta_epoch, result_rank_dir)
         # eval_itm_score_list.append(eval_itm_score_i2t)
         eval_logging_list_epochs.extend(eval_logging_list)
@@ -425,7 +425,7 @@ if __name__ == "__main__":
 
 
 # command
-# CUDA_VISIBLE_DEVICES=0 nohup python tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.1.2.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.1.2.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=0 nohup python tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.1.3.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.1.3.out 2>&1 &
 # CUDA_VISIBLE_DEVICES=1,2 nohup python -m torch.distributed.run --nproc_per_node=2 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
 # CUDA_VISIBLE_DEVICES=0,1,2 nohup python -m torch.distributed.run --nproc_per_node=3 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True > ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.out 2>&1 &
 # CUDA_VISIBLE_DEVICES=0,1,2 python -m torch.distributed.run --nproc_per_node=3 tta_i2t.py --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp11.0.3.5.yaml --is_tta True

@@ -1498,8 +1498,21 @@
     - coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, **coeffi_exp_temper: 2**
     - coeffi_exp_temper_is_learnable = True
 2. i2t:
+    coeffi_exp_temper -> 1.1254655122756958
+    stop at epoch=7
+### exp11.1.3 from exp11.1
+1. objective
+    增大learning_rate确保coeffi_exp_temper的训练是有效的，再逐步调整coeffi_exp_temper至收敛
+1. parameters:
+    - sample_selection = True
+    - top1_match_coeffi = True
+    - **lr=1e-3**, wd=0.0
+    - coeffi_i2t_temper: 100.0, coeffi_t2i_temper: 100.0, **coeffi_exp_temper: 1.1254655122756958**
+    - coeffi_exp_temper_is_learnable = True
+2. i2t:
     coeffi_exp_temper ->
     running
+
 
 
 ### exp13+ bash finish
@@ -1552,7 +1565,7 @@
     - **batchsize=48** =192/4
 2. results i2t best:
     - CUDA_VISIBLE_DEVICES=2 nohup python tta_i2t.py --is_tta True --cfg-path lavis/projects/blip2/eval/ret_coco_eval_itm_adapt_i2t_exp13.4.yaml > ret_coco_eval_itm_adapt_i2t_exp13.4.out 2>&1 &
-        running
+        report i2t metrics offline, epoch 0 : {"txt_r1": 84.6, "txt_r5": 96.56, "txt_r10": 98.32, "txt_r_mean": 93.16000000000001, "txt_mAP": 70.22}
 
 ### exp14+ bash running
 #### exp 14
